@@ -1,0 +1,14 @@
+Package: rosyutils
+Title: Rosy Utils
+Version: 0.0.0.9000
+Authors@R: 
+    person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
+Description: Utilities commonly used in rosy packages.
+License: MIT + file LICENSE
+URL: https://github.com/brandonerose/rosyutils
+BugReports: https://github.com/brandonerose/rosyutils/issues
+Imports: 
+    config (>= 0.3.2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
