@@ -1,3 +1,3 @@
 # rosyutils (development version)
 
-* Initial CRAN submission.
+* adding first batch of functions
