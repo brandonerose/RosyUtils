@@ -2,9 +2,13 @@
 
 export("%>%")
 export(add_list_to_global)
+export(age)
 export(combine_R_files)
 export(find_df_diff)
 export(full.file.info)
+export(sample1)
 export(split_R_files)
 export(sync_dir)
+export(ul)
+export(wl)
 importFrom(magrittr,"%>%")

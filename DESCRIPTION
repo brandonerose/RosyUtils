@@ -12,6 +12,7 @@ Depends:
 Imports: 
     config (>= 0.3.2),
     dplyr,
+    lubridate,
     magrittr,
     tools
 Encoding: UTF-8
