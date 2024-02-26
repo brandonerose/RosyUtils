@@ -3,6 +3,7 @@
 export("%>%")
 export(add_list_to_global)
 export(combine_R_files)
+export(find_df_diff)
 export(full.file.info)
 export(split_R_files)
 export(sync_dir)
