@@ -72,3 +72,12 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
   }
   OUT
 }
+#' @export
+all_character_cols <- function(df){
+  as.data.frame(lapply(df,as.character))
+}
+
+#' @export
+all_character_cols_list <- function(list){
+  lapply(list,all_character_cols)
+}
