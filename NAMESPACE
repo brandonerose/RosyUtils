@@ -3,6 +3,8 @@
 export("%>%")
 export(add_list_to_global)
 export(age)
+export(all_character_cols)
+export(all_character_cols_list)
 export(combine_R_files)
 export(convert_dates)
 export(date_imputation)
