@@ -9,6 +9,8 @@
 #' @return messages and data.frame of only changes and reference cols
 #' @export
 find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
+  new <- all_character_cols(new)
+  old <- all_character_cols(old)
   if (!all(colnames(new) %in% colnames(old))) {
     stop("All new df columns must be included in old df")
   }
