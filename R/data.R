@@ -83,3 +83,17 @@ all_character_cols <- function(df){
 all_character_cols_list <- function(list){
   lapply(list,all_character_cols)
 }
+
+#' @export
+unpack_excel <- function(path){
+  sheets <- readxl::excel_sheets(path)
+  if(anyDuplicated(sheets)>0)stop("not unique names")
+  clean_sheets <- tolower(gsub("__","_",gsub(" ","_",gsub("-","",sheets))))
+  if(anyDuplicated(clean_sheets)>0)stop("not unique names")
+  out <- list()
+  for (i in 1:length(sheets)){
+    out[[i]]<- rio::import(path,col_types="text",sheet = i)
+  }
+  names(out) <- clean_sheets
+  return(out)
+}
