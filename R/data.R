@@ -97,3 +97,39 @@ unpack_excel <- function(path){
   names(out) <- clean_sheets
   return(out)
 }
+#' @export
+collapse_DF <- function(DF,ref_id,list_mod){
+  if( ! ref_id %in% colnames(DF))stop("`ref_id` must be a colname in `DF`")
+  new_DF <- NULL
+  new_DF[[ref_id]] <- unique(DF[[ref_id]])
+  other_cols <-colnames(DF)[which(!colnames(DF) %in% ref_id)]
+  if(!missing(list_mod)){
+    for(i in 1:length(list_mod)){
+      new_DF[[names(list_mod[i])]] <- new_DF[[ref_id]] %>% sapply(function(ID){
+        sub_df <- DF[which(DF[[ref_id]]==ID),list_mod[[i]]]
+        n_col <- ncol(sub_df)
+        n_row <- nrow(sub_df)
+        out_final <- NULL
+        for(j in 1:n_row){
+          out <- NULL
+          for(k in 1:n_col){
+            out <- out %>% append(paste0(colnames(sub_df)[k]," - ",sub_df[j,k]))
+          }
+          out <- out %>% paste(collapse = " | ")
+          out_final <- out_final %>% append(out)
+        }
+        out_final <- out_final %>% paste(collapse = " || ")
+        out_final
+      }) %>% as.character()
+    }
+    DF <- DF[,which(!colnames(DF)%in%list_mod[[i]])]
+    other_cols <- other_cols[which(!other_cols%in%list_mod[[i]])]
+  }
+  other_col <- other_cols %>% sample(1)
+  for (other_col in other_cols) {
+    new_DF[[other_col]] <- sapply( new_DF[[ref_id]], function(ID){
+      paste0(unique(DF[[other_col]][which(DF[[ref_id]]==ID)]),collapse = " | ")
+    })
+  }
+  as.data.frame(new_DF)
+}
