@@ -133,3 +133,17 @@ collapse_DF <- function(DF,ref_id,list_mod){
   }
   as.data.frame(new_DF)
 }
+
+#' @export
+clean_df_cols <- function(df) {
+  str <- tolower(colnames(df))
+  str <- gsub("[^a-z0-9\\s]+", " _", str)
+  str <- gsub("\\s+", "_", str)
+  str <- gsub("^_|_$", "", str)
+  str <- gsub("^_|_$", "", str)
+  str <- gsub("__", "_", str)
+  str <- gsub("__", "_", str)
+  if(anyDuplicated(str)>0)stop("Duplicate col names!")
+  colnames(df) <- str
+  return(df)
+}
