@@ -74,16 +74,17 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
   }
   OUT
 }
+#' @title all_character_cols
 #' @export
 all_character_cols <- function(df){
   as.data.frame(lapply(df,as.character))
 }
-
+#' @title all_character_cols_list
 #' @export
 all_character_cols_list <- function(list){
   lapply(list,all_character_cols)
 }
-
+#' @title collapse_DF
 #' @export
 collapse_DF <- function(DF,ref_id,list_mod){
   if( ! ref_id %in% colnames(DF))stop("`ref_id` must be a colname in `DF`")
@@ -120,7 +121,7 @@ collapse_DF <- function(DF,ref_id,list_mod){
   }
   as.data.frame(new_DF)
 }
-
+#' @title clean_df_cols
 #' @export
 clean_df_cols <- function(df) {
   str <- tolower(colnames(df))
@@ -134,7 +135,7 @@ clean_df_cols <- function(df) {
   colnames(df) <- str
   return(df)
 }
-
+#' @title clean_env_names
 #' @export
 clean_env_names <- function(env_names,silent = F,lowercase=T){
   cleaned_names <- character(length(env_names))

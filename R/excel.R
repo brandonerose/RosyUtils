@@ -1,3 +1,4 @@
+#' @title excel_to_list
 #' @export
 excel_to_list <- function(path){
   sheets <- readxl::excel_sheets(path)
@@ -10,6 +11,7 @@ excel_to_list <- function(path){
   return(out)
 }
 
+#' @title list_to_excel
 #' @export
 list_to_excel <- function(list,dir,append_name,combine = T){
   if(!dir.exists(dir))stop("dir doesn't exist")

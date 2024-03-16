@@ -1,3 +1,5 @@
+#' @title is_something
+#' @export
 is_something <- function(thing,row=0){
   out <- FALSE
   if(!is.null(thing)){
@@ -19,7 +21,8 @@ is_something <- function(thing,row=0){
   }
   return(out)
 }
-
+#' @title is_nested_list
+#' @export
 is_nested_list <- function(x) {
   if (!is.list(x)) return(FALSE)
   if (is.data.frame(x)) return(FALSE)
@@ -30,7 +33,8 @@ is_nested_list <- function(x) {
   }
   return(OUT)
 }
-
+#' @title is_named_list
+#' @export
 is_named_list <- function(x,silent =T,recursive = F) {
   if (!is.list(x))return(FALSE)
   if (is.null(names(x)))return(FALSE)
@@ -46,7 +50,8 @@ is_named_list <- function(x,silent =T,recursive = F) {
   }
   return(named_all)  # Return the result
 }
-
+#' @title is_df_list
+#' @export
 is_df_list <- function(x,strict=F){
   if (!is.list(x)) return(FALSE)
   if (length(x)==0) return(FALSE)
@@ -55,11 +60,13 @@ is_df_list <- function(x,strict=F){
   if(strict)return(all(out))
   return(any(out))
 }
-
+#' @title is_named_df_list
+#' @export
 is_named_df_list <- function(x,strict = F){
   is_named_list(x) && is_df_list(x,strict = strict)
 }
-
+#' @title is_env_name
+#' @export
 is_env_name <- function(env_name,silent=FALSE) {
   result <- tryCatch({
     if (is.null(env_name)) stop("env_name is NULL")
@@ -79,7 +86,8 @@ is_env_name <- function(env_name,silent=FALSE) {
   })
   return(result)
 }
-
+#' @title is_web_link
+#' @export
 is_web_link <- function(link, silent = FALSE,strict = FALSE) {
   result <- tryCatch({
     if(is.null(link)) stop("link is NULL")
