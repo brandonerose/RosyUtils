@@ -81,3 +81,8 @@ sync_dir <- function(from,to,top_level=T){
   }
   if(top_level){message("Up to date!")}
 }
+#' @title list.files.real
+#' @export
+list.files.real <- function(path){
+  grep('~$', list.files(path), fixed = TRUE, value = TRUE, invert = TRUE)
+}

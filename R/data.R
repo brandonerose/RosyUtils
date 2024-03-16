@@ -85,19 +85,6 @@ all_character_cols_list <- function(list){
 }
 
 #' @export
-unpack_excel <- function(path){
-  sheets <- readxl::excel_sheets(path)
-  if(anyDuplicated(sheets)>0)stop("not unique names")
-  clean_sheets <- tolower(gsub("__","_",gsub(" ","_",gsub("-","",sheets))))
-  if(anyDuplicated(clean_sheets)>0)stop("not unique names")
-  out <- list()
-  for (i in 1:length(sheets)){
-    out[[i]]<- rio::import(path,col_types="text",sheet = i)
-  }
-  names(out) <- clean_sheets
-  return(out)
-}
-#' @export
 collapse_DF <- function(DF,ref_id,list_mod){
   if( ! ref_id %in% colnames(DF))stop("`ref_id` must be a colname in `DF`")
   new_DF <- NULL
@@ -147,3 +134,25 @@ clean_df_cols <- function(df) {
   colnames(df) <- str
   return(df)
 }
+
+#' @export
+clean_env_names <- function(env_names,silent = F,lowercase=T){
+  cleaned_names <- character(length(env_names))
+  for (i in seq_along(env_names)) {
+    name <- env_names[i]
+    is_valid <- is_env_name(name, silent = TRUE)
+    if (is_valid) cleaned_names[i] <- name
+    if (!is_valid) {
+      if (!silent) message("Invalid environment name: '", name)
+      cleaned_name <- gsub("__","_",gsub(" ","_",gsub("-","",name)))
+      if(lowercase)cleaned_name <- tolower(cleaned_name)
+      if(cleaned_name%in%cleaned_names){
+        if (!silent) message("Non-unique environment name: '", name, "', added numbers...")
+        cleaned_name <- cleaned_name %>% paste0("_",max(wl(cleaned_name%in%cleaned_names))+1)
+      }
+      cleaned_names[i] <- cleaned_name
+    }
+  }
+  return(cleaned_names)
+}
+
