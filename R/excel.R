@@ -75,6 +75,10 @@ list_to_excel <- function(list,dir,file_name,separate = FALSE,overwrite =TRUE,li
     for(i in seq_along(list)){
       sub_list <- list[i]
       sheet <- names(sub_list)
+      file_name2 <- sheet
+      if(!missing(file_name)){
+        file_name2 <- paste0(file_name,"_",file_name2)
+      }
       save_wb(
         wb = list_to_wb(
           list = sub_list,
@@ -82,7 +86,7 @@ list_to_excel <- function(list,dir,file_name,separate = FALSE,overwrite =TRUE,li
           str_trunc_length = str_trunc_length
         ),
         dir = dir,
-        file_name = paste0(file_name,"_",sheet),
+        file_name = file_name2,
         overwrite = overwrite
       )
     }
