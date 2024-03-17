@@ -67,7 +67,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
 }
 #' @title list_to_wb
 #' @export
-list_to_excel <- function(list,dir,file_name,separate = FALSE,overwrite =TRUE,link_col_list=list(),str_trunc_length=32000){
+list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TRUE,link_col_list=list(),str_trunc_length=32000){
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list)
   list_names <- names(list)
@@ -76,7 +76,7 @@ list_to_excel <- function(list,dir,file_name,separate = FALSE,overwrite =TRUE,li
       sub_list <- list[i]
       sheet <- names(sub_list)
       file_name2 <- sheet
-      if(!missing(file_name)){
+      if(!is.null(file_name)){
         file_name2 <- paste0(file_name,"_",file_name2)
       }
       save_wb(
