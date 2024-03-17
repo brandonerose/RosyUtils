@@ -156,4 +156,28 @@ clean_env_names <- function(env_names,silent = F,lowercase=T){
   }
   return(cleaned_names)
 }
-
+#' @title addSlashIfNeeded
+#' @export
+addSlashIfNeeded <- function(input_string) {
+  if (!endsWith(input_string, "/")) {
+    output_string <- gsub("$", "/", input_string)
+  } else {
+    output_string <- input_string
+  }
+  return(output_string)
+}
+#' @title remove_html_tags
+#' @export
+remove_html_tags <- function(text_vector) {
+  # Regular expression to match HTML tags
+  html_pattern <- "<[^>]+>"
+  # Use gsub to remove the HTML tags from each element in the vector
+  cleaned_vector <- gsub(html_pattern, "", text_vector)
+  return(cleaned_vector)
+}
+#' @title check_match
+#' @export
+check_match <- function(vec_list) {
+  sorted_vecs <- lapply(vec_list, sort)
+  all(sapply(sorted_vecs[-1], function(x) identical(sorted_vecs[[1]], x)))
+}
