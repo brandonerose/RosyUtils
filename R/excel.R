@@ -27,12 +27,15 @@ list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000){
       }
     }
   }
-  for(list_name in list_names){
+  list_names_rename <- stringr::str_trunc(list_names,width = 31,side = "right",ellipsis = "")
+  BAD<-dw(list_names_rename)
+  if(length(BAD)>0)stop("Duplicated names when trimmed: ",list_names[BAD] %>% paste0(collapse = ", "))
+  for(i in seq_along(list_names)){
     wb <- DF_to_wb(
-      DF = list[[list_name]],
-      DF_name = list_name,
+      DF = list[[list_names[i]]],
+      DF_name = list_names_rename[i],
       wb = wb,
-      link_col_list = list_link_names[[list_name]],
+      link_col_list = list_link_names[[list_names[i]]],
       str_trunc_length = str_trunc_length
     )
   }
@@ -41,10 +44,11 @@ list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000){
 }
 #' @title DF_to_wb
 #' @export
-DF_to_wb <- function(DF,sheet,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000){
+DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000){
+  if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   if (nrow(DF)>0){
-    openxlsx::addWorksheet(wb, sheet)
+    openxlsx::addWorksheet(wb, DF_name)
     if(length(link_col_list)>0){
       for(link_col in link_col_list){
         class (DF[[link_col]]) <- "hyperlink"
@@ -52,12 +56,12 @@ DF_to_wb <- function(DF,sheet,wb = openxlsx::createWorkbook(),link_col_list=list
       if(!is.null(names(link_col_list))){
         for(i in seq_along(link_col_list)){
           COL <- which(colnames(DF)==names(link_col_list)[i])
-          openxlsx::writeData(wb, sheet = sheet, x = DF[[link_col_list[[i]]]],startRow = 2,startCol = COL)
+          openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = 2,startCol = COL)
           DF[[link_col_list[[i]]]] <- NULL
         }
       }
     }
-    openxlsx::writeData(wb, sheet = 1, x = DF)
+    openxlsx::writeData(wb, sheet = DF_name, x = DF)
     return(wb)
   }
 }
