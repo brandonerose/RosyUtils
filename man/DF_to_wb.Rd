@@ -6,7 +6,7 @@
 \usage{
 DF_to_wb(
   DF,
-  sheet,
+  DF_name,
   wb = openxlsx::createWorkbook(),
   link_col_list = list(),
   str_trunc_length = 32000

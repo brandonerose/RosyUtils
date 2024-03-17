@@ -7,7 +7,7 @@
 list_to_excel(
   list,
   dir,
-  file_name,
+  file_name = NULL,
   separate = FALSE,
   overwrite = TRUE,
   link_col_list = list(),
