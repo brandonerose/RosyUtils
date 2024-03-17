@@ -41,10 +41,10 @@ list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000){
 }
 #' @title DF_to_wb
 #' @export
-DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000){
+DF_to_wb <- function(DF,sheet,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000){
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   if (nrow(DF)>0){
-    openxlsx::addWorksheet(wb, DF_name)
+    openxlsx::addWorksheet(wb, sheet)
     if(length(link_col_list)>0){
       for(link_col in link_col_list){
         class (DF[[link_col]]) <- "hyperlink"
@@ -52,12 +52,12 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
       if(!is.null(names(link_col_list))){
         for(i in seq_along(link_col_list)){
           COL <- which(colnames(DF)==names(link_col_list)[i])
-          openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = 2,startCol = COL)
+          openxlsx::writeData(wb, sheet = sheet, x = DF[[link_col_list[[i]]]],startRow = 2,startCol = COL)
           DF[[link_col_list[[i]]]] <- NULL
         }
       }
     }
-    openxlsx::writeData(wb, sheet = DF_name, x = DF)
+    openxlsx::writeData(wb, sheet = 1, x = DF)
     return(wb)
   }
 }

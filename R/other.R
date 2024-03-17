@@ -10,3 +10,11 @@ ul <- function(x){
 wl <- function(x){
   length(which(x))
 }
+#' @export
+dwl <- function(x){
+  length(which(duplicated(x)))
+}
+#' @export
+dw <- function(x){
+  which(duplicated(x))
+}
