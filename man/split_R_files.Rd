@@ -8,7 +8,8 @@ split_R_files(
   source_dir = file.path(getwd(), "dev"),
   destination_dir = file.path(getwd(), "R"),
   filename = "combined.R",
-  header_symbol = "="
+  header_symbol = "=",
+  new_lines = character(0)
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ split_R_files(
 \item{filename}{a file name (ends in .R)}
 
 \item{header_symbol}{single character for your header separator in combined file}
+
+\item{new_lines}{characeter vector for new lines}
 }
 \value{
 message

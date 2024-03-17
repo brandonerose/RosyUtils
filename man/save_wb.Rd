@@ -2,10 +2,10 @@
 % Please edit documentation in R/excel.R
 \name{save_wb}
 \alias{save_wb}
-\title{list_to_excel}
+\title{save_wb}
 \usage{
 save_wb(wb, dir, file_name, overwrite = TRUE)
 }
 \description{
-list_to_excel
+save_wb
 }

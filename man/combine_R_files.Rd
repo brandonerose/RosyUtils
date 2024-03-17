@@ -9,7 +9,8 @@ combine_R_files(
   destination_dir = file.path(getwd(), "dev"),
   filename = "combined.R",
   header_symbol = "=",
-  max_new_lines = 0
+  max_new_lines = 0,
+  new_lines = character(0)
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ combine_R_files(
 \item{header_symbol}{single character for your header separator in combined file}
 
 \item{max_new_lines}{integer for max number of new lines}
+
+\item{new_lines}{characeter vector for new lines}
 }
 \value{
 message
