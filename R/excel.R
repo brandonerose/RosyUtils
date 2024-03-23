@@ -39,7 +39,6 @@ list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000){
       str_trunc_length = str_trunc_length
     )
   }
-
   return(wb)
 }
 #' @title DF_to_wb
@@ -50,14 +49,21 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
     if(length(link_col_list)>0){
-      for(link_col in link_col_list){
-        class (DF[[link_col]]) <- "hyperlink"
-      }
-      if(!is.null(names(link_col_list))){
-        for(i in seq_along(link_col_list)){
-          COL <- which(colnames(DF)==names(link_col_list)[i])
-          openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = 2,startCol = COL)
-          DF[[link_col_list[[i]]]] <- NULL
+      has_names <- !is.null(names(link_col_list))
+      for(i in seq_along(link_col_list)){
+        if(link_col_list[[i]]%in%colnames(DF)){
+          class (DF[[link_col_list[[i]]]]) <- "hyperlink"
+        }else{
+          # warning("",immediate. = T)
+        }
+        if(has_names){
+          if(names(link_col_list)[i]%in%colnames(DF)){
+            COL <- which(colnames(DF)==names(link_col_list)[i])
+            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = 2,startCol = COL)
+            DF[[link_col_list[[i]]]] <- NULL
+          }else{
+            # warning("",immediate. = T)
+          }
         }
       }
     }
