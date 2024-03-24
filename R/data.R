@@ -181,3 +181,13 @@ check_match <- function(vec_list) {
   sorted_vecs <- lapply(vec_list, sort)
   all(sapply(sorted_vecs[-1], function(x) identical(sorted_vecs[[1]], x)))
 }
+#' @title vec1_in_vec2
+#' @export
+vec1_in_vec2 <- function(vec1,vec2){
+  vec1[which(vec1 %in% vec2)]
+}
+#' @title vec1_not_in_vec2
+#' @export
+vec1_not_in_vec2 <- function(vec1,vec2){
+  vec1[which(!vec1 %in% vec2)]
+}
