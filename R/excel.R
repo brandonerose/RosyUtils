@@ -52,7 +52,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
     openxlsx::addWorksheet(wb, DF_name)
     startRow <- 1
     if(missing(header_df))  header_df<- data.frame()
-    if(is_something(header_df,row=1)){
+    if(is_something(header_df)){
       openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = 1,colNames = F)
       startRow <- startRow + nrow(header_df)
     }
