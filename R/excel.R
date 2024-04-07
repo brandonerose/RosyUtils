@@ -60,7 +60,6 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
     if(has_header){
       openxlsx::writeData(wb, sheet = DF_name, x = header %>% as.data.frame() %>% t(),startRow = 1,colNames = F)
     }
-    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow, tableStyle = "none")
     if(length(link_col_list)>0){
       has_names <- !is.null(names(link_col_list))
       for(i in seq_along(link_col_list)){
@@ -80,6 +79,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
         }
       }
     }
+    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow, tableStyle = "none")
     return(wb)
   }
 }
