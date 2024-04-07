@@ -13,7 +13,8 @@ excel_to_list <- function(path){
 
 #' @title list_to_wb
 #' @export
-list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000){
+list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000,header_df_list=list()){
+  if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list)
   list_names <- names(list)
@@ -36,29 +37,24 @@ list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000){
       DF_name = list_names_rename[i],
       wb = wb,
       link_col_list = list_link_names[[list_names[i]]],
-      str_trunc_length = str_trunc_length
+      str_trunc_length = str_trunc_length,
+      header_df = header_df_list[[list_names[i]]]
     )
   }
   return(wb)
 }
 #' @title DF_to_wb
 #' @export
-DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000,header_labels=TRUE){
+DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000,header_df){
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
     startRow <- 1
-    header <- Hmisc::label(DF)
-    has_header <- F
-    if(header_labels){
-      if(any(header!="")){
-        startRow <- 2
-        has_header <- T
-      }
-    }
-    if(has_header){
-      openxlsx::writeData(wb, sheet = DF_name, x = header %>% as.data.frame() %>% t(),startRow = 1,colNames = F)
+    if(missing(header_df))  header_df<- data.frame()
+    if(is_something(header_df,row=1)){
+      openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = 1,colNames = F)
+      startRow <- startRow + nrow(header_df)
     }
     if(length(link_col_list)>0){
       has_names <- !is.null(names(link_col_list))
@@ -85,7 +81,8 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
 }
 #' @title list_to_wb
 #' @export
-list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TRUE,link_col_list=list(),str_trunc_length=32000){
+list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TRUE,link_col_list=list(),str_trunc_length=32000,header_df_list){
+  if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list)
   list_names <- names(list)
@@ -100,7 +97,8 @@ list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TR
         wb = list_to_wb(
           list = sub_list,
           link_col_list = link_col_list,
-          str_trunc_length = str_trunc_length
+          str_trunc_length = str_trunc_length,
+          header_df_list = header_df_list
         ),
         dir = dir,
         file_name = file_name2,

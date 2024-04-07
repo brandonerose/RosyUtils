@@ -4,7 +4,12 @@
 \alias{list_to_wb}
 \title{list_to_wb}
 \usage{
-list_to_wb(list, link_col_list = list(), str_trunc_length = 32000)
+list_to_wb(
+  list,
+  link_col_list = list(),
+  str_trunc_length = 32000,
+  header_df_list = list()
+)
 }
 \description{
 list_to_wb

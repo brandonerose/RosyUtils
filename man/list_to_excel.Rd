@@ -11,7 +11,8 @@ list_to_excel(
   separate = FALSE,
   overwrite = TRUE,
   link_col_list = list(),
-  str_trunc_length = 32000
+  str_trunc_length = 32000,
+  header_df_list
 )
 }
 \description{
