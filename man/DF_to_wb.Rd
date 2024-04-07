@@ -9,7 +9,8 @@ DF_to_wb(
   DF_name,
   wb = openxlsx::createWorkbook(),
   link_col_list = list(),
-  str_trunc_length = 32000
+  str_trunc_length = 32000,
+  header_labels = TRUE
 )
 }
 \description{

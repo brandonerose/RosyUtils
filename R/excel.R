@@ -43,11 +43,24 @@ list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000){
 }
 #' @title DF_to_wb
 #' @export
-DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000){
+DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000,header_labels=TRUE){
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
+    startRow <- 1
+    header <- Hmisc::label(DF)
+    has_header <- F
+    if(header_labels){
+      if(any(header!="")){
+        startRow <- 2
+        has_header <- T
+      }
+    }
+    if(has_header){
+      openxlsx::writeData(wb, sheet = DF_name, x = header %>% as.data.frame() %>% t(),startRow = 1,colNames = F)
+    }
+    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow, tableStyle = "none")
     if(length(link_col_list)>0){
       has_names <- !is.null(names(link_col_list))
       for(i in seq_along(link_col_list)){
@@ -59,7 +72,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
         if(has_names){
           if(names(link_col_list)[i]%in%colnames(DF)){
             COL <- which(colnames(DF)==names(link_col_list)[i])
-            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = 2,startCol = COL)
+            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = startRow+1,startCol = COL)
             DF[[link_col_list[[i]]]] <- NULL
           }else{
             # warning("",immediate. = T)
@@ -67,7 +80,6 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
         }
       }
     }
-    openxlsx::writeData(wb, sheet = DF_name, x = DF)
     return(wb)
   }
 }

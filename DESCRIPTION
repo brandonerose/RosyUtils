@@ -13,6 +13,7 @@ Imports:
     admiral,
     config (>= 0.3.2),
     dplyr,
+    Hmisc,
     lubridate,
     magrittr,
     openxlsx,
