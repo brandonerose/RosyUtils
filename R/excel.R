@@ -80,8 +80,7 @@ list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TR
   if(separate){
     for(i in seq_along(list)){
       sub_list <- list[i]
-      sheet <- names(sub_list)
-      file_name2 <- sheet
+      file_name2 <- names(sub_list)
       if(!is.null(file_name)){
         file_name2 <- paste0(file_name,"_",file_name2)
       }
@@ -109,7 +108,24 @@ list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TR
     )
   }
 }
-
+#' @export
+list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE){
+  list <- process_df_list(list)
+  list_names <- names(list)
+  for(i in seq_along(list)){
+    sub_list <- list[i]
+    file_name2 <- names(sub_list)
+    if(!is.null(file_name)){
+      file_name2 <- paste0(file_name,"_",file_name2)
+    }
+    save_csv(
+      df = sub_list[[1]],
+      dir = dir,
+      file_name = file_name2,
+      overwrite = overwrite
+    )
+  }
+}
 #' @title save_wb
 #' @export
 save_wb <- function(wb,dir,file_name,overwrite =TRUE){
@@ -122,6 +138,25 @@ save_wb <- function(wb,dir,file_name,overwrite =TRUE){
   )
   message("Saved at -> ","'",path,"'")
 }
+save_csv <- function(df,dir,file_name,overwrite =TRUE){
+  if(!dir.exists(dir))stop("dir doesn't exist")
+  path <- file.path(dir,paste0(file_name,".csv"))
+  write_it <- T
+  if(!overwrite){
+    if(file.exists(path)){
+      write_it <- F
+      message("Already a file at -> ","'",path,"'")
+    }
+  }
+  if(write_it){
+    write.csv(
+      x = df,
+      file = path
+    )
+    message("Saved at -> ","'",path,"'")
+  }
+}
+
 process_df_list <- function(list){
   if(!is_df_list(list))stop("list must be ...... a list :)")
   is_a_df_tf <- list %>% sapply(function(IN){is.data.frame(IN)})
