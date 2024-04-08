@@ -13,7 +13,7 @@ excel_to_list <- function(path){
 
 #' @title list_to_wb
 #' @export
-list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000,header_df_list=list()){
+list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000,header_df_list=list(),tableStyle = "none",header_style = openxlsx::createStyle(),body_style = openxlsx::createStyle()){
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list)
@@ -38,14 +38,17 @@ list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000,header_d
       wb = wb,
       link_col_list = list_link_names[[list_names[i]]],
       str_trunc_length = str_trunc_length,
-      header_df = header_df_list[[list_names[i]]]
+      header_df = header_df_list[[list_names[i]]],
+      tableStyle = tableStyle,
+      header_style = header_style,
+      body_style = body_style
     )
   }
   return(wb)
 }
 #' @title DF_to_wb
 #' @export
-DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000,header_df){
+DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000,header_df,tableStyle = "none",header_style = openxlsx::createStyle(),body_style = openxlsx::createStyle()){
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   if (nrow(DF)>0){
@@ -75,13 +78,33 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
         }
       }
     }
-    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow, tableStyle = "none")
+    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow, tableStyle = tableStyle)
+
+    style_cols <- seq(ncol(DF))
+
+    openxlsx::addStyle(
+      wb,
+      sheet = DF_name,
+      style = header_style,
+      rows = seq(startRow),
+      cols = style_cols,
+      stack =T
+    )
+    openxlsx::addStyle(
+      wb,
+      sheet = DF_name,
+      style = body_style,
+      rows = seq(nrow(DF)) + startRow,
+      cols = style_cols,
+      stack =T
+    )
+
     return(wb)
   }
 }
 #' @title list_to_wb
 #' @export
-list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TRUE,link_col_list=list(),str_trunc_length=32000,header_df_list){
+list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TRUE,link_col_list=list(),str_trunc_length=32000,header_df_list,tableStyle = "none",header_style = openxlsx::createStyle(),body_style = openxlsx::createStyle()){
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list)
@@ -98,7 +121,10 @@ list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TR
           list = sub_list,
           link_col_list = link_col_list,
           str_trunc_length = str_trunc_length,
-          header_df_list = header_df_list
+          header_df_list = header_df_list,
+          tableStyle = tableStyle,
+          header_style = header_style,
+          body_style = body_style
         ),
         dir = dir,
         file_name = file_name2,
