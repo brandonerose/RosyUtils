@@ -40,7 +40,11 @@ DF_to_wb <- function(
         warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = T)
         non_key_cols <- 1:ncol(DF)
         non_key_cols <- non_key_cols[which(!non_key_cols%in%freeze_key_cols)]
-        DF <- DF[,c(freeze_key_cols,non_key_cols)]
+        new_col_order <- c(freeze_key_cols,non_key_cols)
+        if(is_something(header_df)){
+          header_df <- header_df[,new_col_order]
+        }
+        DF <- DF[,new_col_order]
       }
     }
   }
