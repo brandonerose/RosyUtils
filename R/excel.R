@@ -35,11 +35,13 @@ DF_to_wb <- function(
     all_cols <- colnames(DF)
     if(any(!key_cols%in%all_cols))stop("all key_cols must be in the DFs")
     freeze_key_cols <- which(all_cols%in%key_cols)
-    if(!is_consecutive_srt_1(freeze_key_cols)){
-      warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = T)
-      non_key_cols <- 1:ncol(DF)
-      non_key_cols <- non_key_cols[which(!non_key_cols%in%freeze_key_cols)]
-      DF <- DF[,c(freeze_key_cols,non_key_cols)]
+    if(length(freeze_key_cols)>0){
+      if(!is_consecutive_srt_1(freeze_key_cols)){
+        warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = T)
+        non_key_cols <- 1:ncol(DF)
+        non_key_cols <- non_key_cols[which(!non_key_cols%in%freeze_key_cols)]
+        DF <- DF[,c(freeze_key_cols,non_key_cols)]
+      }
     }
   }
   if (nrow(DF)>0){
@@ -100,10 +102,10 @@ DF_to_wb <- function(
       firstActiveCol <- NULL
       if(freeze_keys){
         firstActiveCol <- startCol
-        freeze_key_rows <- which(colnames(DF)%in%key_cols)
-        if(length(freeze_key_rows)>0){
-          if (is_consecutive_srt_1(freeze_key_rows)){
-            firstActiveCol <- firstActiveCol + freeze_key_rows[length(freeze_key_rows)]
+        freeze_key_cols <- which(colnames(DF)%in%key_cols)
+        if(length(freeze_key_cols)>0){
+          if (is_consecutive_srt_1(freeze_key_cols)){
+            firstActiveCol <- firstActiveCol + freeze_key_cols[length(freeze_key_cols)]
           }else{
             warning("key_cols must be consecutive and start from the left most column.",immediate. = T)
           }
