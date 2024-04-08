@@ -37,7 +37,7 @@ DF_to_wb <- function(
     if(missing(header_df))  header_df<- data.frame()
     if(is_something(header_df)){
       openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = startRow_header,startCol = startCol,colNames = F)
-      startRow_body <- startRow_header + nrow(header_df) + 1
+      startRow_body <- startRow_header + nrow(header_df)
     }
     if(length(link_col_list)>0){
       has_names <- !is.null(names(link_col_list))
