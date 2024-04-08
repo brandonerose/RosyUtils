@@ -14,7 +14,9 @@ DF_to_wb(
   tableStyle = "none",
   header_style = default_header_style,
   body_style = default_body_style,
-  freeze_header = T
+  freeze_header = T,
+  pad_rows = 0,
+  pad_cols = 0
 )
 }
 \description{
