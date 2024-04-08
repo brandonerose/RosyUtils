@@ -31,12 +31,13 @@ DF_to_wb <- function(
   hyperlink_col <- NULL
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
-    startRow <-pad_rows + 1
+    startRow_header <-pad_rows + 1
+    startRow_body <- startRow_header + 1
     startCol <-pad_cols + 1
     if(missing(header_df))  header_df<- data.frame()
     if(is_something(header_df)){
-      openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = 1,startCol = startCol,colNames = F)
-      startRow <- startRow + nrow(header_df)
+      openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = startRow_header,startCol = startCol,colNames = F)
+      startRow_body <- startRow_header + nrow(header_df) + 1
     }
     if(length(link_col_list)>0){
       has_names <- !is.null(names(link_col_list))
@@ -49,7 +50,7 @@ DF_to_wb <- function(
         if(has_names){
           if(names(link_col_list)[i]%in%colnames(DF)){
             hyperlink_col <- which(colnames(DF)==names(link_col_list)[i])
-            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = startRow+1,startCol = hyperlink_col + pad_cols)
+            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = startRow_body,startCol = hyperlink_col + pad_cols)
             DF[[link_col_list[[i]]]] <- NULL
           }else{
             # warning("",immediate. = T)
@@ -58,13 +59,13 @@ DF_to_wb <- function(
       }
     }
 
-    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow,startCol = startCol, tableStyle = tableStyle)
+    openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow_body,startCol = startCol, tableStyle = tableStyle)
     style_cols <- seq(ncol(DF))+pad_cols
     openxlsx::addStyle(
       wb,
       sheet = DF_name,
       style = header_style,
-      rows = seq(startRow),
+      rows = seq(from=startRow_header,to=startRow_body-1),
       cols = style_cols,
       gridExpand = T,
       stack = T
@@ -73,7 +74,7 @@ DF_to_wb <- function(
       wb,
       sheet = DF_name,
       style = body_style,
-      rows = seq(nrow(DF)) + startRow,
+      rows = seq(nrow(DF))+startRow_body,
       cols = style_cols,
       gridExpand = T,
       stack = T
