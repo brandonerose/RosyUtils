@@ -113,17 +113,15 @@ is_web_link <- function(link, silent = FALSE,strict = FALSE) {
 #' @title is_consecutive_srt_1
 #' @export
 is_consecutive_srt_1 <- function(vec) {
-  # Check if the first element is 1
   if (vec[1] != 1) {
     return(FALSE)
   }
-
-  # Check if subsequent elements are consecutive
-  for (i in 2:length(vec)) {
-    if (vec[i] != vec[i-1] + 1) {
-      return(FALSE)
+  if(length(vec)>1){
+    for (i in 2:length(vec)) {
+      if (vec[i] != vec[i-1] + 1) {
+        return(FALSE)
+      }
     }
   }
-
   return(TRUE)
 }
