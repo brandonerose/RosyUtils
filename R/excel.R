@@ -82,17 +82,23 @@ DF_to_wb <- function(
       gridExpand = T,
       stack = T
     )
-    if(freeze_header){
-      openxlsx::freezePane(wb, DF_name, firstActiveRow = startRow_table+1)
-    }
-    if(freeze_keys){
-      freeze_keys <- which(colnames(DF)%in%key_cols)
-      if(length(key_cols)>0){
-        if (is_consecutive_srt_1(freeze_keys)){
-          openxlsx::freezePane(wb, DF_name, firstActiveCol = startRow_header+1)
-        }else{
-          warning("key_cols must be consecutive and start from the left most column.",immediate. = T)
+    if(freeze_header||freeze_keys){
+      firstActiveRow <- NULL
+      if(freeze_header){
+        firstActiveRow <-  startRow_table+1
+      }
+      firstActiveCol <- NULL
+      if(freeze_keys){
+        firstActiveCol <- startCol
+        freeze_key_rows <- which(colnames(DF)%in%key_cols)
+        if(length(freeze_key_rows)>0){
+          if (is_consecutive_srt_1(freeze_key_rows)){
+            firstActiveCol <- firstActiveCol + freeze_key_rows[length(freeze_key_rows)]
+          }else{
+            warning("key_cols must be consecutive and start from the left most column.",immediate. = T)
+          }
         }
+        openxlsx::freezePane(wb, DF_name, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol)
       }
     }
     return(wb)
