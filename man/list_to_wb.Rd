@@ -10,8 +10,8 @@ list_to_wb(
   str_trunc_length = 32000,
   header_df_list = list(),
   tableStyle = "none",
-  header_style = openxlsx::createStyle(),
-  body_style = openxlsx::createStyle(),
+  header_style = default_header_style,
+  body_style = default_body_style,
   freeze_header = T
 )
 }
