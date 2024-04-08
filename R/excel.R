@@ -26,6 +26,7 @@ DF_to_wb <- function(
 ) {
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
+  hyperlink_col <- NULL
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
     startRow <- 1
@@ -44,8 +45,8 @@ DF_to_wb <- function(
         }
         if(has_names){
           if(names(link_col_list)[i]%in%colnames(DF)){
-            COL <- which(colnames(DF)==names(link_col_list)[i])
-            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = startRow+1,startCol = COL)
+            hyperlink_col <- which(colnames(DF)==names(link_col_list)[i])
+            openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = startRow+1,startCol = hyperlink_col)
             DF[[link_col_list[[i]]]] <- NULL
           }else{
             # warning("",immediate. = T)
@@ -65,6 +66,7 @@ DF_to_wb <- function(
       gridExpand = T,
       stack = T
     )
+    hyperlink_col
     openxlsx::addStyle(
       wb,
       sheet = DF_name,
@@ -133,8 +135,7 @@ list_to_excel <- function(
     file_name = NULL,
     separate = FALSE,
     overwrite = TRUE,
-    link_col_list =
-      list(),
+    link_col_list = list(),
     str_trunc_length = 32000,
     header_df_list,
     tableStyle = "none",
@@ -260,14 +261,14 @@ default_header_style <-
     fontSize = 14,
     fontColour = "black",
     border = "TopBottomLeftRight",
-    borderColour = "black"
+    # borderColour = "black"
   )
 
 default_body_style <-
   openxlsx::createStyle(
     halign = "left",
     valign = "center",
-    border = "Bottom",
-    fontSize = 12,
-    fontColour = "black"
+    # border = "Bottom",
+    # fontColour = "black",
+    fontSize = 12
   )
