@@ -24,11 +24,14 @@ DF_to_wb <- function(
     body_style = default_body_style,
     freeze_header = T,
     pad_rows = 0,
-    pad_cols = 0
+    pad_cols = 0,
+    freeze_keys = T,
+    key_cols = NULL
 ) {
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   hyperlink_col <- NULL
+
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
     startRow_header <-pad_rows + 1
@@ -60,11 +63,12 @@ DF_to_wb <- function(
     }
     openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow_table,startCol = startCol, tableStyle = tableStyle)
     style_cols <- seq(ncol(DF))+pad_cols
+
     openxlsx::addStyle(
       wb,
       sheet = DF_name,
       style = header_style,
-      rows = seq(from=startRow_header,to=startRow_table-1),
+      rows = seq(from=startRow_header,to=startRow_table),
       cols = style_cols,
       gridExpand = T,
       stack = T
@@ -79,7 +83,17 @@ DF_to_wb <- function(
       stack = T
     )
     if(freeze_header){
-      openxlsx::freezePane(wb, DF_name, firstActiveRow = startRow_table)
+      openxlsx::freezePane(wb, DF_name, firstActiveRow = startRow_table+1)
+    }
+    if(freeze_keys){
+      freeze_keys <- which(colnames(DF)%in%key_cols)
+      if(length(key_cols)>0){
+        if (is_consecutive_srt_1(freeze_keys)){
+          openxlsx::freezePane(wb, DF_name, firstActiveCol = startRow_header+1)
+        }else{
+          warning("key_cols must be consecutive and start from the left most column.",immediate. = T)
+        }
+      }
     }
     return(wb)
   }
@@ -96,7 +110,9 @@ list_to_wb <- function(
     body_style = default_body_style,
     freeze_header = T,
     pad_rows = 0,
-    pad_cols = 0
+    pad_cols = 0,
+    freeze_keys = T,
+    key_cols_list = NULL
 ){
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
@@ -128,7 +144,9 @@ list_to_wb <- function(
       body_style = body_style,
       freeze_header = freeze_header,
       pad_rows = pad_rows,
-      pad_cols = pad_cols
+      pad_cols = pad_cols,
+      freeze_keys = freeze_keys,
+      key_cols = key_cols_list[[list_names[i]]]
     )
   }
   return(wb)
@@ -149,7 +167,9 @@ list_to_excel <- function(
     body_style = default_body_style,
     freeze_header = T,
     pad_rows = 0,
-    pad_cols = 0
+    pad_cols = 0,
+    freeze_keys = T,
+    key_cols_list = NULL
 ) {
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
@@ -173,7 +193,9 @@ list_to_excel <- function(
           body_style = body_style,
           freeze_header = freeze_header,
           pad_rows = pad_rows,
-          pad_cols = pad_cols
+          pad_cols = pad_cols,
+          freeze_keys = freeze_keys,
+          key_cols = key_cols_list[[list_names[i]]]
         ),
         dir = dir,
         file_name = file_name2,
@@ -192,7 +214,9 @@ list_to_excel <- function(
         body_style = body_style,
         freeze_header = freeze_header,
         pad_rows = pad_rows,
-        pad_cols = pad_cols
+        pad_cols = pad_cols,
+        freeze_keys = freeze_keys,
+        key_cols = key_cols_list[[list_names[i]]]
       ),
       dir = dir,
       file_name = file_name,
