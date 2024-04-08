@@ -80,7 +80,7 @@ DF_to_wb <- function(
       stack = T
     )
     if(freeze_header){
-      openxlsx::freezePane(wb, DF_name, firstActiveRow = startRow+1)
+      openxlsx::freezePane(wb, DF_name, firstActiveRow = startRow_body)
     }
     return(wb)
   }
