@@ -35,7 +35,7 @@ DF_to_wb <- function(
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
     startRow_header <-pad_rows + 1
-    startRow_table <- startRow_header + 1
+    startRow_table <- startRow_header
     startCol <-pad_cols + 1
     if(missing(header_df))  header_df<- data.frame()
     if(is_something(header_df)){
