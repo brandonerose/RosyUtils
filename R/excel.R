@@ -66,7 +66,6 @@ DF_to_wb <- function(
       gridExpand = T,
       stack = T
     )
-    hyperlink_col
     openxlsx::addStyle(
       wb,
       sheet = DF_name,
