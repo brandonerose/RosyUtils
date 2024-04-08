@@ -78,6 +78,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
         }
       }
     }
+
     openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow, tableStyle = tableStyle)
 
     style_cols <- seq(ncol(DF))
@@ -89,7 +90,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
       rows = seq(startRow),
       cols = style_cols,
       gridExpand = T,
-      stack =T
+      stack = T
     )
     openxlsx::addStyle(
       wb,
@@ -98,7 +99,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
       rows = seq(nrow(DF)) + startRow,
       cols = style_cols,
       gridExpand = T,
-      stack =T
+      stack = T
     )
 
     return(wb)
