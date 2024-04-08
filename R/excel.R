@@ -31,7 +31,17 @@ DF_to_wb <- function(
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   hyperlink_col <- NULL
-
+  if(freeze_keys){
+    all_cols <- colnames(DF)
+    if(any(!key_cols%in%all_cols))stop("all key_cols must be in the DFs")
+    freeze_key_cols <- which(all_cols%in%key_cols)
+    if(!is_consecutive_srt_1(freeze_key_cols)){
+      warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = T)
+      non_key_cols <- 1:ncol(DF)
+      non_key_cols <- non_key_cols[which(!non_key_cols%in%freeze_key_cols)]
+      DF <- DF[,c(freeze_key_cols,non_key_cols)]
+    }
+  }
   if (nrow(DF)>0){
     openxlsx::addWorksheet(wb, DF_name)
     startRow_header <-pad_rows + 1
