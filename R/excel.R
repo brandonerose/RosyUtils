@@ -10,45 +10,20 @@ excel_to_list <- function(path){
   names(out) <- clean_sheets
   return(out)
 }
-
-#' @title list_to_wb
-#' @export
-list_to_wb <- function(list,link_col_list=list(),str_trunc_length=32000,header_df_list=list(),tableStyle = "none",header_style = openxlsx::createStyle(),body_style = openxlsx::createStyle()){
-  if(missing(header_df_list))  header_df_list<- list()
-  wb <- openxlsx::createWorkbook()
-  list <- process_df_list(list)
-  list_names <- names(list)
-  list_link_names <- list()
-  if(length(link_col_list)>0){
-    if(is_named_list(link_col_list)){
-      if(!all(names(link_col_list)%in%list_names)){
-        for(list_name in list_names){
-          list_link_names[[list_name]] <- link_col_list
-        }
-      }
-    }
-  }
-  list_names_rename <- stringr::str_trunc(list_names,width = 31,side = "right",ellipsis = "")
-  BAD<-dw(list_names_rename)
-  if(length(BAD)>0)stop("Duplicated names when trimmed: ",list_names[BAD] %>% paste0(collapse = ", "))
-  for(i in seq_along(list_names)){
-    wb <- DF_to_wb(
-      DF = list[[list_names[i]]],
-      DF_name = list_names_rename[i],
-      wb = wb,
-      link_col_list = list_link_names[[list_names[i]]],
-      str_trunc_length = str_trunc_length,
-      header_df = header_df_list[[list_names[i]]],
-      tableStyle = tableStyle,
-      header_style = header_style,
-      body_style = body_style
-    )
-  }
-  return(wb)
-}
 #' @title DF_to_wb
 #' @export
-DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=list(),str_trunc_length=32000,header_df,tableStyle = "none",header_style = openxlsx::createStyle(),body_style = openxlsx::createStyle()){
+DF_to_wb <- function(
+    DF,
+    DF_name,
+    wb = openxlsx::createWorkbook(),
+    link_col_list = list(),
+    str_trunc_length = 32000,
+    header_df,
+    tableStyle = "none",
+    header_style = openxlsx::createStyle(),
+    body_style = openxlsx::createStyle(),
+    freeze_header = T
+) {
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
   DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   if (nrow(DF)>0){
@@ -80,9 +55,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
     }
 
     openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow, tableStyle = tableStyle)
-
     style_cols <- seq(ncol(DF))
-
     openxlsx::addStyle(
       wb,
       sheet = DF_name,
@@ -101,13 +74,81 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
       gridExpand = T,
       stack = T
     )
-
+    if(freeze_header){
+      for (name in names(list)){
+        if(is.null(header_df_list[[name]])){
+          x<- 2
+        }else{
+          x <- nrow(header_df_list[[name]])+2
+        }
+        openxlsx::freezePane(wb, name, firstActiveRow = x)
+      }
+    }
     return(wb)
   }
 }
 #' @title list_to_wb
 #' @export
-list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TRUE,link_col_list=list(),str_trunc_length=32000,header_df_list,tableStyle = "none",header_style = openxlsx::createStyle(),body_style = openxlsx::createStyle()){
+list_to_wb <- function(
+    list,
+    link_col_list = list(),
+    str_trunc_length = 32000,
+    header_df_list = list(),
+    tableStyle = "none",
+    header_style = openxlsx::createStyle(),
+    body_style = openxlsx::createStyle(),
+    freeze_header = T
+){
+  if(missing(header_df_list))  header_df_list<- list()
+  wb <- openxlsx::createWorkbook()
+  list <- process_df_list(list)
+  list_names <- names(list)
+  list_link_names <- list()
+  if(length(link_col_list)>0){
+    if(is_named_list(link_col_list)){
+      if(!all(names(link_col_list)%in%list_names)){
+        for(list_name in list_names){
+          list_link_names[[list_name]] <- link_col_list
+        }
+      }
+    }
+  }
+  list_names_rename <- stringr::str_trunc(list_names,width = 31,side = "right",ellipsis = "")
+  BAD<-dw(list_names_rename)
+  if(length(BAD)>0)stop("Duplicated names when trimmed: ",list_names[BAD] %>% paste0(collapse = ", "))
+  for(i in seq_along(list_names)){
+    wb <- DF_to_wb(
+      DF = list[[list_names[i]]],
+      DF_name = list_names_rename[i],
+      wb = wb,
+      link_col_list = list_link_names[[list_names[i]]],
+      str_trunc_length = str_trunc_length,
+      header_df = header_df_list[[list_names[i]]],
+      tableStyle = tableStyle,
+      header_style = header_style,
+      body_style = body_style,
+      freeze_header = freeze_header
+    )
+  }
+  return(wb)
+}
+#' @title list_to_wb
+#' @export
+list_to_excel <- function(
+    list,
+    dir,
+    file_name = NULL,
+    separate = FALSE,
+    overwrite = TRUE,
+    link_col_list =
+      list(),
+    str_trunc_length = 32000,
+    header_df_list,
+    tableStyle = "none",
+    header_style = openxlsx::createStyle(),
+    body_style = openxlsx::createStyle(),
+    freeze_header = T
+) {
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list)
@@ -127,7 +168,8 @@ list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TR
           header_df_list = header_df_list,
           tableStyle = tableStyle,
           header_style = header_style,
-          body_style = body_style
+          body_style = body_style,
+          freeze_header = freeze_header
         ),
         dir = dir,
         file_name = file_name2,
@@ -139,7 +181,12 @@ list_to_excel <- function(list,dir,file_name=NULL,separate = FALSE,overwrite =TR
       wb = list_to_wb(
         list = list,
         link_col_list = link_col_list,
-        str_trunc_length = str_trunc_length
+        str_trunc_length = str_trunc_length,
+        header_df_list = header_df_list,
+        tableStyle = tableStyle,
+        header_style = header_style,
+        body_style = body_style,
+        freeze_header = freeze_header
       ),
       dir = dir,
       file_name = file_name,
