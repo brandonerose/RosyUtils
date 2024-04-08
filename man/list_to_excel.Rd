@@ -15,7 +15,8 @@ list_to_excel(
   header_df_list,
   tableStyle = "none",
   header_style = openxlsx::createStyle(),
-  body_style = openxlsx::createStyle()
+  body_style = openxlsx::createStyle(),
+  freeze_header = T
 )
 }
 \description{

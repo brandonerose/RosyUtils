@@ -11,7 +11,8 @@ list_to_wb(
   header_df_list = list(),
   tableStyle = "none",
   header_style = openxlsx::createStyle(),
-  body_style = openxlsx::createStyle()
+  body_style = openxlsx::createStyle(),
+  freeze_header = T
 )
 }
 \description{
