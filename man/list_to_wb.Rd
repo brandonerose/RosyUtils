@@ -14,7 +14,9 @@ list_to_wb(
   body_style = default_body_style,
   freeze_header = T,
   pad_rows = 0,
-  pad_cols = 0
+  pad_cols = 0,
+  freeze_keys = T,
+  key_cols_list = NULL
 )
 }
 \description{
