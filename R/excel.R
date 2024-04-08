@@ -20,8 +20,8 @@ DF_to_wb <- function(
     str_trunc_length = 32000,
     header_df,
     tableStyle = "none",
-    header_style = openxlsx::createStyle(),
-    body_style = openxlsx::createStyle(),
+    header_style = default_header_style,
+    body_style = default_body_style,
     freeze_header = T
 ) {
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
@@ -88,8 +88,8 @@ list_to_wb <- function(
     str_trunc_length = 32000,
     header_df_list = list(),
     tableStyle = "none",
-    header_style = openxlsx::createStyle(),
-    body_style = openxlsx::createStyle(),
+    header_style = default_header_style,
+    body_style = default_body_style,
     freeze_header = T
 ){
   if(missing(header_df_list))  header_df_list<- list()
@@ -138,8 +138,8 @@ list_to_excel <- function(
     str_trunc_length = 32000,
     header_df_list,
     tableStyle = "none",
-    header_style = openxlsx::createStyle(),
-    body_style = openxlsx::createStyle(),
+    header_style = default_header_style,
+    body_style = default_body_style,
     freeze_header = T
 ) {
   if(missing(header_df_list))  header_df_list<- list()
@@ -251,3 +251,23 @@ process_df_list <- function(list){
   return(list)
 }
 
+default_header_style <-
+  openxlsx::createStyle(
+    fgFill = "#74DFFF",
+    halign = "center",
+    valign = "center",
+    textDecoration = "Bold",
+    fontSize = 14,
+    fontColour = "black",
+    border = "TopBottomLeftRight",
+    borderColour = "black"
+  )
+
+default_body_style <-
+  openxlsx::createStyle(
+    halign = "left",
+    valign = "center",
+    border = "Bottom",
+    fontSize = 12,
+    fontColour = "black"
+  )
