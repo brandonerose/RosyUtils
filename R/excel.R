@@ -88,6 +88,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
       style = header_style,
       rows = seq(startRow),
       cols = style_cols,
+      gridExpand = T,
       stack =T
     )
     openxlsx::addStyle(
@@ -96,6 +97,7 @@ DF_to_wb <- function(DF,DF_name,wb = openxlsx::createWorkbook(),link_col_list=li
       style = body_style,
       rows = seq(nrow(DF)) + startRow,
       cols = style_cols,
+      gridExpand = T,
       stack =T
     )
 
