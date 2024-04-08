@@ -75,14 +75,7 @@ DF_to_wb <- function(
       stack = T
     )
     if(freeze_header){
-      for (name in names(list)){
-        if(is.null(header_df_list[[name]])){
-          x<- 2
-        }else{
-          x <- nrow(header_df_list[[name]])+2
-        }
-        openxlsx::freezePane(wb, name, firstActiveRow = x)
-      }
+      openxlsx::freezePane(wb, DF_name, firstActiveRow = startRow+1)
     }
     return(wb)
   }
