@@ -311,9 +311,10 @@ process_df_list <- function(list){
     message("Dropping non-data.frames and empties... ", paste0(names(drops),collapse = ", "))
   }
   list <- list[keeps]
-
-  if(!is_named_df_list(list)){
-    names(list) <- paste0("sheet",seq_along(list))
+  if(length(list)>0){
+    if(!is_named_df_list(list)){
+      names(list) <- paste0("sheet",seq_along(list))
+    }
   }
   return(list)
 }
