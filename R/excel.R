@@ -197,6 +197,7 @@ list_to_excel <- function(
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list)
   list_names <- names(list)
+  if(length(list)==0)return(warning("empty list cannot be saved",immediate. = T))
   if(separate){
     for(i in seq_along(list)){
       sub_list <- list[i]
