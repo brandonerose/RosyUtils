@@ -28,3 +28,8 @@ dw <- function(x){
 drop_nas <- function(x) {
   x[!sapply(x, is.na)]
 }
+#' @title vec_which_duplicated
+#' @export
+vec_which_duplicated <- function(vec){
+  vec[which(duplicated(vec))]
+}
