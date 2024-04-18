@@ -33,3 +33,8 @@ drop_nas <- function(x) {
 vec_which_duplicated <- function(vec){
   vec[which(duplicated(vec))]
 }
+#' @title clean_num
+#' @export
+clean_num<-function(num){
+  formatC(num, format="d", big.mark=",")
+}
