@@ -10,6 +10,26 @@ excel_to_list <- function(path){
   names(out) <- clean_sheets
   return(out)
 }
+#' @title wb_to_list
+#' @export
+wb_to_list <- function(wb){
+  # wb <- openxlsx::loadWorkbook(file = path)
+  # test for if user does not have excel
+  sheets <- openxlsx::sheets(wb)
+  clean_sheets <- clean_env_names(sheets)
+  out <- list()
+  for (i in 1:length(sheets)){
+    col_row <- 1
+    x<-openxlsx::getTables(wb,sheet = i)
+    if(length(x)>0){
+      col_row <-  as.integer(gsub("[A-Za-z]", "", unlist(x %>% attr("refs") %>% strsplit(":"))[[1]]))# test for xlsx without letters for cols
+    }
+    out[[i]]<- openxlsx::read.xlsx(wb,sheet = i,startRow = col_row)
+
+  }
+  names(out) <- clean_sheets
+  return(out)
+}
 #' @title DF_to_wb
 #' @export
 DF_to_wb <- function(
