@@ -16,11 +16,11 @@ combine_R_files <- function(source_dir= file.path(getwd(),"R"), destination_dir=
     header <- paste0(header,  paste0(rep(header_symbol,80-nchar(header)), collapse=""))
     combined_text <- c(combined_text, header,new_lines, readLines(file))
   }
+  message(length(combined_text)," lines")
   combined_text <-paste(combined_text, collapse = "\n")
   combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
   destination_file <- file.path(destination_dir, filename)
   writeLines(combined_text, destination_file)
-  message(length(combined_text)," lines")
   cat("Combined file saved to:", destination_file, "\n")
 }
 #' @title split_R_files
