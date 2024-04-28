@@ -12,8 +12,10 @@ is_something <- function(thing,row=0){
         if(is.list(thing)){
           out <- TRUE
         }else{
-          if(!is.na(thing)){
-            out <-TRUE
+          if(length(thing)==1){
+            if(!is.na(thing)){
+              out <-TRUE
+            }
           }
         }
       }
