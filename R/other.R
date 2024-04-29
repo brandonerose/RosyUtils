@@ -38,3 +38,6 @@ vec_which_duplicated <- function(vec){
 clean_num<-function(num){
   formatC(num, format="d", big.mark=",")
 }
+size <- function(x){
+  format(object.size(x),units = "auto")
+}
