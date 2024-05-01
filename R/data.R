@@ -203,3 +203,37 @@ vec1_in_vec2 <- function(vec1,vec2){
 vec1_not_in_vec2 <- function(vec1,vec2){
   vec1[which(!vec1 %in% vec2)]
 }
+
+#' @title find_in_DF_list
+#' @export
+find_in_df_list <- function(df_list,text,exact = F){
+  df_list <- process_df_list(df_list)
+  out <- data.frame(
+    record_id = character(0),
+    col = character(0),
+    row = character(0)
+  )
+  if (!exact){
+    text <- tolower(text)
+  }
+  for(form in names(df_list)){
+    DF <- df_list[[form]]
+    for(col in colnames(DF)){
+      if (!exact){
+        DF[[col]] <- tolower(DF[[col]])
+      }
+      rows <- which(grepl(text,DF[[col]]))
+      if(length(rows)>0){
+        out <- out %>%dplyr::bind_rows(
+          data.frame(
+            record_id = DF[[DB$redcap$id_col]][rows],
+            col = col,
+            row = as.character(rows)
+          )
+        )
+      }
+    }
+  }
+  return(out)
+}
+

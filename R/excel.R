@@ -334,7 +334,7 @@ process_df_list <- function(list){
   list <- list[keeps]
   if(length(list)>0){
     if(!is_named_df_list(list)){
-      names(list) <- paste0("sheet",seq_along(list))
+      names(list) <- paste0(seq_along(list))
     }
   }
   return(list)
