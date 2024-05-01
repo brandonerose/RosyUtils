@@ -119,7 +119,10 @@ collapse_DF <- function(DF,ref_id,list_mod){
   other_col <- other_cols %>% sample(1)
   for (other_col in other_cols) {
     new_DF[[other_col]] <- sapply( new_DF[[ref_id]], function(ID){
-      paste0(unique(DF[[other_col]][which(DF[[ref_id]]==ID)]),collapse = " | ")
+      x<- unique(DF[[other_col]][which(DF[[ref_id]]==ID)]) %>% drop_nas()
+      if(length(x)==0)return(NA){
+        return(paste0(x,collapse = " | "))
+      }
     })
   }
   as.data.frame(new_DF)
