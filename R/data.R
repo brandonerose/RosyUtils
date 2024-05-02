@@ -128,7 +128,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass=""){
   if(length(rows_to_keep)>0){
     rows_to_keep <- rows_to_keep %>% unique() %>% sort()
     cols_to_keep <- cols_to_keep %>% unique() %>% sort()
-    message(message_pass,nrow(OUT), " rows have updates")
+    message(message_pass,length(rows_to_keep), " rows have updates")
     return(new[rows_to_keep,cols_to_keep])
   }else{
     message(message_pass,"No changes!")
