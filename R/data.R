@@ -112,6 +112,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass=""){
   placeholder <- "NA_placeholder"
   rows_to_keep <- NULL
   cols_to_keep <- which(colnames(new) %in% ref_cols)
+  COLS <- colnames(new)[which(!colnames(new)%in%ref_cols)]
   for (COL in COLS){
     vector1 <- merged_df[[COL]]
     vector2 <- merged_df[[paste0(COL, appended_old_col_suffix)]]
