@@ -1,5 +1,5 @@
 #' @export
-add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_split=" [:|:] ",write_split = " | "){
+add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_split=" [:|:] ",write_split = " | ",remove_previous = T){
   if(any(!ids%in%DF[[id_field_name]]))stop( "Some of your record IDs are not included in the set of the current database IDs! Add them first...")
   flag_vector <- DF[[flag_field_name]] %>% strsplit(split=read_split)
   DF[[flag_field_name]] <- 1:nrow(DF) %>% sapply(function(ROW){
@@ -8,15 +8,14 @@ add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_spli
     }else{
       IN <- NULL
     }
-    IN<-IN[which(IN!=flag_name)] #remove flag_name
+    if(remove_previous){
+      IN<-IN[which(IN!=flag_name)] #remove flag_name
+    }
     if(DF[[id_field_name]][ROW]%in%ids){
       IN <- IN %>% append(flag_name) # add id if it should be there
     }
-    if(!is.null(IN)){
-      return(IN %>% sort() %>% unique() %>% trimws() %>% paste0(collapse = " | ") )#sort and clean
-    }else{
-      return(NA)
-    }
+    if(is.null(IN))return(NA)
+    return(IN %>% sort() %>% unique() %>% trimws() %>% paste0(collapse = " | ") )#sort and clean
   })
   return(DF)
 }
