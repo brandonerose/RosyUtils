@@ -74,6 +74,67 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
   }
   OUT
 }
+#' @title find the difference between two data.frames find_df_diff2
+#' @description
+#' This function will compare two data.frames: new and old.
+#' You define the reference columns with ref_cols.
+#' Reference columns are always included in the return data.frame and their combination should always lead to a unique key for each row.
+#' @param new a new data.frame to compare to old. All new cols must be included in the set of the old ones.
+#' @param old a reference data.frame to be compared to
+#' @param ref_cols character vector of reference columns. They are always included in the return data.frame and their combination should always lead to a unique key for each row.
+#' @return messages and data.frame of only changes and reference cols
+#' @export
+find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass=""){
+  new <- all_character_cols(new)
+  old <- all_character_cols(old)
+  if (!all(colnames(new) %in% colnames(old))) {
+    stop("All new df columns must be included in old df")
+  }
+  if (!all(ref_cols %in% colnames(new))| !all(ref_cols %in% colnames(old))) {
+    stop("ref_cols must be included in both dfs")
+  }
+  if (length(ref_cols)>1){
+    new$key <- apply( new[ , ref_cols] , 1 , paste , collapse = "_" )
+    old$key <- apply( old[ , ref_cols ] , 1 , paste , collapse = "_" )
+  }else{
+    new$key <- new[ , ref_cols]
+    old$key <- old[ , ref_cols]
+  }
+  if (anyDuplicated(old$key) > 0) {
+    stop("Keys must lead to unique rows! (old df)")
+  }
+  if (anyDuplicated(new$key) > 0) {
+    stop("Keys must lead to unique rows! (new df)")
+  }
+  appended_old_col_suffix <- "_old_col"
+  if(any(endsWith(unique(colnames(old),colnames(new)),appended_old_col_suffix)))stop("colnames cant end with '",appended_old_col_suffix,"'")
+  merged_df <- merge(new, old, by = ref_cols, suffixes = c("",appended_old_col_suffix ))
+  placeholder <- "NA_placeholder"
+  rows_to_keep <- NULL
+  cols_to_keep <- which(colnames(new) %in% ref_cols)
+  for (COL in COLS){
+    vector1 <- merged_df[[COL]]
+    vector2 <- merged_df[[paste0(COL, appended_old_col_suffix)]]
+    vector1_no_na <- ifelse(is.na(vector1), placeholder, vector1)
+    vector2_no_na <- ifelse(is.na(vector2), placeholder, vector2)
+    # Compare vectors element-wise
+    are_not_equal <- which(vector1_no_na != vector2_no_na)
+    if(length(are_not_equal)>0){
+      rows_to_keep <- rows_to_keep %>% append(are_not_equal)
+      cols_to_keep <- cols_to_keep %>% append(which(colnames(new) == COL))
+    }
+  }
+  if(length(rows_to_keep)>0){
+    rows_to_keep <- rows_to_keep %>% unique() %>% sort()
+    cols_to_keep <- cols_to_keep %>% unique() %>% sort()
+    message(message_pass,nrow(OUT), " rows have updates")
+    return(new[rows_to_keep,cols_to_keep])
+  }else{
+    message(message_pass,"No changes!")
+    return(NULL)
+  }
+}
+
 
 #' @title all_character_cols
 #' @export
