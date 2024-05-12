@@ -169,7 +169,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, 
 #' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T,  n_row_view = 20){
+find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T, n_row_view = 20){
   if(!is_something(new_list)){
     message("new_list is empty")
     return(list())
