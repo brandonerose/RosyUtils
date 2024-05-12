@@ -4,7 +4,13 @@
 \alias{find_df_list_diff}
 \title{find the difference between two lists of related data.frames}
 \usage{
-find_df_list_diff(new_list, old_list, ref_col_list, view_old = T)
+find_df_list_diff(
+  new_list,
+  old_list,
+  ref_col_list,
+  view_old = T,
+  n_row_view = 20
+)
 }
 \arguments{
 \item{new_list}{a new data.frame to compare to old. All new cols must be included in the set of the old ones.}

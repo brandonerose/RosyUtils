@@ -4,7 +4,14 @@
 \alias{find_df_diff2}
 \title{find the difference between two data.frames find_df_diff2}
 \usage{
-find_df_diff2(new, old, ref_cols = NULL, message_pass = "", view_old = T)
+find_df_diff2(
+  new,
+  old,
+  ref_cols = NULL,
+  message_pass = "",
+  view_old = T,
+  n_row_view = 20
+)
 }
 \arguments{
 \item{new}{a new data.frame to compare to old. All new cols must be included in the set of the old ones.}

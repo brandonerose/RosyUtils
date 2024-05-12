@@ -84,7 +84,7 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
 #' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T){
+find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, n_row_view = 20){
   new <- all_character_cols(new)
   old <- all_character_cols(old)
   if (!all(colnames(new) %in% colnames(old))) {
@@ -134,7 +134,22 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T){
     rows_to_keep <- rows_to_keep %>% unique()
     cols_to_keep <- cols_to_keep %>% unique()
     if(view_old){
-      print.data.frame(merged_df[rows_to_keep,unique(cols_to_view)])
+      rows_to_keep2 <- rows_to_keep
+      done <- F
+      while ( ! done) {
+        length_of_rows_to_keep <- length(rows_to_keep2)
+        if(length_of_rows_to_keep==0){
+          done <- T
+        }else{
+          indices <- 1:ifelse(length_of_rows_to_keep<n_row_view,length_of_rows_to_keep,n_row_view)
+          rows_to_keep3 <- rows_to_keep2[indices]
+          print.data.frame(merged_df[rows_to_keep3,unique(cols_to_view)])
+          choice <- utils::menu(choices = c("Check more rows","Proceed with no more checking", "Stop the function"),title = "What would you like to do?")
+          if(choice==3)stop("Stopped as requested!")
+          if(choice==2)done <- T
+          if(choice==1)rows_to_keep2 <- rows_to_keep2[-indices]
+        }
+      }
     }
     message(message_pass,length(rows_to_keep), " rows have updates")
     return(merged_df[rows_to_keep,cols_to_keep])
@@ -154,7 +169,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T){
 #' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T){
+find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T,  n_row_view = 20){
   if(!is_something(new_list)){
     message("new_list is empty")
     return(list())
@@ -173,7 +188,7 @@ find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T){
     names(ref_col_list) <- names(new_list)
   }
   for(df_name in names(new_list)){
-    new_list[[df_name]] <- find_df_diff2(new = new_list[[df_name]], old = old_list[[df_name]],ref_cols = ref_col_list[[df_name]], message_pass = paste0(df_name,": "),view_old = view_old)
+    new_list[[df_name]] <- find_df_diff2(new = new_list[[df_name]], old = old_list[[df_name]],ref_cols = ref_col_list[[df_name]], message_pass = paste0(df_name,": "),view_old = view_old, n_row_view = n_row_view)
   }
   return(new_list)
 }
