@@ -82,9 +82,10 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
 #' @param new a new data.frame to compare to old. All new cols must be included in the set of the old ones.
 #' @param old a reference data.frame to be compared to
 #' @param ref_cols character vector of reference columns. They are always included in the return data.frame and their combination should always lead to a unique key for each row.
+#' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass=""){
+find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T){
   new <- all_character_cols(new)
   old <- all_character_cols(old)
   if (!all(colnames(new) %in% colnames(old))) {
@@ -106,34 +107,75 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass=""){
   if (anyDuplicated(new_keys) > 0) {
     stop("Keys must lead to unique rows! (new df)")
   }
-  appended_old_col_suffix <- "_old_col"
+  appended_old_col_suffix <- "__old"
   if(any(endsWith(unique(colnames(old),colnames(new)),appended_old_col_suffix)))stop("colnames cant end with '",appended_old_col_suffix,"'")
   merged_df <- merge(new, old, by = ref_cols, suffixes = c("",appended_old_col_suffix ))
   placeholder <- "NA_placeholder"
   rows_to_keep <- NULL
-  cols_to_keep <- which(colnames(merged_df) %in% ref_cols)
+  cols_to_view <- cols_to_keep <- which(colnames(merged_df) %in% ref_cols)
   COLS <- colnames(new)[which(!colnames(new)%in%ref_cols)]
   for (COL in COLS){
     vector1 <- merged_df[[COL]]
-    vector2 <- merged_df[[paste0(COL, appended_old_col_suffix)]]
+    compare_COL <- paste0(COL, appended_old_col_suffix)
+    vector2 <- merged_df[[compare_COL]]
     vector1_no_na <- ifelse(is.na(vector1), placeholder, vector1)
     vector2_no_na <- ifelse(is.na(vector2), placeholder, vector2)
     # Compare vectors element-wise
     are_not_equal <- which(vector1_no_na != vector2_no_na)
     if(length(are_not_equal)>0){
       rows_to_keep <- rows_to_keep %>% append(are_not_equal)
-      cols_to_keep <- cols_to_keep %>% append(which(colnames(merged_df) == COL))
+      additional_cols <- which(colnames(merged_df) == COL)
+      cols_to_keep <- cols_to_keep %>% append(additional_cols)
+      if(view_old){
+        cols_to_view <- cols_to_view %>% append(additional_cols) %>% append(which(colnames(merged_df) == compare_COL))
+      }
     }
   }
   if(length(rows_to_keep)>0){
-    rows_to_keep <- rows_to_keep %>% unique() %>% sort()
-    cols_to_keep <- cols_to_keep %>% unique() %>% sort()
+    rows_to_keep <- rows_to_keep %>% unique()
+    cols_to_keep <- cols_to_keep %>% unique()
+    if(view_old){
+      print.data.frame(merged_df[rows_to_keep,unique(cols_to_view)])
+    }
     message(message_pass,length(rows_to_keep), " rows have updates")
     return(merged_df[rows_to_keep,cols_to_keep])
   }else{
     message(message_pass,"No changes!")
     return(NULL)
   }
+}
+#' @title find the difference between two lists of related data.frames
+#' @description
+#' This function will compare two data.frames: new and old.
+#' You define the reference columns with ref_cols.
+#' Reference columns are always included in the return data.frame and their combination should always lead to a unique key for each row.
+#' @param new_list a new data.frame to compare to old. All new cols must be included in the set of the old ones.
+#' @param old_list a reference data.frame to be compared to
+#' @param ref_col_list character vector of reference columns. They are always included in the return data.frame and their combination should always lead to a unique key for each row.
+#' @return messages and data.frame of only changes and reference cols
+#' @export
+find_df_list_diff <- function(new_list, old_list,ref_col_list){
+  if(!is_something(new_list)){
+    message("new_list is empty")
+    return(list())
+  }
+  if(!is_something(old_list)){
+    message("old_list is empty")
+    return(list())
+  }
+  if(!is_df_list(new_list))stop("new_list must be a list of data.frames")
+  if(!is_df_list(old_list))stop("old_list must be a list of data.frames")
+  if(any(!names(new_list)%in%names(old_list)))stop("All new_list names must be included in the set of old_list names.")
+  if(!is.list(ref_col_list)){
+    ref_col_list <- names(new_list) %>% lapply(function(IN){
+      ref_col_list
+    })
+    names(ref_col_list) <- names(new_list)
+  }
+  for(df_name in names(new_list)){
+    new_list[[df_name]] <- find_df_diff2(new = new_list[[df_name]], old = old_list[[df_name]],ref_cols = ref_col_list[[df_name]], message_pass = paste0(df_name,": "))
+  }
+  return(new_list)
 }
 #' @title all_character_cols
 #' @export

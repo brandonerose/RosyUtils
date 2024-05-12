@@ -4,7 +4,7 @@
 \alias{find_df_diff2}
 \title{find the difference between two data.frames find_df_diff2}
 \usage{
-find_df_diff2(new, old, ref_cols = NULL, message_pass = "")
+find_df_diff2(new, old, ref_cols = NULL, message_pass = "", view_old = T)
 }
 \arguments{
 \item{new}{a new data.frame to compare to old. All new cols must be included in the set of the old ones.}
@@ -12,6 +12,8 @@ find_df_diff2(new, old, ref_cols = NULL, message_pass = "")
 \item{old}{a reference data.frame to be compared to}
 
 \item{ref_cols}{character vector of reference columns. They are always included in the return data.frame and their combination should always lead to a unique key for each row.}
+
+\item{view_old}{logical for viewing old}
 }
 \value{
 messages and data.frame of only changes and reference cols
