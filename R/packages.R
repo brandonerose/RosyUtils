@@ -60,5 +60,3 @@ warn_or_stop <- function(m,warn_only=F){
   if(warn_only)return(warning(m,immediate. = T))
   return(stop(m))
 }
-
-

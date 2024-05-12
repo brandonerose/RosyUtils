@@ -47,7 +47,6 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
       )
     )
   }
-
   for (KEY in new$key[which(new$key%in%old$key)]){
     row <- which(new$key == KEY)
     row_old <- which(old$key == KEY)
@@ -182,13 +181,11 @@ find_df_list_diff <- function(new_list, old_list,ref_col_list){
 all_character_cols <- function(df){
   as.data.frame(lapply(df,as.character))
 }
-
 #' @title all_character_cols_list
 #' @export
 all_character_cols_list <- function(list){
   lapply(list,all_character_cols)
 }
-
 #' @title collapse_DF
 #' @export
 collapse_DF <- function(DF,ref_id,list_mod){
@@ -228,7 +225,6 @@ collapse_DF <- function(DF,ref_id,list_mod){
   }
   as.data.frame(new_DF)
 }
-
 #' @title clean_df_cols
 #' @export
 clean_df_cols <- function(df) {
@@ -243,7 +239,6 @@ clean_df_cols <- function(df) {
   colnames(df) <- str
   return(df)
 }
-
 #' @title clean_env_names
 #' @export
 clean_env_names <- function(env_names,silent = F,lowercase=T){
@@ -265,7 +260,6 @@ clean_env_names <- function(env_names,silent = F,lowercase=T){
   }
   return(cleaned_names)
 }
-
 #' @title addSlashIfNeeded
 #' @export
 addSlashIfNeeded <- function(input_string) {
@@ -276,7 +270,6 @@ addSlashIfNeeded <- function(input_string) {
   }
   return(output_string)
 }
-
 #' @title remove_html_tags
 #' @export
 remove_html_tags <- function(text_vector) {
@@ -286,26 +279,22 @@ remove_html_tags <- function(text_vector) {
   cleaned_vector <- gsub(html_pattern, "", text_vector)
   return(cleaned_vector)
 }
-
 #' @title check_match
 #' @export
 check_match <- function(vec_list) {
   sorted_vecs <- lapply(vec_list, sort)
   all(sapply(sorted_vecs[-1], function(x) identical(sorted_vecs[[1]], x)))
 }
-
 #' @title vec1_in_vec2
 #' @export
 vec1_in_vec2 <- function(vec1,vec2){
   vec1[which(vec1 %in% vec2)]
 }
-
 #' @title vec1_not_in_vec2
 #' @export
 vec1_not_in_vec2 <- function(vec1,vec2){
   vec1[which(!vec1 %in% vec2)]
 }
-
 #' @title find_in_DF_list
 #' @export
 find_in_df_list <- function(df_list,text,exact = F){
@@ -338,4 +327,3 @@ find_in_df_list <- function(df_list,text,exact = F){
   }
   return(out)
 }
-

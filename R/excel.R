@@ -25,7 +25,6 @@ wb_to_list <- function(wb){
       col_row <-  as.integer(gsub("[A-Za-z]", "", unlist(x %>% attr("refs") %>% strsplit(":"))[[1]]))# test for xlsx without letters for cols
     }
     out[[i]]<- openxlsx::read.xlsx(wb,sheet = i,startRow = col_row)
-
   }
   names(out) <- clean_sheets
   return(out)
@@ -99,7 +98,6 @@ DF_to_wb <- function(
     }
     openxlsx::writeDataTable(wb, sheet = DF_name, x = DF,startRow = startRow_table,startCol = startCol, tableStyle = tableStyle)
     style_cols <- seq(ncol(DF))+pad_cols
-
     openxlsx::addStyle(
       wb,
       sheet = DF_name,
@@ -315,7 +313,6 @@ save_csv <- function(df,dir,file_name,overwrite =TRUE){
     message("Saved at -> ","'",path,"'")
   }
 }
-
 process_df_list <- function(list){
   if(!is_df_list(list))stop("list must be ...... a list :)")
   is_a_df_with_rows <- list %>% sapply(function(IN){
@@ -339,7 +336,6 @@ process_df_list <- function(list){
   }
   return(list)
 }
-
 default_header_style <-
   openxlsx::createStyle(
     fgFill = "#74DFFF",
@@ -351,7 +347,6 @@ default_header_style <-
     border = "TopBottomLeftRight",
     # borderColour = "black"
   )
-
 default_body_style <-
   openxlsx::createStyle(
     halign = "left",
