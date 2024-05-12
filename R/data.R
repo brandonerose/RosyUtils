@@ -151,9 +151,10 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T){
 #' @param new_list a new data.frame to compare to old. All new cols must be included in the set of the old ones.
 #' @param old_list a reference data.frame to be compared to
 #' @param ref_col_list character vector of reference columns. They are always included in the return data.frame and their combination should always lead to a unique key for each row.
+#' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_list_diff <- function(new_list, old_list,ref_col_list){
+find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T){
   if(!is_something(new_list)){
     message("new_list is empty")
     return(list())
@@ -172,7 +173,7 @@ find_df_list_diff <- function(new_list, old_list,ref_col_list){
     names(ref_col_list) <- names(new_list)
   }
   for(df_name in names(new_list)){
-    new_list[[df_name]] <- find_df_diff2(new = new_list[[df_name]], old = old_list[[df_name]],ref_cols = ref_col_list[[df_name]], message_pass = paste0(df_name,": "))
+    new_list[[df_name]] <- find_df_diff2(new = new_list[[df_name]], old = old_list[[df_name]],ref_cols = ref_col_list[[df_name]], message_pass = paste0(df_name,": "),view_old = view_old)
   }
   return(new_list)
 }

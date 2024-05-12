@@ -4,7 +4,7 @@
 \alias{find_df_list_diff}
 \title{find the difference between two lists of related data.frames}
 \usage{
-find_df_list_diff(new_list, old_list, ref_col_list)
+find_df_list_diff(new_list, old_list, ref_col_list, view_old = T)
 }
 \arguments{
 \item{new_list}{a new data.frame to compare to old. All new cols must be included in the set of the old ones.}
@@ -12,6 +12,8 @@ find_df_list_diff(new_list, old_list, ref_col_list)
 \item{old_list}{a reference data.frame to be compared to}
 
 \item{ref_col_list}{character vector of reference columns. They are always included in the return data.frame and their combination should always lead to a unique key for each row.}
+
+\item{view_old}{logical for viewing old}
 }
 \value{
 messages and data.frame of only changes and reference cols
