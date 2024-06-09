@@ -108,7 +108,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, 
   }
   appended_old_col_suffix <- "__old"
   if(any(endsWith(unique(colnames(old),colnames(new)),appended_old_col_suffix)))stop("colnames cant end with '",appended_old_col_suffix,"'")
-  merged_df <- merge(new, old, by = ref_cols, suffixes = c("",appended_old_col_suffix ))
+  merged_df <- merge(new, old, by = ref_cols, suffixes = c("",appended_old_col_suffix ),all.x = T)
   placeholder <- "NA_placeholder"
   rows_to_keep <- NULL
   cols_to_view <- cols_to_keep <- which(colnames(merged_df) %in% ref_cols)
