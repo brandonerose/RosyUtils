@@ -54,3 +54,14 @@ clean_num<-function(num){
 size <- function(x){
   format(object.size(x),units = "auto")
 }
+read_pdf <- function(path,no_double_spaces = F){
+  pdf_text_raw <- pdftools::pdf_text(path)
+  pdf_text <- pdf_text_raw %>% paste(collapse = " ")
+  pdf_text<-gsub("\\n"," ",pdf_text)
+  if(no_double_spaces){
+    while(grepl("  ",pdf_text)){
+      pdf_text<-gsub("  "," ",pdf_text)
+    }
+  }
+  pdf_text <- trimws(pdf_text)
+}
