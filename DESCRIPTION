@@ -1,12 +1,12 @@
-Package: Rosyutils
+Package: RosyUtils
 Title: Rosy Utils
-Version: 1.0.0.9000
+Version: 1.0.0.9001
 Authors@R: 
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
 Description: Utilities commonly used in rosy packages.
 License: MIT + file LICENSE
-URL: https://github.com/brandonerose/Rosyutils
-BugReports: https://github.com/brandonerose/Rosyutils/issues
+URL: https://github.com/brandonerose/RosyUtils
+BugReports: https://github.com/brandonerose/RosyUtils/issues
 Depends: 
     R (>= 2.10)
 Imports: 

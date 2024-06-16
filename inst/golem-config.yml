@@ -1,5 +1,5 @@
 default:
-  golem_name: Rosyutils
+  golem_name: RosyUtils
   golem_version: 1.0.0.9000
   app_prod: no
 production:
