@@ -1,6 +1,6 @@
 Package: RosyUtils
 Title: Rosy Utils
-Version: 1.0.0.9001
+Version: 1.0.0.9002
 Authors@R: 
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
 Description: Utilities commonly used in rosy packages.
@@ -13,6 +13,7 @@ Imports:
     admiral (>= 1.0.2),
     config (>= 0.3.2),
     dplyr (>= 1.1.4),
+    grDevices,
     lubridate (>= 1.9.3),
     magrittr (>= 2.0.3),
     openxlsx (>= 4.2.5.2),
