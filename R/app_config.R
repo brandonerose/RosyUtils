@@ -9,7 +9,7 @@
 #'
 #' @noRd
 app_sys <- function(...) {
-  system.file(..., package = "rosyutils")
+  system.file(..., package = pkg_name)
 }
 #' Read App Config
 #'
