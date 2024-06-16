@@ -1,3 +1,14 @@
+#' @title Clear Environment
+#' @description clear the global environment
+#' @return cleared environment
+#' @export
+clear_env <- function(){
+  pos <- 1
+  rm(list=ls(all.names = T,pos = pos),pos = pos)
+  cat("\014")
+  if(!is.null(grDevices::dev.list())) grDevices::dev.off()
+  grDevices::graphics.off()
+}
 #' @title sample1
 #' @export
 sample1 <- function(x){
