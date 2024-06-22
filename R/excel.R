@@ -314,24 +314,26 @@ save_csv <- function(df,dir,file_name,overwrite =TRUE){
   }
 }
 process_df_list <- function(list){
-  if(!is_df_list(list))stop("list must be ...... a list :)")
-  is_a_df_with_rows <- list %>% sapply(function(IN){
-    is_df <- is.data.frame(IN)
-    if(is_df){
-      return(nrow(IN)>0)
-    }else{
-      return(F)
+  if(is_something(list)){
+    if(!is_df_list(list))stop("list must be ...... a list :)")
+    is_a_df_with_rows <- list %>% sapply(function(IN){
+      is_df <- is.data.frame(IN)
+      if(is_df){
+        return(nrow(IN)>0)
+      }else{
+        return(F)
+      }
+    })
+    keeps <- which(is_a_df_with_rows)
+    drops <-which(!is_a_df_with_rows)
+    if(length(drops)>0){
+      message("Dropping non-data.frames and empties... ", paste0(names(drops),collapse = ", "))
     }
-  })
-  keeps <- which(is_a_df_with_rows)
-  drops <-which(!is_a_df_with_rows)
-  if(length(drops)>0){
-    message("Dropping non-data.frames and empties... ", paste0(names(drops),collapse = ", "))
-  }
-  list <- list[keeps]
-  if(length(list)>0){
-    if(!is_named_df_list(list)){
-      names(list) <- paste0(seq_along(list))
+    list <- list[keeps]
+    if(length(list)>0){
+      if(!is_named_df_list(list)){
+        names(list) <- paste0(seq_along(list))
+      }
     }
   }
   return(list)
