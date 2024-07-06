@@ -96,9 +96,12 @@ assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
   keep_going <- T
   i <- 1
   vec_length <- length(vec)
+  v1_length <- length(v1)
   while(keep_going){
     rows <- which(v1==vec[i])
-    message(i, " of ",vec_length, " (",round(i/vec_length*100,digits = 1),"%)")
+    message(i, " of ",vec_length, " (",round(i/vec_length*100,digits = 1),"%) Unique Elements Done After This")
+    v2_na <- wl(!is.na(v2))
+    message(v2_na, " of ",v1_length, " (",round(v2_na/v1_length*100,digits = 1),"%) Elements not NA now")
     message(length(rows)," elements can change based on next choice")
     the_current_choice <- utils::menu(the_choices,title=paste0("What would you like to do for '",vec[i],"'?"))
     if(the_current_choice==1) the_final_v2_choice <- NA
