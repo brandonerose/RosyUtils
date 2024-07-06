@@ -52,8 +52,9 @@ get_df_flag_rows <- function(DF,flag_field_name,flag_name){
 combine_two_split_vector_flags <- function(v1,v2,read_split=" [:|:] ",write_split = " | "){
   combined_list <- Map(function(x, y) c(x, y), strsplit(v1,split = read_split), strsplit(v2,split = read_split))
   v3 <- sapply(combined_list,function(E){
-    x<-sort(drop_nas(unique(E)))
+    x<-trimws(sort(drop_nas(unique(E))),whitespace = "[\\h\\v]")
     if(length(x)==0)return(NA)
     return(paste0(x,collapse = write_split))
   })
+  return(v3)
 }
