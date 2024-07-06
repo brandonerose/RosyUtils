@@ -68,3 +68,49 @@ clean_split_vec <- function(vec,read_split=" [:|:] ",write_split = " | ",sort_th
     return(paste0(x,collapse = write_split))
   }) %>% unlist() %>% return()
 }
+#' @export
+assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
+  v1 <- vec
+  v2 <- rep(NA,length(v1))
+  vec %>% length() %>% message(" elements")
+  vec %>% ul() %>% message(" unique elements")
+  vec %>% is.na() %>% wl() %>% message(" NA elements")
+  if(sort_type=="smart"){
+    x <- v1 %>% sort() %>% rle
+    x<- data.frame(
+      lengths = x$lengths,
+      values = x$values
+    )
+    vec <- x$values[order(x$lengths,decreasing = T)]
+  }
+  vec <- vec %>% drop_nas() %>% unique()
+  if(sort_type=="alphabetic") vec <- vec %>% sort()
+  if(length(vec)==0){return(v2)}
+  the_choices <- c("Skip","Stop")
+  no_choices <- missing(choices)
+  if(no_choices){
+    the_choices <- the_choices %>% append("Type Your Answer")
+  }else{
+    the_choices <- the_choices %>% append(choices)
+  }
+  keep_going <- T
+  i <- 1
+  while(keep_going){
+    rows <- which(v1==vec[i])
+    message(length(rows)," elements can change based on next choice")
+    the_current_choice <- utils::menu(the_choices,title=paste0("What would you like to do for '",vec[i],"'?"))
+    if(the_current_choice==1) the_final_v2_choice <- NA
+    if(the_current_choice==2) keep_going <- F
+    if(the_current_choice>=3){
+      the_final_v2_choice <- the_choices[the_current_choice]
+      if(no_choices){
+        the_final_v2_choice <- readline("Type Your Choice!")
+      }
+      if(!is.na(the_final_v2_choice))v2[rows] <- the_final_v2_choice
+    }
+    i <- i + 1
+    if(i>length(vec)) keep_going <- F
+  }
+  return(v2)
+}
+
