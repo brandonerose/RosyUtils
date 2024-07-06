@@ -58,3 +58,13 @@ combine_two_split_vector_flags <- function(v1,v2,read_split=" [:|:] ",write_spli
   })
   return(v3)
 }
+#' @export
+clean_split_vec <- function(vec,read_split=" [:|:] ",write_split = " | ",sort_them=T,lowercase_them=T){
+  vec %>% trimws(whitespace = "[\\h\\v]") %>% lapply(function(E){
+    if(is.na(E))return(NA)
+    x <- strsplit(E,split= read_split) %>% unlist() %>% unique() %>% trimws(whitespace = "[\\h\\v]")
+    if(sort_them)x <- sort(x)
+    if(lowercase_them)x <- tolower(x)
+    return(paste0(x,collapse = write_split))
+  }) %>% unlist() %>% return()
+}
