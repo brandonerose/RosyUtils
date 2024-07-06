@@ -70,13 +70,13 @@ clean_split_vec <- function(vec,read_split=" [:|:] ",write_split = " | ",sort_th
 }
 #' @export
 assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
-  v1 <- vec
+  v1 <- vec %>% as.character()
   v2 <- rep(NA,length(v1))
   vec %>% length() %>% message(" elements")
   vec %>% ul() %>% message(" unique elements")
   vec %>% is.na() %>% wl() %>% message(" NA elements")
   if(sort_type=="smart"){
-    x <- v1 %>% sort() %>% rle
+    x <- v1 %>% sort() %>% rle()
     x<- data.frame(
       lengths = x$lengths,
       values = x$values
@@ -95,8 +95,10 @@ assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
   }
   keep_going <- T
   i <- 1
+  vec_length <- length(vec)
   while(keep_going){
     rows <- which(v1==vec[i])
+    message(i, " of ",vec_length, " (",round(i/vec_length*100,digits = 1),"%)")
     message(length(rows)," elements can change based on next choice")
     the_current_choice <- utils::menu(the_choices,title=paste0("What would you like to do for '",vec[i],"'?"))
     if(the_current_choice==1) the_final_v2_choice <- NA
@@ -109,8 +111,7 @@ assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
       if(!is.na(the_final_v2_choice))v2[rows] <- the_final_v2_choice
     }
     i <- i + 1
-    if(i>length(vec)) keep_going <- F
+    if(i>vec_length) keep_going <- F
   }
   return(v2)
 }
-
