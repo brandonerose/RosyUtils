@@ -54,6 +54,8 @@ clean_num<-function(num){
 size <- function(x){
   format(object.size(x),units = "auto")
 }
+#' @title read_pdf
+#' @export
 read_pdf <- function(path,no_double_spaces = F){
   pdf_text_raw <- pdftools::pdf_text(path)
   pdf_text <- pdf_text_raw %>% paste(collapse = " ")
@@ -64,4 +66,24 @@ read_pdf <- function(path,no_double_spaces = F){
     }
   }
   pdf_text <- trimws(pdf_text)
+}
+#' @title wrap_string_to_lines
+#' @export
+wrap_string_to_lines <- function(text, max_length,spacer="") {
+  result_vector <- c()
+  n <- nchar(text)
+  start <- 1
+  end <- min(start + max_length-1, n)
+  chunk <- substr(text, start, end)
+  stringr::str_length(chunk)
+  result_vector <- c(result_vector, chunk)
+  start <- end + 1
+  while (start <= n) {
+    end <- min(start + (max_length - stringr::str_length(spacer)-1), n)
+    chunk <- paste(spacer, substr(text, start, end), sep = "")
+    stringr::str_length(chunk)
+    result_vector <- c(result_vector, chunk)
+    start <- end + 1
+  }
+  return(result_vector)
 }
