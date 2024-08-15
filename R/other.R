@@ -87,3 +87,31 @@ wrap_string_to_lines <- function(text, max_length,spacer="") {
   }
   return(result_vector)
 }
+#' @title unique_trimmed_strings
+#' @export
+unique_trimmed_strings <- function(strings,max_length) {
+  trim_string <- function(s, max_length) {
+    substr(s, 1, max_length)
+  }
+  trimmed_strings <- sapply(strings, trim_string, max_length = max_length)
+  # Initialize a vector to store unique strings
+  unique_strings <- character(length(trimmed_strings))
+  # Initialize a counter to keep track of occurrences
+  counts <- integer(length(trimmed_strings))
+
+  for (i in seq_along(trimmed_strings)) {
+    base_string <- trimmed_strings[i]
+    new_string <- base_string
+    counter <- 1
+
+    # Keep adjusting the string until it's unique
+    while (new_string %in% unique_strings) {
+      new_string <- paste0(stringr::str_trunc(base_string,width = max_length-(counter),side = "right",ellipsis = ""), counter)
+      counter <- counter + 1
+    }
+    unique_strings[i] <- new_string
+    counts[i] <- counter
+  }
+
+  return(unique_strings)
+}

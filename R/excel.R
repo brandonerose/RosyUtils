@@ -170,7 +170,11 @@ list_to_wb <- function(
   }
   list_names_rename <- stringr::str_trunc(list_names,width = 31,side = "right",ellipsis = "")
   BAD<-dw(list_names_rename)
-  if(length(BAD)>0)stop("Duplicated names when trimmed: ",list_names[BAD] %>% paste0(collapse = ", "))
+  if(length(BAD)>0){
+    warning("Duplicated names when trimmed from right 31 max in Excel: ",list_names[BAD] %>% paste0(collapse = ", "),immediate. = T)
+    message("Use CSV or shorten the names and make sure they are unique if they are trimmed to 31 char. For now will make unique by adding number.")
+    list_names_rename <- unique_trimmed_strings(list_names_rename, max_length = 31)
+  }
   for(i in seq_along(list_names)){
     wb <- DF_to_wb(
       DF = list[[list_names[i]]],
