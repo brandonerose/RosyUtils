@@ -30,7 +30,8 @@ summarize_emails <- function(emails){
 choose_emails_to_delete_in_bulk <- function(inbox,full_address = T,n=1000){
   ADDRESS_TYPE <- "email"
   if(!full_address) ADDRESS_TYPE <- "email2"
-  emails <- inbox$list_emails(n=n)
+  message("Getting emails... This can take several seconds!")
+  emails <- inbox$list_emails(n=n,pagesize = 50)
   emails_sum <- summarize_emails(emails)
   email_addresses <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T) %>% names()
   email_addresses_count <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T)
