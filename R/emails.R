@@ -40,7 +40,7 @@ choose_emails_to_delete_in_bulk <- function(inbox,full_address = T,n=1000){
     # emails_sum$i[rows] %>% print()
     choice <- utils::menu(choices = c("Yes","No"),title = paste0("You want to delete emails from ",address,"?"))
     if(choice==1){
-      emails_from <- outlook$list_emails(search = paste0("from:",address),n=2000)
+      emails_from <- outlook$list_emails(search = paste0("from:",address),n=n)
       emails_from_sum <- summarize_emails(emails_from)
       email_from_addresses <- emails_from_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T) %>% names()
       email_from_addresses_count <- emails_from_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T)

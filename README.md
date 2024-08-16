@@ -29,23 +29,33 @@ RStudtio and update all packages in RStudio. See
 
 ## Microsoft Outlook Clean Up Example
 
-The following functions represent the core functions of the package.
+The following uses the
+[Microsoft365R](https://github.com/Azure/Microsoft365R "Microsoft365R")
+package from Microsoft Azure. RosyUtils leverages this package to
+automate simple deletion of emails from certain email addresses in bulk!
 
 ``` r
 
-DB <- update_DB(DB) # update from redcap by checking log and using saved object 
+library("Microsoft365R") #install.packages("Microsoft365R")
+library("RosyUtils") # remotes::install_github("brandonerose/RosyUtils")
 
-DB <- transform_DB(DB) # transform to most basic forms, can be modified
+# outlook <- get_personal_outlook() 
+outlook <- get_business_outlook() # this will open authenticator in Microsoft to allow Microsoft365R to use the graph API. May have to run several times at first.
 
-DB <- clean_DB(DB)
+inbox <- outlook$get_inbox()
 
-DB <- summarize_DB(DB) #can use for subsets!
-
-DB <- DB %>% drop_redcap_dir() #drops excel files with links to directory
-
-DB <- summarize_DB(DB)
-
-DB %>% save_summary() # will save summary data, look at the tabs!
+# the following function will sample the first 1,000 (n) emails from your inbox
+# then it will sort all the from addresses and count how many emails there are
+# It will print all of the sampled subject lines from this email to aid your choice
+# It will ask if you want to delete anything from this email. 1 for Yes and 2 for No
+# then it will search for ALL emails in your inbox from this
+# again will show subject but this time for all
+# final choice for deleting
+# if you choose yes it will print message as it deletes
+# you can stop anytime with escape button!
+# you have the option to change to full_address = F which will use the root email
+# for example searching by from med.miami.edu instead email@med.miami.edu
+choose_emails_to_delete_in_bulk(inbox, full_address = T, n = 1000)
 ```
 
 ## Future plans
