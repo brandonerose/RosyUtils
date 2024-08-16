@@ -17,6 +17,7 @@ Imports:
     magrittr (>= 2.0.3),
     openxlsx (>= 4.2.5.2),
     pdftools,
+    purrr,
     readxl (>= 1.4.3),
     rio (>= 1.0.1),
     stringr (>= 1.5.1),
