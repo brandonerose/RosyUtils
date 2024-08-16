@@ -343,3 +343,144 @@ find_in_df_list <- function(df_list,text,exact = F){
   }
   return(out)
 }
+edit_variable_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
+  change_form <- field_names_to_instruments(DB,field_name_to_change)
+  view_forms <- field_names_to_instruments(DB,field_names_to_view)
+  field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
+  # if(length(view_forms)>1)stop("only one form combinations are allowed.")
+  if(missing(records)) records <- DB$data_extract[[view_forms]][[DB$redcap$id_col]] %>% unique()
+  all_forms <- c(change_form,view_forms) %>% unique()
+  ref_cols_change <- DB$redcap$instrument_key_cols[[change_form]]
+  # ref_cols_view <- DB$redcap$instrument_key_cols[[view_forms]]
+  if(missing(optional_DF)){
+    optional_DF <- DB[["data_extract"]][[change_form]][,unique(c(ref_cols_change,field_names_to_view))]
+  }
+  if(is.null(field_names_to_view)) field_names_to_view <- colnames(optional_DF)
+  # if(any(!ref_cols%in%colnames(DF)))stop("DF must contain all ref_cols")
+  if(length(records)>0){
+    # message("fix these in REDCap --> ",paste0(out,collapse = " | "))
+    rows_of_choices <- which(DB$redcap$codebook$field_name==field_name_to_change)
+    has_choices <- length(rows_of_choices)>0
+    choices1 <- c("Do Nothing", "Edit","Launch Redcap Link Only")
+    if(has_choices){
+      choices2 <- c("Do Nothing",DB$redcap$codebook$name[rows_of_choices],"Launch Redcap Link Only")
+    }else{
+      choices2 <- c("Do Nothing","Manual Entry","Launch Redcap Link Only")
+    }
+    is_repeating_form <- change_form %in% DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)]
+    OUT <- NULL
+    for (record in records){ # record <- records%>% sample(1)
+      record_was_updated <- F
+      VIEW <- optional_DF[which(optional_DF[[DB$redcap$id_col]]==record),]
+      VIEW_simp <- VIEW[,unique(c(DB$redcap$id_col,field_names_to_view))] %>% unique()
+      row.names(VIEW_simp) <- NULL
+      VIEW_simp %>%t() %>% print()
+      CHANGE <- filter_DB(DB, records = record, form_names = change_form)[[1]]
+      row.names(CHANGE) <- NULL
+      CHANGE <- CHANGE[,unique(c(ref_cols_change,field_name_to_change))]
+      if(nrow(CHANGE)==0){
+        print("Nothing in CHANGE. If you choose edit it will add an instance...")
+        blank_row <- data.frame(
+          record
+        )
+        colnames(blank_row)[[1]] <- DB$redcap$id_col
+        if("redcap_repeat_instance"%in%ref_cols_change){
+          blank_row$redcap_repeat_instance <- "1"
+          blank_row$redcap_repeat_instrument <- change_form
+        }
+        blank_row[[field_name_to_change]] <- NA
+      }else{
+        print(CHANGE)
+      }
+      choice1 <- utils::menu(choices1,title=paste0("What would you like to do?"))
+      if(choice1 == 3){
+        DB %>% link_REDCap_record(record = record)
+      }
+      if(choice1 == 2){
+        if(nrow(CHANGE)==0)CHANGE <- blank_row
+        for(j in 1:nrow(CHANGE)){
+          message("Old answer (",field_name_to_change, "): ",CHANGE[j,field_name_to_change])
+          choice2 <- utils::menu(choices2,title=paste0("What would you like to do?"))
+          choice <- choices2[choice2]
+          OUT_sub <- CHANGE[j,]
+          if(choice %in% c("Manual Entry","Do Nothing","Launch Redcap Link Only")){
+            if(choice=="Do Nothing"){
+              message("Did not change anything")
+            }
+            if(choice=="Manual Entry"){
+              OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
+              if(upload_individually){
+                OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
+                record_was_updated <- T
+              }else{
+                OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+              }
+            }
+            if(choice=="Launch Redcap Link Only"){#account for repeat? instance
+              DB %>% link_REDCap_record(record = record,page = change_form,instance = CHANGE[j,"redcap_repeat_instance"])
+            }
+          }else{
+            OUT_sub[[field_name_to_change]] <- choice
+            if(upload_individually){
+              OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+              message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
+              record_was_updated <- T
+            }else{
+              OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+            }
+          }
+        }
+        if(is_repeating_form){
+          choice3 <- 2
+          the_max <- 0
+          if(nrow(CHANGE)>0)the_max <- CHANGE$redcap_repeat_instance %>% as.integer() %>% max()
+          while (choice3 == 2) {
+            choice3 <- utils::menu(c("No","Yes"),title=paste0("Would you like to add an additional instance?"))
+            if(choice3 == 2){
+              OUT_sub <- data.frame(
+                record_id = record,
+                redcap_repeat_instrument = change_form,
+                redcap_repeat_instance = as.character(the_max + 1)
+              )
+              colnames(OUT_sub)[1]<-DB$redcap$id_col
+              choice2 <- utils::menu(choices2,title=paste0("What would you like to do?"))
+              choice <- choices2[choice2]
+              if(choice %in% c("Manual Entry","Do Nothing","Launch Redcap Link Only")){
+                if(choice=="Do Nothing"){
+                  message("Did not change anything")
+                }
+                if(choice=="Manual Entry"){
+                  OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
+                  if(upload_individually){
+                    OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                    message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
+                    record_was_updated <- T
+                  }else{
+                    OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+                  }
+                  the_max <- the_max + 1
+                }
+                if(choice=="Launch Redcap Link Only"){#account for repeat? instance
+                  DB %>% link_REDCap_record(record = record,page = change_form,instance = CHANGE[j,"redcap_repeat_instance"])
+                }
+              }else{
+                OUT_sub[[field_name_to_change]] <- choice
+                if(upload_individually){
+                  OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+                  message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
+                  record_was_updated <- T
+                }else{
+                  OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+                }
+                the_max <- the_max + 1
+              }
+            }
+          }
+        }
+      }
+    }
+    if(record_was_updated)DB <- update_DB(DB)
+  }
+  if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
+}
