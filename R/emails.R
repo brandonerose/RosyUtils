@@ -75,6 +75,7 @@ choose_emails_to_delete_in_bulk <- function(inbox,full_address = T,use_sender = 
 choose_emails_to_delete_from <- function(inbox,address,n=2000, individual_choice = F){
   message("Getting emails... This can take several seconds!")
   emails_from <- outlook$list_emails(search = paste0("from:",address),n=n)
+  if(length(emails_from)==0)return(message("No emails from '",address,"'"))
   emails_from_sum <- summarize_emails(emails_from)
   emails_from_sum$subject %>% print()
   choice_from <- 0
