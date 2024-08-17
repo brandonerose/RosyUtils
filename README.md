@@ -40,7 +40,7 @@ library("Microsoft365R") #install.packages("Microsoft365R")
 library("RosyUtils") # remotes::install_github("brandonerose/RosyUtils")
 
 # outlook <- get_personal_outlook() 
-outlook <- get_business_outlook() # this will open authenticator in Microsoft to allow Microsoft365R to use the graph API. May have to run several times at first.
+outlook <- get_business_outlook() # this will open authentication in Microsoft to allow Microsoft365R to use the graph API. May have to run several times at first.
 
 inbox <- outlook$get_inbox()
 
@@ -55,9 +55,16 @@ inbox <- outlook$get_inbox()
 # you can stop anytime with escape button!
 # you have the option to change to full_address = F which will use the root email
 # for example searching by from med.miami.edu instead email@med.miami.edu
-choose_emails_to_delete_in_bulk(inbox, full_address = T, n = 1000)
+choose_emails_to_delete_in_bulk(inbox =. inbox, full_address = T, use_sender = T n = 2000)
 
-# BELOW IS A DEMO OF THE GENERAL STEPS USED BY THE FUNCTION ABOVE -------
+# Or choose to delete just by searching an address! (It will prompt you BEFORE it deletes anything)
+
+choose_emails_to_delete_from(inbox,address = "junkemail@annoying.com", n= 1000) #replace with real email address
+
+# or maybe you want to delete all senders from annoying.com!
+choose_emails_to_delete_from(inbox,address = "annoying.com", n= 1000) #replace with real email address
+
+#-------BELOW IS A DEMO OF THE GENERAL STEPS USED BY THE FUNCTIONS ABOVE -------
 
 #you can list your emails like this!
 emails <- inbox$list_emails(n=500) # may take ~10-20 seconds
@@ -66,14 +73,13 @@ emails <- inbox$list_emails(n=500) # may take ~10-20 seconds
 emails_sum <- summarize_emails(emails)
 
 #top 10 emails from your sample of 500
-emails_sum$email %>% table() %>% sort(decreasing = T) %>% head(10)
-
+emails_sum$from %>% table() %>% sort(decreasing = T) %>% head(10)
 
 #top 10 emails ROOTS from your sample of 500
-emails_sum$email2 %>% table() %>% sort(decreasing = T) %>% head(10)
+emails_sum$from_root %>% table() %>% sort(decreasing = T) %>% head(10)
 
 #top email from
-top_email <- (emails_sum$email %>% table() %>% sort(decreasing = T) %>% names())[[1]]
+top_email <- (emails_sum$from %>% table() %>% sort(decreasing = T) %>% names())[[1]]
 
 #all the emails from the top_email (max n=1000)
 emails_from <- outlook$list_emails(search = paste0("from:",top_email),n=1000)
@@ -81,8 +87,16 @@ emails_from <- outlook$list_emails(search = paste0("from:",top_email),n=1000)
 #final summary of all emails from top_email
 emails_from_sum <- summarize_emails(emails_from)
 
-#then we can use Microsoft365R to delete! For details see full function "choose_emails_to_delete_in_bulk" 
-# Not including code here so as to not provide code that will delete emails without asking user.
+#then we can use Microsoft365R to delete! 
+
+# if you don't wish to use the full function above try this!
+emails_counted <- count_emails(emails_sum = emails_sum, ADDRESS_TYPE = "sender")
+# emails_counted <- count_emails(emails_sum = emails_sum, ADDRESS_TYPE = "sender_root") #alternative search
+# emails_counted <- count_emails(emails_sum = emails_sum, ADDRESS_TYPE = "from")  #alternative search
+# emails_counted <- count_emails(emails_sum = emails_sum, ADDRESS_TYPE = "from_root")  #alternative search
+an_address <- sample(emails_counted$address,1)
+
+choose_emails_to_delete_from(inbox = inbox,address = an_address, n= 1000) 
 ```
 
 ## Future plans

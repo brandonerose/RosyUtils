@@ -9,53 +9,88 @@ summarize_emails <- function(emails){
     subject = emails %>%
       purrr::map_depth(1,"properties") %>%
       purrr::map_depth(1,"subject") %>%  unlist(),
-    email = emails %>%
+    from = emails %>%
       purrr::map_depth(1,"properties") %>%
       purrr::map_depth(1,"from")%>%
       purrr::map_depth(1,"emailAddress")%>%
       purrr::map_depth(1,"address") %>%
       unlist(),
-    name = emails %>%
+    from_root = NA,
+    from_name = emails %>%
       purrr::map_depth(1,"properties") %>%
       purrr::map_depth(1,"from")%>%
       purrr::map_depth(1,"emailAddress")%>%
       purrr::map_depth(1,"name") %>%
+      unlist(),
+    sender = emails %>%
+      purrr::map_depth(1,"properties") %>%
+      purrr::map_depth(1,"sender")%>%
+      purrr::map_depth(1,"emailAddress")%>%
+      purrr::map_depth(1,"address") %>%
+      unlist(),
+    sender_root = NA,
+    sender_name = emails %>%
+      purrr::map_depth(1,"properties") %>%
+      purrr::map_depth(1,"sender")%>%
+      purrr::map_depth(1,"emailAddress")%>%
+      purrr::map_depth(1,"name") %>%
       unlist()
   )
-  x$email2 <- x$email %>% strsplit(split = "@") %>% sapply(dplyr::last) %>% unlist()
+  x$from_root <- x$from %>% strsplit(split = "@") %>% sapply(dplyr::last) %>% unlist()
+  x$sender_root <- x$sender %>% strsplit(split = "@") %>% sapply(dplyr::last) %>% unlist()
+  x$same <- x$from == x$sender
+  x$same_root <- x$from_root == x$sender_root
   return(x)
+}
+#' @title count_emails
+#' @export
+count_emails <- function(emails_sum,ADDRESS_TYPE){
+  x <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T)
+  y <- names(x)
+  z <- names(x) %>% sapply(function(address){emails_sum[[paste0(ADDRESS_TYPE,"_name")]][which(emails_sum[[ADDRESS_TYPE]]==address)][1]}) %>% as.character()
+  return(data.frame(
+    count = as.integer(x),
+    address = y,
+    name = z
+  ))
 }
 #' @title choose_emails_to_delete_in_bulk
 #' @export
-choose_emails_to_delete_in_bulk <- function(inbox,full_address = T,n=1000){
-  ADDRESS_TYPE <- "email"
-  if(!full_address) ADDRESS_TYPE <- "email2"
+choose_emails_to_delete_in_bulk <- function(inbox,full_address = T,use_sender = T,n=2000){
+  ADDRESS_TYPE <- use_sender %>% ifelse("sender","from")
+  ADDRESS_TYPE <- full_address %>% ifelse(ADDRESS_TYPE,paste0(ADDRESS_TYPE,"_root"))
   message("Getting emails... This can take several seconds!")
   emails <- inbox$list_emails(n=n,pagesize = 50)
   emails_sum <- summarize_emails(emails)
-  email_addresses <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T) %>% names()
-  email_addresses_count <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T)
-  for (address in email_addresses){ # address <- email_addresses%>% sample(1)
-    rows <- which(emails_sum[[ADDRESS_TYPE]]==address)
-    emails_sum$subject[rows] %>% print()
-    # emails_sum$i[rows] %>% print()
-    choice <- utils::menu(choices = c("Yes","No"),title = paste0("You want to delete emails from ",address,"?"))
-    if(choice==1){
-      emails_from <- outlook$list_emails(search = paste0("from:",address),n=n)
-      emails_from_sum <- summarize_emails(emails_from)
-      email_from_addresses <- emails_from_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T) %>% names()
-      email_from_addresses_count <- emails_from_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T)
-      rows_from <- which(emails_from_sum[[ADDRESS_TYPE]]==address)
-      emails_from_sum$subject[rows_from] %>% print()
-      choice_from <- utils::menu(choices = c("Yes","No"),title = paste0("Are you sure (see above)? ",address,"?"))
-      if(choice_from==1){
-        for (row_from in rows_from){# row_from <- rows_from %>% sample(1)
-          try({emails_from[[emails_from_sum$i[row_from]]]$delete("confirm"==F)})
-          the_address <- emails_from[[emails_from_sum$i[row_from]]]$properties$from$emailAddress$address
-          the_subject <- emails_from[[emails_from_sum$i[row_from]]]$properties$subject
-          message("Deleted email: ",the_address," --> ",the_subject)
-        }
-      }
+  emails_counted <- count_emails(emails_sum = emails_sum,ADDRESS_TYPE = ADDRESS_TYPE)
+  for (row in 1:nrow(emails_counted)){ # row <-  1:nrow(emails_counted) %>% sample(1)
+    address <- emails_counted$address[row]
+    name <- emails_counted$name[row]
+    message("Searching for emails from '",address,"' (",name,") ...")
+    choose_emails_to_delete_from(inbox = inbox, address = address)
+  }
+}
+#' @title choose_emails_to_delete_from
+#' @export
+choose_emails_to_delete_from <- function(inbox,address,n=2000, individual_choice = F){
+  message("Getting emails... This can take several seconds!")
+  emails_from <- outlook$list_emails(search = paste0("from:",address),n=n)
+  emails_from_sum <- summarize_emails(emails_from)
+  emails_from_sum$subject %>% print()
+  choice_from <- 0
+  if(!individual_choice){
+    choice_from <- utils::menu(choices = c("Yes","No","Choose Individually"),title = paste0("Would like to delete email(s) from '",address,"'? (n = ",nrow(emails_from_sum),")"))
+  }
+  if(choice_from == 3) individual_choice <- T
+  for (i in 1:length(emails_from)){# i <- 1:length(emails_from) %>% sample(1)
+    the_address <- emails_from[[i]]$properties$from$emailAddress$address
+    the_subject <- emails_from[[i]]$properties$subject
+    if(individual_choice){
+      choice_from <- utils::menu(choices = c("Yes","No"),title = paste0("Would like to delete email from '",the_address,"'? --> ",the_subject))
+    }
+    if(choice_from==1){
+      try({emails_from[[i]]$delete(confirm=F)})
+      message("Deleted email: ",the_address," --> ",the_subject)
     }
   }
 }
