@@ -56,7 +56,7 @@ inbox <- outlook$get_inbox()
 # you can stop anytime with escape button!
 # you have the option to change to full_address = F which will use the root email
 # for example searching by from med.miami.edu instead email@med.miami.edu
-choose_emails_to_delete_in_bulk(inbox = inbox, full_address = T, use_sender, = T, n = 2000)
+choose_emails_to_delete_in_bulk(inbox = inbox, full_address = T, use_sender = T, n = 2000)
 
 # Or choose to delete just by searching an address! (It will prompt you BEFORE it deletes anything)
 
