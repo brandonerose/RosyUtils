@@ -88,15 +88,28 @@ convert_dates <- function(input_string) {
   if(!is.na(input_string)){
     input_string <- input_string %>% trimws()
     if(input_string!=""){
-      dates <- extract_dates(input_string)
+      dates <- extract_dates(input_string,allow_partial = F)
       output_string <- input_string
-      for (pattern in dates) {
-        pattern <- gsub("-","/",pattern)
-        split_pattern <- pattern %>% strsplit("/") %>% unlist()
-        month <- split_pattern[[1]] %>% as.integer()%>% stringr::str_pad(2,"left",0)
-        day <- split_pattern[[2]] %>% as.integer()%>% stringr::str_pad(2,"left",0)
-        year <- split_pattern[[3]] %>% as.integer()
-        if(stringr::str_length(year)%in%c(1,2)){
+      for (the_date in dates) {
+        the_date_final <- gsub("-","/",the_date)
+        split_pattern <- the_date_final %>% strsplit("/") %>% unlist() %>% sapply(function(E){
+          E %>% as.integer()%>% stringr::str_pad(2,"left",0)
+        }) %>% unlist()
+        y_n <- 3
+        m_n <- 1
+        d_n <- 2
+        check_year <- which(nchar(split_pattern)==4)
+        if(length(check_year)==1){
+          if(check_year==1){
+            y_n <- 1
+            m_n <- 2
+            d_n <- 3
+          }
+        }
+        month <- split_pattern[[m_n]]
+        day <- split_pattern[[d_n]]
+        year <- split_pattern[[y_n]]
+        if(nchar(year)==2){
           year <-year %>% stringr::str_pad(2,"left",0)
           if(year>=0&&year<25){
             year <- paste0("20",year)
@@ -105,7 +118,8 @@ convert_dates <- function(input_string) {
             year <- paste0("19",year)
           }
         }
-        output_string <- gsub(pattern, paste0(year,"-",month,"-",day), output_string, perl = TRUE)
+        the_date_final <- paste0(year,"-",month,"-",day)
+        output_string <- gsub(the_date, the_date_final, output_string)
       }
       return(output_string)
     }
