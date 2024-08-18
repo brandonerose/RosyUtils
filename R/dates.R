@@ -32,14 +32,24 @@ is_date_full <- function(date) {
   grepl("^\\d{4}-\\d{2}-\\d{2}$", date)
 }
 #' @export
-extract_dates <- function(input_string) {
+extract_dates <- function(input_string,allow_partial = T) {
   # Regular expression pattern to match different date formats
   date_patterns <- c(
     "\\b(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])/(\\d{2})\\b", # MM/DD/YY
-    "\\b(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])/(\\d{4})\\b", # MM/DD/YYYY
-    "\\b(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])-(\\d{2})\\b", # MM-DD-YY
-    "\\b(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])-(\\d{4})\\b"  # MM-DD-YYYY
+    "\\b(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])/(19[0-9]{2}|20[0-9]{2})\\b", # MM/DD/YYYY
+    "\\b(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])-(19[0-9]{2}|20[0-9]{2})\\b",  # MM-DD-YYYY
+    "\\b(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])-(\\d{2})\\b", # MM-DD-YY is this weird?
+    "\\b(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])-(19[0-9]{2}|20[0-9]{2})\\b",  # MM-DD-YYYY
+    "\\b(19[0-9]{2}|20[0-9]{2})-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])\\b"  # YYYY-MM-DD
   )
+  if(allow_partial){
+    date_patterns <- date_patterns %>% append(
+      c(
+        "\\b(19[0-9]{2}|20[0-9]{2})-(0?[1-9]|1[0-2])(?!-[0-9])\\b",  # YYYY-MM
+        "\\b(0?[1-9]|1[0-2])/(19[0-9]{2}|20[0-9]{2})\\b" # MM/YYYY
+      )
+    )
+  }
   # Initialize an empty list to store matches
   matched_dates <- list()
   # Extract date matches using str_extract_all for each pattern
