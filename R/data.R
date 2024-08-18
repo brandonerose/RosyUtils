@@ -343,7 +343,58 @@ find_in_df_list <- function(df_list,text,exact = F){
   }
   return(out)
 }
-edit_variable_while_viewing <- function(DB,optional_DF,records, field_name_to_change, field_names_to_view=NULL,upload_individually = T){
+#' @title count_vec_df
+#' @export
+count_vec_df <- function(vec){
+  vec <- vec %>% table() %>% sort(decreasing = T)
+  df <- data.frame(
+    count = as.integer(vec),
+    name = names(vec)
+  )
+  return(df)
+}
+#' @title reassign_variable_in_bulk
+#' @export
+reassign_variable_in_bulk <- function(df,old_colname,new_colname,optional_choices){
+  if( ! new_colname %in% colnames(df))df[[new_colname]] <- NA
+  df_vec_counted <- count_vec_df(df[[old_colname]])
+  choices <- "Do Nothing (Skip)"
+  has_choices <- F
+  if(!missing(optional_choices)) {
+    choices <- choices %>% append(c("Best Guess --> ", optional_choices))
+    has_choices <- T
+  }
+  choices <- choices %>% append(c("Manual Entry","Stop and Return Current DF"))
+  df_vec_counted %>% head(20) %>% print.data.frame()
+  for(i in 1:nrow(df_vec_counted)){ #i <- 1:nrow(df_vec_counted) %>% sample(1)
+    the_name <- df_vec_counted$name[i]
+    choices_mod <- choices
+    best_guess <- NA
+    if(has_choices) {
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "osa") %>% which.min() %>% optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "lv") %>% which.min() %>% optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "dl") %>% which.min() %>% optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "lcs") %>% which.max() %>% optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "qgram") %>% which.min() %>% optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "cosine") %>% which.min() %>% optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "jw") %>% which.max() %>% optional_choices[.]
+      best_guess <- stringdist::stringdist(the_name,optional_choices,method = "jaccard") %>% which.min() %>% optional_choices[.]
+      choices_mod[which(choices_mod=="Best Guess --> ")] <- paste0("Best Guess --> ",best_guess)
+    }
+    choice <- utils::menu(choices_mod,title=paste0("What would you like to do for...?\n\n --> ",the_name," <--"))
+    clean_choice <- choices[choice]
+    if(clean_choice=="Stop and Return Current DF") return(df)
+    if(clean_choice != "Do Nothing (Skip)"){
+      if(clean_choice == "Best Guess --> "){
+        clean_choice <- best_guess
+      }
+      if(clean_choice=="Manual Entry")clean_choice <- readline("Enter reassignment here --> ")
+      rows <- which(df[[old_colname]]==the_name)
+      df[[new_colname]][rows] <- clean_choice
+    }
+  }
+}
+edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, field_names_to_view=NULL){
   change_form <- field_names_to_instruments(DB,field_name_to_change)
   view_forms <- field_names_to_instruments(DB,field_names_to_view)
   field_names_to_view <- c(field_name_to_change,field_names_to_view) %>% unique()
