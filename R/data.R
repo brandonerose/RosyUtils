@@ -353,6 +353,11 @@ count_vec_df <- function(vec){
   )
   return(df)
 }
+#' @title vec_to_cvec
+#' @export
+vec_to_cvec <- function(vec){
+  vec %>% paste0("\"",.,"\"",collapse = ",\n") %>% paste0("c(\n",.,"\n)") %>% cat()
+}
 #' @title reassign_variable_in_bulk
 #' @export
 reassign_variable_in_bulk <- function(df,old_colname,new_colname,optional_choices){
