@@ -242,7 +242,8 @@ list_to_excel <- function(
           pad_rows = pad_rows,
           pad_cols = pad_cols,
           freeze_keys = freeze_keys,
-          key_cols_list = key_cols_list[[list_names[i]]]
+          key_cols_list = key_cols_list[[list_names[i]]],
+          drop_empty = drop_empty
         ),
         dir = dir,
         file_name = file_name2,
@@ -263,7 +264,8 @@ list_to_excel <- function(
         pad_rows = pad_rows,
         pad_cols = pad_cols,
         freeze_keys = freeze_keys,
-        key_cols_list = key_cols_list
+        key_cols_list = key_cols_list,
+        drop_empty = drop_empty
       ),
       dir = dir,
       file_name = file_name,
