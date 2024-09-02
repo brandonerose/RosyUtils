@@ -16,7 +16,8 @@ list_to_wb(
   pad_rows = 0,
   pad_cols = 0,
   freeze_keys = T,
-  key_cols_list = NULL
+  key_cols_list = NULL,
+  drop_empty = T
 )
 }
 \description{

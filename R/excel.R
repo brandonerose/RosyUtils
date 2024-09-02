@@ -152,11 +152,12 @@ list_to_wb <- function(
     pad_rows = 0,
     pad_cols = 0,
     freeze_keys = T,
-    key_cols_list = NULL
+    key_cols_list = NULL,
+    drop_empty = T
 ){
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
-  list <- process_df_list(list)
+  list <- process_df_list(list,drop_empty = drop_empty)
   list_names <- names(list)
   list_link_names <- list()
   if(length(link_col_list)>0){
@@ -213,11 +214,12 @@ list_to_excel <- function(
     pad_rows = 0,
     pad_cols = 0,
     freeze_keys = T,
-    key_cols_list = NULL
+    key_cols_list = NULL,
+    drop_empty = T
 ) {
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
-  list <- process_df_list(list)
+  list <- process_df_list(list,drop_empty = drop_empty)
   list_names <- names(list)
   if(length(list)==0)return(warning("empty list cannot be saved",immediate. = T))
   if(separate){
@@ -270,8 +272,8 @@ list_to_excel <- function(
   }
 }
 #' @export
-list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE){
-  list <- process_df_list(list)
+list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE, drop_empty = T){
+  list <- process_df_list(list,drop_empty = drop_empty)
   list_names <- names(list)
   for(i in seq_along(list)){
     sub_list <- list[i]
@@ -317,23 +319,25 @@ save_csv <- function(df,dir,file_name,overwrite =TRUE){
     message("Saved at -> ","'",path,"'")
   }
 }
-process_df_list <- function(list){
+process_df_list <- function(list,drop_empty = T){
   if(is_something(list)){
     if(!is_df_list(list))stop("list must be ...... a list :)")
-    is_a_df_with_rows <- list %>% sapply(function(IN){
-      is_df <- is.data.frame(IN)
-      if(is_df){
-        return(nrow(IN)>0)
-      }else{
-        return(F)
+    if(drop_empty){
+      is_a_df_with_rows <- list %>% sapply(function(IN){
+        is_df <- is.data.frame(IN)
+        if(is_df){
+          return(nrow(IN)>0)
+        }else{
+          return(F)
+        }
+      })
+      keeps <- which(is_a_df_with_rows)
+      drops <-which(!is_a_df_with_rows)
+      if(length(drops)>0){
+        message("Dropping non-data.frames and empties... ", paste0(names(drops),collapse = ", "))
       }
-    })
-    keeps <- which(is_a_df_with_rows)
-    drops <-which(!is_a_df_with_rows)
-    if(length(drops)>0){
-      message("Dropping non-data.frames and empties... ", paste0(names(drops),collapse = ", "))
+      list <- list[keeps]
     }
-    list <- list[keeps]
     if(length(list)>0){
       if(!is_named_df_list(list)){
         names(list) <- paste0(seq_along(list))
