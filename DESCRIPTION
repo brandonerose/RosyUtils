@@ -12,7 +12,9 @@ Depends:
 Imports: 
     admiral (>= 1.0.2),
     dplyr (>= 1.1.4),
+    golem,
     grDevices,
+    listviewer,
     lubridate (>= 1.9.3),
     magrittr (>= 2.0.3),
     openxlsx (>= 4.2.5.2),
@@ -20,6 +22,9 @@ Imports:
     purrr,
     readxl (>= 1.4.3),
     rio (>= 1.0.1),
+    shiny,
+    shinydashboard,
+    shinydashboardPlus,
     stringdist,
     stringr (>= 1.5.1),
     utils

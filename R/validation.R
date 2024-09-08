@@ -131,3 +131,4 @@ is_consecutive_srt_1 <- function(vec) {
   }
   return(TRUE)
 }
+
