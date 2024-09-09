@@ -11,6 +11,7 @@ Depends:
     R (>= 2.10)
 Imports: 
     admiral (>= 1.0.2),
+    config,
     dplyr (>= 1.1.4),
     golem,
     grDevices,
