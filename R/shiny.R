@@ -104,8 +104,8 @@ mod_backend_server <- function(){
       values %>% reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
     })
     output$input_list <- listviewer::renderJsonedit({
-      if(!is_something(values))return(NULL)
-      if(!is.reactive(values))return(NULL)
+      if(!is_something(input))return(NULL)
+      if(!is.reactive(input))return(NULL)
       input %>% reactiveValuesToList() %>% listviewer::jsonedit()
     })
   })
