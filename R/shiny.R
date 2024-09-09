@@ -26,8 +26,6 @@ backend_menu_item <- function(){
     )
   )
 }
-backend_tabItem <- function(){
-}
 #' @title dbBody
 #' @export
 dbBody <- function(...){
@@ -83,17 +81,17 @@ dbControlbar <- function(...){
     )
   )
 }
+#' @importFrom shiny NS tagList
 mod_backend_ui <- function() {
   ns <- NS("backend")
   tagList(
-    listviewer::jsoneditOutput("values_list"),
-    listviewer::jsoneditOutput("input_list")
+    listviewer::jsoneditOutput(ns("values_list")),
+    listviewer::jsoneditOutput(ns("input_list"))
   )
 }
 #' @title mod_backend_server
 #' @description A shiny Module.
 #' @param id,input,output,session Internal parameters for {shiny}.
-#' @importFrom shiny NS tagList
 #' @export
 mod_backend_server <- function(){
   moduleServer("backend", function(input, output, session){
