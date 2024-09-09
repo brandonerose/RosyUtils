@@ -38,7 +38,7 @@ dbBody <- function(...){
           box(
             title = h1("Backend"),
             width = 12,
-            mod_backend_ui()
+            mod_backend_ui("backend")
           )
         )
       )
@@ -82,8 +82,8 @@ dbControlbar <- function(...){
   )
 }
 #' @importFrom shiny NS tagList
-mod_backend_ui <- function() {
-  ns <- NS("backend")
+mod_backend_ui <- function(id) {
+  ns <- NS(id)
   tagList(
     listviewer::jsoneditOutput(ns("values_list")),
     listviewer::jsoneditOutput(ns("input_list"))
@@ -93,8 +93,8 @@ mod_backend_ui <- function() {
 #' @description A shiny Module.
 #' @param id,input,output,session Internal parameters for {shiny}.
 #' @export
-mod_backend_server <- function(input,values = NULL){
-  moduleServer("backend", function(input, output, session){
+mod_backend_server <- function(id,input,values = NULL){
+  moduleServer(id, function(input, output, session){
     ns <- session$ns
     message("values is_something: ",is_something(values))
     message("values class: ",class(values))
