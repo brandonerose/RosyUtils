@@ -11,7 +11,7 @@ dbSidebar <- function(...){
     sidebarMenu(
       id="sb1",
       ...,
-      backend_menu_item(),
+      backend_menu_item()
     ),
     TCD_SBF()
   )
