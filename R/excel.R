@@ -20,9 +20,9 @@ wb_to_list <- function(wb){
   out <- list()
   for (i in 1:length(sheets)){
     col_row <- 1
-    x<-openxlsx::getTables(wb,sheet = i)
+    x <- openxlsx::getTables(wb,sheet = i)
     if(length(x)>0){
-      col_row <-  as.integer(gsub("[A-Za-z]", "", unlist(x %>% attr("refs") %>% strsplit(":"))[[1]]))# test for xlsx without letters for cols
+      col_row <- as.integer(gsub("[A-Za-z]", "", unlist(x %>% attr("refs") %>% strsplit(":"))[[1]]))# test for xlsx without letters for cols
     }
     out[[i]]<- openxlsx::read.xlsx(wb,sheet = i,startRow = col_row)
   }
@@ -48,7 +48,7 @@ DF_to_wb <- function(
     key_cols = NULL
 ) {
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
-  DF <-  DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
+  DF <- DF %>% lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>% as.data.frame()
   hyperlink_col <- NULL
   if(freeze_keys){
     all_cols <- colnames(DF)
@@ -119,7 +119,7 @@ DF_to_wb <- function(
     if(freeze_header||freeze_keys){
       firstActiveRow <- NULL
       if(freeze_header){
-        firstActiveRow <-  startRow_table+1
+        firstActiveRow <- startRow_table+1
       }
       firstActiveCol <- NULL
       if(freeze_keys){
@@ -170,7 +170,7 @@ list_to_wb <- function(
     }
   }
   list_names_rename <- stringr::str_trunc(list_names,width = 31,side = "right",ellipsis = "")
-  BAD<-dw(list_names_rename)
+  BAD <- dw(list_names_rename)
   if(length(BAD)>0){
     warning("Duplicated names when trimmed from right 31 max in Excel: ",list_names[BAD] %>% paste0(collapse = ", "),immediate. = T)
     message("Use CSV or shorten the names and make sure they are unique if they are trimmed to 31 char. For now will make unique by adding number.")

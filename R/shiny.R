@@ -3,18 +3,44 @@
 #' @import shinydashboard
 #' @title dbSidebar
 #' @export
-dbSidebar<-function(...){
+dbSidebar <- function(...){
   shinydashboardPlus::dashboardSidebar(
     minified = F,
     collapsed = F,
     TCD_SBH(),
     ...,
+    backend_menu_item(),
     TCD_SBF()
+  )
+}
+backend_menu_item <- function(){
+  if(golem::app_prod())return(NULL)
+  return(
+    menuItem(
+      text="Backend",
+      tabName = "backend",
+      icon =shiny::icon("gear")
+    )
+  )
+}
+backend_tabItem <- function(){
+  if(golem::app_prod())return(NULL)
+  return(
+    tabItem(
+      "backend",
+      fluidRow(
+        box(
+          title = h1("Backend"),
+          width = 12,
+          mod_backend_ui("backend")
+        )
+      )
+    )
   )
 }
 #' @title dbBody
 #' @export
-dbBody<-function(...){
+dbBody <- function(...){
   dashboardBody(
     tabItems(
       # home--------
@@ -28,26 +54,13 @@ dbBody<-function(...){
           )
         )
       ),
-      # backend ---------
-      tabItem(
-        "backend",
-        fluidRow(
-          fluidRow(
-            box(
-              title = h1("Backend"),
-              width = 12,
-              listviewer::jsoneditOutput("values_list"),
-              listviewer::jsoneditOutput("input_list")
-            )
-          )
-        )
-      )
+      backend_tabItem()
     )
   )
 }
 #' @title dbHeader
 #' @export
-dbHeader<-function(...){
+dbHeader <- function(...){
   shinydashboardPlus::dashboardHeader(
     title = tagList(
       span(class = "logo-lg", pkg_name),
@@ -62,7 +75,7 @@ dbHeader<-function(...){
 }
 #' @title dbControlbar
 #' @export
-dbControlbar<-function(...){
+dbControlbar <- function(...){
   shinydashboardPlus::dashboardControlbar(
     TCD_SBH(),
     div(style="text-align:center",p(paste0(pkg_name,' Version: ',pkg_version))),
@@ -81,24 +94,34 @@ dbControlbar<-function(...){
     )
   )
 }
-#' @title mod_backend_ui
+mod_backend_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    listviewer::jsoneditOutput("values_list"),
+    listviewer::jsoneditOutput("input_list")
+  )
+}
+#' @title mod_backend_server
 #' @description A shiny Module.
 #' @param id,input,output,session Internal parameters for {shiny}.
 #' @importFrom shiny NS tagList
 #' @export
-mod_backend_ui <- function(id) {
-  ns <- NS(id)
-  tagList(
-  )
-}
-#' @title mod_backend_server
-#' @export
-mod_backend_server <- function(id){
-  moduleServer(id, function(input, output, session){
+mod_backend_server <- function(){
+  moduleServer("backend", function(input, output, session){
     ns <- session$ns
+    output$values_list <- listviewer::renderJsonedit({
+      if(!is_something(values))return(NULL)
+      if(!is.reactive(values))return(NULL)
+      values %>% reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
+    })
+    output$input_list <- listviewer::renderJsonedit({
+      if(!is_something(values))return(NULL)
+      if(!is.reactive(values))return(NULL)
+      input %>% reactiveValuesToList() %>% listviewer::jsonedit()
+    })
   })
 }
-TCD_SBH<-function(){
+TCD_SBH <- function(){
   shinydashboard::sidebarMenu(
     shiny::div(
       style="text-align:center",
@@ -110,7 +133,7 @@ TCD_SBH<-function(){
     )
   )
 }
-TCD_SBF<-function(){
+TCD_SBF <- function(){
   shinydashboard::sidebarMenu(
     shinydashboard::menuItem(
       text="Donate!",
@@ -146,7 +169,7 @@ TCD_SBF<-function(){
   # p(paste0('Version: ',pkg_version)) %>% shiny::div(style="text-align:center"),
   # p(paste0('Last Update: ',pkg_date)) %>% shiny::div(style="text-align:center"),
 }
-TCD_NF<-function(){
+TCD_NF <- function(){
   shinydashboardPlus::dashboardFooter(
     left = fluidRow(
       shiny::actionButton(
@@ -187,7 +210,7 @@ TCD_NF<-function(){
     right = NULL
   )
 }
-TCD_SF<-function(){
+TCD_SF <- function(){
   shiny::div(
     class = "sticky_footer",
     fluidRow(

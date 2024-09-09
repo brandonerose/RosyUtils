@@ -46,7 +46,7 @@ vec_which_duplicated <- function(vec){
 }
 #' @title clean_num
 #' @export
-clean_num<-function(num){
+clean_num <- function(num){
   formatC(num, format="d", big.mark=",")
 }
 #' @title size
@@ -59,10 +59,10 @@ size <- function(x){
 read_pdf <- function(path,no_double_spaces = F){
   pdf_text_raw <- pdftools::pdf_text(path)
   pdf_text <- pdf_text_raw %>% paste(collapse = " ")
-  pdf_text<-gsub("\\n"," ",pdf_text)
+  pdf_text <- gsub("\\n"," ",pdf_text)
   if(no_double_spaces){
     while(grepl("  ",pdf_text)){
-      pdf_text<-gsub("  "," ",pdf_text)
+      pdf_text <- gsub("  "," ",pdf_text)
     }
   }
   pdf_text <- trimws(pdf_text)

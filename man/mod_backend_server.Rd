@@ -4,8 +4,11 @@
 \alias{mod_backend_server}
 \title{mod_backend_server}
 \usage{
-mod_backend_server(id)
+mod_backend_server()
+}
+\arguments{
+\item{id, input, output, session}{Internal parameters for {shiny}.}
 }
 \description{
-mod_backend_server
+A shiny Module.
 }

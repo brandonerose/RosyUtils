@@ -9,7 +9,7 @@ add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_spli
       IN <- NULL
     }
     if(remove_previous){
-      IN<-IN[which(IN!=flag_name)] #remove flag_name
+      IN <- IN[which(IN!=flag_name)] #remove flag_name
     }
     if(DF[[id_field_name]][ROW]%in%ids){
       IN <- IN %>% append(flag_name) # add id if it should be there
@@ -34,7 +34,7 @@ remove_df_flag <- function(DF,flag_field_name,flag_name){
       }else{
         IN <- NULL
       }
-      IN<-IN[which(IN!=flag_name)] #remove flag_name
+      IN <- IN[which(IN!=flag_name)] #remove flag_name
       if(!is.null(IN)){
         return(IN %>% sort() %>% unique() %>% trimws() %>% paste0(collapse = " | ") )#sort and clean
       }else{
@@ -52,7 +52,7 @@ get_df_flag_rows <- function(DF,flag_field_name,flag_name){
 combine_two_split_vector_flags <- function(v1,v2,read_split=" [:|:] ",write_split = " | "){
   combined_list <- Map(function(x, y) c(x, y), strsplit(v1,split = read_split), strsplit(v2,split = read_split))
   v3 <- sapply(combined_list,function(E){
-    x<-trimws(sort(drop_nas(unique(E))),whitespace = "[\\h\\v]")
+    x <- trimws(sort(drop_nas(unique(E))),whitespace = "[\\h\\v]")
     if(length(x)==0)return(NA)
     return(paste0(x,collapse = write_split))
   })

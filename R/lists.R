@@ -8,7 +8,7 @@ add_list_to_global <- function(x,only_dfs=F){
   if(length(x)==0)stop("length(x) has to be at least 1")
   if(class(x)=="character"){
     if(is.null(names(x)))stop("if x is a character vector it must have names")
-    x<-as.list(x)
+    x <- as.list(x)
   }
   if(class(x)!="list")stop("x must be a named list or named character vector")
   if(is.null(names(x)))stop("x list must have names")

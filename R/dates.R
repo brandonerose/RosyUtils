@@ -12,11 +12,11 @@ is_date <- function(date) {
     year <- OUT2[[1]]
     check_date <- year
     if(length(OUT2)==1){
-      check_date<-check_date %>% paste0("-01")
+      check_date <- check_date %>% paste0("-01")
       OUT2[[2]] <- "01"
     }
     if(length(OUT2)==2){
-      check_date<-check_date %>% paste0("-01")
+      check_date <- check_date %>% paste0("-01")
       OUT2[[3]] <- "01"
     }
     year <- year %>% as.integer()
@@ -126,12 +126,12 @@ convert_dates <- function(input_string) {
   }
 }
 #' @export
-date_imputation<-function(dates_in,date_imputation){
+date_imputation <- function(dates_in,date_imputation){
   #followup add min max
   z <- sapply(dates_in,is_date) %>% as.logical()
-  x<-which(z&!is_date_full(dates_in))
-  y<-which(!z)
-  date_out<-dates_in
+  x <- which(z&!is_date_full(dates_in))
+  y <- which(!z)
+  date_out <- dates_in
   if(length(y)>0){
     date_out[y] <- NA
   }
