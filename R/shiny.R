@@ -14,7 +14,7 @@ dbSidebar <- function(...){
   )
 }
 backend_menu_item <- function(){
-  if(golem::app_prod())return(div())
+  if(golem::app_prod())return(NULL)
   return(
     menuItem(
       text="Backend",
@@ -24,19 +24,7 @@ backend_menu_item <- function(){
   )
 }
 backend_tabItem <- function(){
-  if(golem::app_prod())return(div())
-  return(
-    tabItem(
-      "backend",
-      fluidRow(
-        box(
-          title = h1("Backend"),
-          width = 12,
-          mod_backend_ui()
-        )
-      )
-    )
-  )
+
 }
 #' @title dbBody
 #' @export
@@ -44,7 +32,16 @@ dbBody <- function(...){
   dashboardBody(
     tabItems(
       ...,
-      backend_tabItem()
+      tabItem(
+        "backend",
+        fluidRow(
+          box(
+            title = h1("Backend"),
+            width = 12,
+            mod_backend_ui()
+          )
+        )
+      )
     )
   )
 }
