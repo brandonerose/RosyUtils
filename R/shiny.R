@@ -8,8 +8,11 @@ dbSidebar <- function(...){
     minified = F,
     collapsed = F,
     TCD_SBH(),
-    ...,
-    backend_menu_item(),
+    sidebarMenu(
+      id="sb1",
+      ...,
+      backend_menu_item(),
+    ),
     TCD_SBF()
   )
 }
@@ -24,7 +27,6 @@ backend_menu_item <- function(){
   )
 }
 backend_tabItem <- function(){
-
 }
 #' @title dbBody
 #' @export
