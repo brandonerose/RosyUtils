@@ -4,7 +4,7 @@
 \alias{mod_backend_server}
 \title{mod_backend_server}
 \usage{
-mod_backend_server()
+mod_backend_server(input, values = NULL)
 }
 \arguments{
 \item{id, input, output, session}{Internal parameters for {shiny}.}

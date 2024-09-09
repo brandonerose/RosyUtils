@@ -93,7 +93,7 @@ mod_backend_ui <- function() {
 #' @description A shiny Module.
 #' @param id,input,output,session Internal parameters for {shiny}.
 #' @export
-mod_backend_server <- function(){
+mod_backend_server <- function(input,values = NULL){
   moduleServer("backend", function(input, output, session){
     ns <- session$ns
     output$values_list <- listviewer::renderJsonedit({
