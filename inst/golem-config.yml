@@ -1,8 +1,0 @@
-default:
-  golem_name: RosyUtils
-  golem_version: 1.0.0.9011
-  app_prod: no
-production:
-  app_prod: yes
-dev:
-  golem_wd: !expr golem::pkg_path()
