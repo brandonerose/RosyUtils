@@ -101,12 +101,12 @@ mod_backend_server <- function(){
     output$values_list <- listviewer::renderJsonedit({
       if(!is_something(values))return(NULL)
       if(!is.reactive(values))return(NULL)
-      session$parent$values %>% reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
+      values %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
     })
     output$input_list <- listviewer::renderJsonedit({
       if(!is_something(input))return(NULL)
       if(!is.reactive(input))return(NULL)
-      session$parent$input %>% reactiveValuesToList() %>% listviewer::jsonedit()
+      input %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit()
     })
   })
 }
