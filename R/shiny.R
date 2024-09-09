@@ -96,6 +96,10 @@ mod_backend_ui <- function() {
 mod_backend_server <- function(input,values = NULL){
   moduleServer("backend", function(input, output, session){
     ns <- session$ns
+    message("values is_something: ",is_something(values))
+    message("values class: ",class(values))
+    message("input is_something: ",is_something(input))
+    message("input class: ",class(input))
     output$values_list <- listviewer::renderJsonedit({
       if(!is_something(values))return(NULL)
       if(!is.reactive(values))return(NULL)
