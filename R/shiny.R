@@ -81,6 +81,23 @@ dbControlbar<-function(...){
     )
   )
 }
+#' @title mod_backend_ui
+#' @description A shiny Module.
+#' @param id,input,output,session Internal parameters for {shiny}.
+#' @importFrom shiny NS tagList
+#' @export
+mod_backend_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+  )
+}
+#' @title mod_backend_server
+#' @export
+mod_backend_server <- function(id){
+  moduleServer(id, function(input, output, session){
+    ns <- session$ns
+  })
+}
 TCD_SBH<-function(){
   shinydashboard::sidebarMenu(
     shiny::div(
@@ -209,81 +226,5 @@ TCD_SF<-function(){
         onclick ="window.open('https://www.thecodingdocs.com/founder', '_blank')"
       )
     )
-  )
-}
-#' backend UI Function
-#'
-#' @description A shiny Module.
-#' @param id,input,output,session Internal parameters for {shiny}.
-#' @importFrom shiny NS tagList
-mod_backend_ui <- function(id) {
-  ns <- NS(id)
-  tagList(
-  )
-}
-mod_backend_server <- function(id){
-  moduleServer(id, function(input, output, session){
-    ns <- session$ns
-  })
-}
-#' @param ... arguments to pass to golem_opts.
-#' See `?golem::get_golem_options` for more details.
-#' @inheritParams shiny::shinyApp
-#' @export
-#' @importFrom shiny shinyApp
-#' @importFrom golem with_golem_options
-run_app <- function(
-    onStart = NULL,
-    options = list(),
-    enableBookmarking = NULL,
-    uiPattern = "/",
-    ...
-) {
-  with_golem_options(
-    app = shinyApp(
-      ui = app_ui,
-      server = app_server,
-      onStart = onStart,
-      options = options,
-      enableBookmarking = enableBookmarking,
-      uiPattern = uiPattern
-    ),
-    golem_opts = list(...)
-  )
-}
-# mod_backend_ui("backend_1") # UI
-# mod_backend_server("backend_1") # server
-#' @param ... character vectors, specifying subdirectory and file(s)
-#' within your package. The default, none, returns the root of the app.
-app_sys <- function(...) {
-  system.file(..., package = pkg_name)
-}
-#' Read App Config
-#'
-#' @param value Value to retrieve from the config file.
-#' @param config GOLEM_CONFIG_ACTIVE value. If unset, R_CONFIG_ACTIVE.
-#' If unset, "default".
-#' @param use_parent Logical, scan the parent directory for config file.
-#' @param file Location of the config file
-#'
-#' @noRd
-get_golem_config <- function(
-    value,
-    config = Sys.getenv(
-      "GOLEM_CONFIG_ACTIVE",
-      Sys.getenv(
-        "R_CONFIG_ACTIVE",
-        "default"
-      )
-    ),
-    use_parent = TRUE,
-    # Modify this if your config file is somewhere else
-    file = app_sys("golem-config.yml")
-) {
-  config::get(
-    value = value,
-    config = config,
-    file = file,
-    use_parent = use_parent
   )
 }

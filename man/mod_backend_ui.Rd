@@ -2,7 +2,7 @@
 % Please edit documentation in R/shiny.R
 \name{mod_backend_ui}
 \alias{mod_backend_ui}
-\title{backend UI Function}
+\title{mod_backend_ui}
 \usage{
 mod_backend_ui(id)
 }
