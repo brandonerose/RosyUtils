@@ -14,7 +14,7 @@ dbSidebar <- function(...){
   )
 }
 backend_menu_item <- function(){
-  if(golem::app_prod())return(NULL)
+  if(golem::app_prod())return(div())
   return(
     menuItem(
       text="Backend",
@@ -24,7 +24,7 @@ backend_menu_item <- function(){
   )
 }
 backend_tabItem <- function(){
-  if(golem::app_prod())return(NULL)
+  if(golem::app_prod())return(div())
   return(
     tabItem(
       "backend",
