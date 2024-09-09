@@ -32,7 +32,7 @@ backend_tabItem <- function(){
         box(
           title = h1("Backend"),
           width = 12,
-          mod_backend_ui("backend")
+          mod_backend_ui()
         )
       )
     )
@@ -43,17 +43,7 @@ backend_tabItem <- function(){
 dbBody <- function(...){
   dashboardBody(
     tabItems(
-      # home--------
-      tabItem(
-        "home",
-        fluidRow(
-          box(
-            title = h1("Home"),
-            width = 12,
-            uiOutput("html_test")
-          )
-        )
-      ),
+      ...,
       backend_tabItem()
     )
   )
@@ -94,8 +84,8 @@ dbControlbar <- function(...){
     )
   )
 }
-mod_backend_ui <- function(id) {
-  ns <- NS(id)
+mod_backend_ui <- function() {
+  ns <- NS("backend")
   tagList(
     listviewer::jsoneditOutput("values_list"),
     listviewer::jsoneditOutput("input_list")
