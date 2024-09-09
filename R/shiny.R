@@ -219,13 +219,11 @@ TCD_SF<-function(){
 mod_backend_ui <- function(id) {
   ns <- NS(id)
   tagList(
-
   )
 }
 mod_backend_server <- function(id){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
-
   })
 }
 #' @param ... arguments to pass to golem_opts.
@@ -255,13 +253,11 @@ run_app <- function(
 }
 # mod_backend_ui("backend_1") # UI
 # mod_backend_server("backend_1") # server
-
 #' @param ... character vectors, specifying subdirectory and file(s)
 #' within your package. The default, none, returns the root of the app.
 app_sys <- function(...) {
   system.file(..., package = pkg_name)
 }
-
 #' Read App Config
 #'
 #' @param value Value to retrieve from the config file.
