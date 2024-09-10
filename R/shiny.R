@@ -38,12 +38,12 @@ dbBody <- function(...){
           box(
             title = h1("Input List"),
             width = 12,
-            mod_backend_ui("input_list")
+            mod_list_ui("input_list")
           ),
           box(
             title = h1("Values List"),
             width = 12,
-            mod_backend_ui("values_list")
+            mod_list_ui("values_list")
           )
         )
       )
@@ -86,14 +86,17 @@ dbControlbar <- function(...){
     )
   )
 }
-#' @importFrom shiny NS tagList
+#' @title mod_list_ui
+#' @description A shiny Module.
+#' @param id,input,output,session Internal parameters for {shiny}.
+#' @export
 mod_list_ui <- function(id) {
   ns <- NS(id)
   tagList(
     listviewer::jsoneditOutput(ns("values_list")),
   )
 }
-#' @title mod_backend_server
+#' @title mod_list_server
 #' @description A shiny Module.
 #' @param id,input,output,session Internal parameters for {shiny}.
 #' @export
