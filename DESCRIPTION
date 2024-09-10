@@ -14,7 +14,6 @@ Imports:
     dplyr (>= 1.1.4),
     golem,
     grDevices,
-    listviewer,
     lubridate (>= 1.9.3),
     magrittr (>= 2.0.3),
     openxlsx (>= 4.2.5.2),
