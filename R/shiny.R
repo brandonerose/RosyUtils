@@ -111,16 +111,18 @@ mod_backend_server <- function(id,input,values = NULL){
       if(!is_something(values))return(NULL)
       # if(is.reactive(values))return(NULL)
       # values %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
-      values %>% class() %>% message()
-      values %>% class() %>% return()
+      values %>% shiny::reactiveValuesToList() %>% class() %>% message()
+      values %>% shiny::reactiveValuesToList() %>% names() %>% message()
+      values %>% shiny::reactiveValuesToList()%>% class() %>% return()
     })
     output$input_list <- renderPrint({
     # output$input_list <- listviewer::renderJsonedit({
       if(!is_something(input))return(NULL)
       # if(is.reactive(input))return(NULL)
       # input %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
-      input %>% class() %>% message()
-      input %>% class() %>% return()
+      input %>% shiny::reactiveValuesToList() %>% class() %>% message()
+      input %>% shiny::reactiveValuesToList() %>% names() %>% message()
+      input %>% shiny::reactiveValuesToList() %>% class() %>% return()
     })
   })
 }
