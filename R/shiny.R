@@ -36,9 +36,14 @@ dbBody <- function(...){
         "backend",
         fluidRow(
           box(
-            title = h1("Backend"),
+            title = h1("Input List"),
             width = 12,
-            mod_backend_ui()
+            mod_backend_ui("input_list")
+          ),
+          box(
+            title = h1("Values List"),
+            width = 12,
+            mod_backend_ui("values_list")
           )
         )
       )
@@ -82,47 +87,22 @@ dbControlbar <- function(...){
   )
 }
 #' @importFrom shiny NS tagList
-mod_backend_ui <- function() {
-  ns <- NS("backend")
+mod_list_ui <- function(id) {
+  ns <- NS(id)
   tagList(
     listviewer::jsoneditOutput(ns("values_list")),
-    listviewer::jsoneditOutput(ns("input_list"))
-    # verbatimTextOutput(ns("values_list")),
-    # verbatimTextOutput(ns("input_list"))
   )
 }
 #' @title mod_backend_server
 #' @description A shiny Module.
 #' @param id,input,output,session Internal parameters for {shiny}.
 #' @export
-mod_backend_server <- function(input,values = NULL){
-  moduleServer("backend", function(input, output, session){
+mod_list_server <- function(id,values){
+  moduleServer(id, function(input, output, session){
     ns <- session$ns
-    # message("values is_something: ",is_something(values))
-    # message("values class: ",class(values))
-    # message("values length: ",values %>% length())
-    # message("values is.reactive: ",values %>% is.reactive())
-    # message("input is_something: ",is_something(input))
-    # message("input class: ",class(input))
-    # message("input length: ",input %>% length())
-    # message("input is.reactive: ",input %>% is.reactive())
     output$values_list <- listviewer::renderJsonedit({
-    # output$values_list <- renderPrint({
       if(!is_something(values))return(NULL)
-      # if(is.reactive(values))return(NULL)
       values %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
-      # values %>% shiny::reactiveValuesToList() %>% class() %>% message()
-      # values %>% shiny::reactiveValuesToList() %>% names() %>% message()
-      # values %>% shiny::reactiveValuesToList()%>% class() %>% return()
-    })
-    # output$input_list <- renderPrint({
-    output$input_list <- listviewer::renderJsonedit({
-      if(!is_something(input))return(NULL)
-      # if(is.reactive(input))return(NULL)
-      input %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
-      # input %>% shiny::reactiveValuesToList() %>% class() %>% message()
-      # input %>% shiny::reactiveValuesToList() %>% names() %>% message()
-      # input %>% shiny::reactiveValuesToList() %>% class() %>% return()
     })
   })
 }
