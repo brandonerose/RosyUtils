@@ -100,6 +100,7 @@ mod_backend_server <- function(id,input,values = NULL){
     ns <- session$ns
     message("values is_something: ",is_something(values))
     message("values class: ",class(values))
+    message("values length: ",values %>% length())
     message("input is_something: ",is_something(input))
     message("input class: ",class(input))
     message("input length: ",input %>% length())
@@ -108,6 +109,7 @@ mod_backend_server <- function(id,input,values = NULL){
       if(!is_something(values))return(NULL)
       if(!is.reactive(values))return(NULL)
       # values %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
+      values %>% shiny::reactiveValuesToList() %>% names() %>% print()
       values %>% shiny::reactiveValuesToList() %>% names() %>% return()
     })
     output$input_list <- renderPrint({
@@ -115,6 +117,7 @@ mod_backend_server <- function(id,input,values = NULL){
       if(!is_something(input))return(NULL)
       if(!is.reactive(input))return(NULL)
       # input %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
+      input %>% shiny::reactiveValuesToList() %>% names() %>% print()
       input %>% shiny::reactiveValuesToList() %>% names() %>% return()
     })
   })
