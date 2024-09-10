@@ -101,13 +101,15 @@ mod_backend_server <- function(id,input,values = NULL){
     message("values is_something: ",is_something(values))
     message("values class: ",class(values))
     message("values length: ",values %>% length())
+    message("values is.reactive: ",values %>% is.reactive())
     message("input is_something: ",is_something(input))
     message("input class: ",class(input))
     message("input length: ",input %>% length())
+    message("input is.reactive: ",input %>% is.reactive())
     # output$values_list <- listviewer::renderJsonedit({
     output$values_list <- renderPrint({
       if(!is_something(values))return(NULL)
-      if(!is.reactive(values))return(NULL)
+      if(is.reactive(values))return(NULL)
       # values %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
       values %>% shiny::reactiveValuesToList() %>% names() %>% print()
       values %>% shiny::reactiveValuesToList() %>% names() %>% return()
@@ -115,7 +117,7 @@ mod_backend_server <- function(id,input,values = NULL){
     output$input_list <- renderPrint({
     # output$input_list <- listviewer::renderJsonedit({
       if(!is_something(input))return(NULL)
-      if(!is.reactive(input))return(NULL)
+      if(is.reactive(input))return(NULL)
       # input %>% shiny::reactiveValuesToList() %>% listviewer::jsonedit() %>% return()
       input %>% shiny::reactiveValuesToList() %>% names() %>% print()
       input %>% shiny::reactiveValuesToList() %>% names() %>% return()
