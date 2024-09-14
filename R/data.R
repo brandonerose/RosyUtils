@@ -258,7 +258,7 @@ clean_df_cols <- function(df) {
 #' @title clean_df_blanks
 #' @export
 clean_df_blanks <- function(df,other_blanks=NULL) {
-  df %>% lapply(function(IN){
+  df <- df %>% lapply(function(IN){
     IN[which(IN%in%c("NA","",other_blanks))] <- NA
     return(IN)
   }) %>% as.data.frame()
