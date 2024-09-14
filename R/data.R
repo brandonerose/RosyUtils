@@ -549,3 +549,21 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
   }
   if(!upload_individually)OUT %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
 }
+#' @title count_instances
+#' @export
+count_instances <- function(df,ref_id,inst_name){
+  vec_ori<- df[[ref_id]]
+  x<- vec_ori %>% rle()
+  x<- data.frame(
+    lengths = x$lengths,
+    values = x$values
+  )
+  vec <- x$lengths %>% sapply(function(IN){1:IN}) %>% unlist()
+  vec2 <- 1:nrow(x) %>% sapply(function(ROW){rep(x$values[ROW],x$lengths[ROW])}) %>% unlist()
+  if(any(vec_ori!=vec2))stop("mismatch!")
+  df[[inst_name]] <- vec
+  key_check <- paste0(df[[ref_id]],"__",df[[inst_name]])
+  dup_keys <- key_check[which(duplicated(key_check))]
+  if(length(dup_keys)>0)stop("You can't have ids that are not sorted by the ref_id ('",ref_id,"') ",dup_keys %>% paste0(collapse = ", "))
+  return(df)
+}
