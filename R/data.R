@@ -567,3 +567,12 @@ count_instances <- function(df,ref_id,inst_name){
   if(length(dup_keys)>0)stop("You can't have ids that are not sorted by the ref_id ('",ref_id,"') ",dup_keys %>% paste0(collapse = ", "))
   return(df)
 }
+#' @title scale_vec_to_range
+#' @export
+scale_vec_to_range <- function(vec, max_target, min_target = 1) {
+  scaled_x <- round((x - min(x)) / (max(x) - min(x)) * (max_target - min_target) + min_target)
+  min_x <- min(x)
+  max_x <- max(x)
+  scaled_x <- round(((x - min_x) / (max_x - min_x)) * (max_target - min_target) + min_target)
+  return(scaled_x)
+}
