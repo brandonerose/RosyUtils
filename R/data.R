@@ -569,10 +569,10 @@ count_instances <- function(df,ref_id,inst_name){
 }
 #' @title scale_vec_to_range
 #' @export
-scale_vec_to_range <- function(vec, max_target, min_target = 1) {
-  scaled_x <- round((x - min(x)) / (max(x) - min(x)) * (max_target - min_target) + min_target)
-  min_x <- min(x)
-  max_x <- max(x)
-  scaled_x <- round(((x - min_x) / (max_x - min_x)) * (max_target - min_target) + min_target)
-  return(scaled_x)
+scale_vec_to_range <- function(vec, mavec_target, min_target = 1) {
+  scaled_vec <- round((vec - min(vec)) / (mavec(vec) - min(vec)) * (mavec_target - min_target) + min_target)
+  min_vec <- min(vec)
+  mavec_vec <- mavec(vec)
+  scaled_vec <- round(((vec - min_vec) / (mavec_vec - min_vec)) * (mavec_target - min_target) + min_target)
+  return(scaled_vec)
 }
