@@ -4,7 +4,7 @@
 \alias{scale_vec_to_range}
 \title{scale_vec_to_range}
 \usage{
-scale_vec_to_range(vec, mavec_target, min_target = 1)
+scale_vec_to_range(vec, max_target, min_target = 1)
 }
 \description{
 scale_vec_to_range
