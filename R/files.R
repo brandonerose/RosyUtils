@@ -86,3 +86,20 @@ sync_dir <- function(from,to,top_level=T){
 list.files.real <- function(path){
   grep('~$', list.files(path), fixed = TRUE, value = TRUE, invert = TRUE)
 }
+#' @title view_file
+#' @description view_file
+#' @param browser logical for launching from your PC default, not RStudio
+#' @return file opens
+#' @export
+view_file <- function(path,browser = F){
+  its_there <- file.exists(path)
+  if(! its_there) return(message("No file there: ",path))
+  if(its_there){
+    its_dir <- dir.exists(path)
+    if(browser)browseURL(url = path)
+    if(!broswer){
+      if(its_dir)rstudioapi::filesPaneNavigate(path = path)
+      if(!its_dir)rstudioapi::navigateToFile(file = path)
+    }
+  }
+}
