@@ -120,3 +120,10 @@ delete_file <- function(path, silent = F){
     if(deleted&&!silent)return(message("File was deleted: ",path))
   }
 }
+#' @title replace_word_file
+#' @export
+replace_word_file <- function (file, pattern, replace) {
+  suppressWarnings(tx <- readLines(file))
+  tx2 <- gsub(pattern = pattern, replacement = replace, x = tx)
+  writeLines(tx2, con = file)
+}
