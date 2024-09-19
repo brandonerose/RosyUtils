@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# RosyUtils <img src="man/figures/logo.png" align="right" height="200" />
+# RosyUtils <img src="inst/app/www/logo.png" align="right" height="150" />
 
 <!-- badges: start -->
 
@@ -9,23 +9,36 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-A staging package to demonstrate various custom R functions. Part R
-packages maintained by Brandon Rose’s “Rosyverse” and some functions
-used in other packages like RosyREDCap
+## Rosyverse
 
-## Installation
+Rosyverse is an evolving pre-CRAN set of packages maintained by Brandon
+Rose, MD, MPH. It is important to continue to run
+`Rosyverse::update_all()` while you are using this set of related
+packages. Please out if there are issues with installation,
+documentation, or packages.
 
-You can install the development version of RosyUtils like so:
+``` r
+# install remotes package if you don't have it
+# install.packages("remotes") 
+# install Rosyverse metapackage which has a function called `update_all()`
+remotes::install_github("brandonerose/Rosyverse")
+Rosyverse::update_all() # run update on all packages
+Rosyverse::load_all() #load all Rosyverse packages!
+```
+
+If you have any issues above download the most recent version of R at
+RStudtio and update all packages in RStudio. See
+[thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
+
+## RosyUtils Installation
+
+RosyUtils is designed to…
 
 ``` r
 # install remotes package if you don't have it
 # install.packages("remotes") 
 remotes::install_github("brandonerose/RosyUtils")
 ```
-
-If you have any issues above download the most recent version of R at
-RStudtio and update all packages in RStudio. See
-[thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
 
 ## Microsoft Outlook Clean Up Example
 
@@ -129,4 +142,4 @@ Follow us on Twitter
 Follow me on Twitter
 [twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
 
-[![TheCodingDocs.com](man/figures/TCD.png)](http://www.thecodingdocs.com)
+[![TheCodingDocs.com](inst/app/www/TCD.png)](http://www.thecodingdocs.com)
