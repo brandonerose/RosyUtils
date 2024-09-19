@@ -103,3 +103,20 @@ view_file <- function(path,browser = F){
     }
   }
 }
+#' @title delete_file
+#' @description delete_file
+#' @param path a file path
+#' @param silent logical for silencing messages
+#' @return file deleted and maybe a message
+#' @export
+delete_file <- function(path, silent = F){
+  its_there <- file.exists(path)
+  if(! its_there){
+    if(!silent)return(message("No file to delete: ",path))
+    return()
+  }
+  if(its_there){
+    deleted <- file.remove(path)
+    if(deleted&&!silent)return(message("File was deleted: ",path))
+  }
+}
