@@ -39,6 +39,11 @@ dw <- function(x){
 drop_nas <- function(x) {
   x[!sapply(x, is.na)]
 }
+#' @title drop_if
+#' @export
+drop_if <- function(x,drops) {
+  x[which(!x%in%drops)]
+}
 #' @title vec_which_duplicated
 #' @export
 vec_which_duplicated <- function(vec){

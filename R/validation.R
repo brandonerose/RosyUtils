@@ -131,4 +131,39 @@ is_consecutive_srt_1 <- function(vec) {
   }
   return(TRUE)
 }
-
+#' @title validate_env_name
+#' @export
+validate_env_name <- function(env_name) {
+  # Check if the name is empty
+  if(is.null(env_name)) stop("env_name is NULL")
+  if (nchar(env_name) == 0) {
+    stop("Short name cannot be empty.")
+  }
+  # Check if the name starts with a number
+  if (grepl("^\\d", env_name)) {
+    stop("Short name cannot start with a number.")
+  }
+  # Check if the name contains any invalid characters
+  if (grepl("[^A-Za-z0-9_]", env_name)) {
+    stop("Short name can only contain letters, numbers, and underscores.")
+  }
+  return(env_name)
+}
+#' @title validate_web_link
+#' @export
+validate_web_link <- function(link) {
+  if(is.null(link)) stop("link is NULL")
+  # Check if the link starts with "https://" or "http://"
+  if (!grepl("^https?://", link)) {
+    stop("Invalid web link. It must start with 'http://' or 'https://'.")
+  }
+  # Remove trailing slash if present
+  link <- gsub("/$", "", link)
+  # Check if the link ends with one of the specified web endings
+  if (!grepl("\\.(edu|com|org|net|gov|io|xyz|info|co|uk)$", link)) {
+    stop("Invalid web link. It must end with a valid web ending (.edu, .com, etc.).")
+  }
+  # Add a trailing slash
+  link <- paste0(link, "/")
+  return(link)
+}
