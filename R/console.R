@@ -1,6 +1,6 @@
-#' @title clickable_url_in_console
+#' @title bullet_in_console
 #' @export
-bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collape_urls = F){
+bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collape_urls = T){
   url_if <- ""
   if(length(url)>0){
     url %>% lapply(function(IN){validate_web_link(IN)})

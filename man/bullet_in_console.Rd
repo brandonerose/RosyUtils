@@ -2,10 +2,10 @@
 % Please edit documentation in R/console.R
 \name{bullet_in_console}
 \alias{bullet_in_console}
-\title{clickable_url_in_console}
+\title{bullet_in_console}
 \usage{
-bullet_in_console(text = "", url = NULL, bullet_type = "i", collape_urls = F)
+bullet_in_console(text = "", url = NULL, bullet_type = "i", collape_urls = T)
 }
 \description{
-clickable_url_in_console
+bullet_in_console
 }
