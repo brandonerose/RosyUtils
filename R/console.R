@@ -3,7 +3,7 @@
 bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collape_urls = T){
   url_if <- ""
   if(length(url)>0){
-    url %>% lapply(function(IN){validate_web_link(IN)})
+    # url %>% lapply(function(IN){validate_web_link(IN)}) # doesnt work for /subheaders/
     url_if <- " {.url {url}}"
     url_names <- names(url)
     if(is.list(url)){
