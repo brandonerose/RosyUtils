@@ -4,7 +4,13 @@
 \alias{bullet_in_console}
 \title{bullet_in_console}
 \usage{
-bullet_in_console(text = "", url = NULL, bullet_type = "i", collape_urls = T)
+bullet_in_console(
+  text = "",
+  url = NULL,
+  bullet_type = "i",
+  collapse = T,
+  file = NULL
+)
 }
 \description{
 bullet_in_console
