@@ -576,3 +576,10 @@ scale_vec_to_range <- function(vec, max_target, min_target = 1) {
   scaled_vec <- round(((vec - min_vec) / (max_vec - min_vec)) * (max_target - min_target) + min_target)
   return(scaled_vec)
 }
+#' @title vec_to_empty_df
+#' @export
+vec_to_empty_df <- function(vec) {
+  df <- data.frame(matrix(ncol = length(vec), nrow = 0))
+  colnames(df) <- vec
+  return(df)
+}
