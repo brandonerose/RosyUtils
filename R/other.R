@@ -117,3 +117,8 @@ unique_trimmed_strings <- function(strings,max_length) {
   }
   return(unique_strings)
 }
+#' @title as_comma_string
+#' @export
+as_comma_string <- function(vec){
+  paste0(vec,collapse = ", ")
+}
