@@ -122,3 +122,9 @@ unique_trimmed_strings <- function(strings,max_length) {
 as_comma_string <- function(vec){
   paste0(vec,collapse = ", ")
 }
+#' @title choice_vector_string
+#' @export
+choice_vector_string <- function(vec){
+  if(!is_something(vec))return(NA)
+  return(paste0(paste0(1:length(vec),", ",vec),collapse = " | "))
+}
