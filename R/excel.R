@@ -321,7 +321,9 @@ save_csv <- function(df,dir,file_name,overwrite =TRUE){
     message("Saved at -> ","'",path,"'")
   }
 }
-process_df_list <- function(list,drop_empty = T){
+#' @title process_df_list
+#' @export
+process_df_list <- function(list,drop_empty = T,silent = F){
   if(is_something(list)){
     if(!is_df_list(list))stop("list must be ...... a list :)")
     if(drop_empty){
@@ -336,7 +338,7 @@ process_df_list <- function(list,drop_empty = T){
       keeps <- which(is_a_df_with_rows)
       drops <-which(!is_a_df_with_rows)
       if(length(drops)>0){
-        message("Dropping non-data.frames and empties... ", paste0(names(drops),collapse = ", "))
+        if(!silent)bullet_in_console("Dropping non-data.frames and empties... ", paste0(names(drops),collapse = ", "))
       }
       list <- list[keeps]
     }
