@@ -215,8 +215,7 @@ list_to_excel <- function(
     pad_cols = 0,
     freeze_keys = T,
     key_cols_list = NULL,
-    drop_empty = T,
-    ext = "xlsx"
+    drop_empty = T
 ) {
   if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
@@ -248,8 +247,7 @@ list_to_excel <- function(
         ),
         dir = dir,
         file_name = file_name2,
-        overwrite = overwrite,
-        ext = ext
+        overwrite = overwrite
       )
     }
   }else{
@@ -271,8 +269,7 @@ list_to_excel <- function(
       ),
       dir = dir,
       file_name = file_name,
-      overwrite = overwrite,
-      ext = ext
+      overwrite = overwrite
     )
   }
 }
@@ -296,9 +293,9 @@ list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE, drop_empty = T
 }
 #' @title save_wb
 #' @export
-save_wb <- function(wb,dir,file_name,overwrite =TRUE,ext = "xlsx"){
+save_wb <- function(wb,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
-  path <- file.path(dir,paste0(file_name,".",ext))
+  path <- file.path(dir,paste0(file_name,".xlsx"))
   openxlsx::saveWorkbook(
     wb = wb,
     file = path,
