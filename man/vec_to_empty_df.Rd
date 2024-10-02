@@ -4,7 +4,7 @@
 \alias{vec_to_empty_df}
 \title{vec_to_empty_df}
 \usage{
-vec_to_empty_df(vec)
+vec_to_empty_df(vec, nrow = 0)
 }
 \description{
 vec_to_empty_df
