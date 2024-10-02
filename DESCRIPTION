@@ -24,6 +24,7 @@ Imports:
     rstudioapi,
     stringdist,
     stringr (>= 1.5.1),
+    tools,
     utils
 Encoding: UTF-8
 LazyData: true

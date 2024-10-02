@@ -10,6 +10,27 @@ excel_to_list <- function(path){
   names(out) <- clean_sheets
   return(out)
 }
+#' @title csv_to_list
+#' @export
+csv_to_list <- function(paths){
+  paths <- normalizePath(paths)
+  OUT <- list()
+  clean_names <- paths %>% basename() %>% tools::file_path_sans_ext() %>% clean_env_names()
+  for (i in 1:length(paths)){
+    OUT[[i]]<- read.csv(paths[i],stringsAsFactors = F,na.strings = c("","NA"))
+  }
+  names(OUT) <- clean_names
+  return(OUT)
+}
+#' @title csv_folder_to_list
+#' @export
+csv_folder_to_list <- function(folder){
+  folder <- normalizePath(folder)
+  if(!dir.exists(folder))stop("Folder does not exist: ",folder)
+  paths <- list.files.real(folder)
+  paths <- paths[which(paths %>% endsWith(".csv"))]
+  return(csv_to_list(paths = paths))
+}
 #' @title wb_to_list
 #' @export
 wb_to_list <- function(wb){

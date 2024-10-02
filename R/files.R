@@ -83,8 +83,8 @@ sync_dir <- function(from,to,top_level=T){
 }
 #' @title list.files.real
 #' @export
-list.files.real <- function(path){
-  grep('~$', list.files(path), fixed = TRUE, value = TRUE, invert = TRUE)
+list.files.real <- function(path,full.names = T, recursive = F){
+  grep('~$', normalizePath(list.files(path,full.names = full.names,recursive = recursive)), fixed = TRUE, value = TRUE, invert = TRUE)
 }
 #' @title view_file
 #' @description view_file
