@@ -579,7 +579,7 @@ scale_vec_to_range <- function(vec, max_target, min_target = 1) {
 #' @title vec_to_empty_df
 #' @export
 vec_to_empty_df <- function(vec,nrow = 0) {
-  df <- data.frame(matrix(data = NA, ncol = length(vec), nrow = 0))
+  df <- data.frame(matrix(data = NA, ncol = length(vec), nrow = nrow))
   colnames(df) <- vec
   return(df)
 }
