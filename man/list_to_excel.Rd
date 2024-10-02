@@ -21,7 +21,8 @@ list_to_excel(
   pad_cols = 0,
   freeze_keys = T,
   key_cols_list = NULL,
-  drop_empty = T
+  drop_empty = T,
+  ext = "xlsx"
 )
 }
 \description{

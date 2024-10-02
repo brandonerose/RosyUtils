@@ -4,7 +4,7 @@
 \alias{save_wb}
 \title{save_wb}
 \usage{
-save_wb(wb, dir, file_name, overwrite = TRUE)
+save_wb(wb, dir, file_name, overwrite = TRUE, ext = "xlsx")
 }
 \description{
 save_wb
