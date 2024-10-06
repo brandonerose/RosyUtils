@@ -128,3 +128,24 @@ choice_vector_string <- function(vec){
   if(!is_something(vec))return(NA)
   return(paste0(paste0(1:length(vec),", ",vec),collapse = " | "))
 }
+#' @title matches
+#' @export
+matches <- function(x,ref){
+  final_match <- list()
+  final_match[1:length(x)] <- NA
+  next_match <- match(x,ref)
+  next_match_index <- which(!is.na(next_match))
+  while(length(next_match_index)>0){
+    final_match[next_match_index] <- next_match_index %>% lapply(function(index){
+      if(all(is.na(final_match[[index]]))){
+        return(next_match[index])
+      }else{
+        return(c(final_match[[index]],next_match[index]))
+      }
+    })
+    ref[next_match[which(!is.na(next_match))]] <- NA
+    next_match <- match(x,ref)
+    next_match_index <- which(!is.na(next_match))
+  }
+  return(final_match)
+}
