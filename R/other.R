@@ -130,7 +130,7 @@ choice_vector_string <- function(vec){
 }
 #' @title matches
 #' @export
-matches <- function(x,ref){
+matches <- function(x,ref,count_only=F){
   final_match <- list()
   final_match[1:length(x)] <- NA
   next_match <- match(x,ref)
@@ -146,6 +146,12 @@ matches <- function(x,ref){
     ref[next_match[which(!is.na(next_match))]] <- NA
     next_match <- match(x,ref)
     next_match_index <- which(!is.na(next_match))
+  }
+  if(count_only){
+    final_match <- final_match %>% sapply(function(IN){
+      if(is.na(IN[1]))return(NA)
+      return(length(IN))
+    })
   }
   return(final_match)
 }
