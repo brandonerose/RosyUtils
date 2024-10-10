@@ -322,7 +322,7 @@ save_wb <- function(wb,dir,file_name,overwrite =TRUE){
     file = path,
     overwrite = overwrite
   )
-  message("Saved at -> ","'",path,"'")
+  bullet_in_console(paste0("Saved at -> ","'",path,"'"),bullet_type = "V")
 }
 save_csv <- function(df,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
@@ -339,7 +339,7 @@ save_csv <- function(df,dir,file_name,overwrite =TRUE){
       x = df,
       file = path
     )
-    message("Saved at -> ","'",path,"'")
+    bullet_in_console(paste0("Saved at -> ","'",path,"'"),bullet_type = "V")
   }
 }
 #' @title process_df_list
