@@ -84,11 +84,11 @@ delete_dates2 <- function(input_string){
   gsub(paste(date_patterns, collapse = "|"), "", input_string)
 }
 #' @export
-convert_dates <- function(input_string) {
+convert_dates <- function(input_string,allow_partial = F) {
   if(!is.na(input_string)){
     input_string <- input_string %>% trimws()
     if(input_string!=""){
-      dates <- extract_dates(input_string,allow_partial = F)
+      dates <- extract_dates(input_string,allow_partial = allow_partial)
       output_string <- input_string
       for (the_date in dates) {
         the_date_final <- gsub("-","/",the_date)
@@ -106,8 +106,6 @@ convert_dates <- function(input_string) {
             d_n <- 3
           }
         }
-        month <- split_pattern[[m_n]]
-        day <- split_pattern[[d_n]]
         year <- split_pattern[[y_n]]
         if(nchar(year)==2){
           year <-year %>% stringr::str_pad(2,"left",0)
@@ -118,7 +116,15 @@ convert_dates <- function(input_string) {
             year <- paste0("19",year)
           }
         }
-        the_date_final <- paste0(year,"-",month,"-",day)
+        the_date_final <- paste0(year)
+        if(length(split_pattern)>1){
+          month <- split_pattern[[m_n]]
+          the_date_final <- the_date_final %>% paste0("-",month)
+        }
+        if(length(split_pattern)>2){
+          day <- split_pattern[[d_n]]
+          the_date_final <- the_date_final %>% paste0("-",day)
+        }
         output_string <- gsub(the_date, the_date_final, output_string)
       }
       return(output_string)
