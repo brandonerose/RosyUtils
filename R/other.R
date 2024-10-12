@@ -92,6 +92,27 @@ wrap_string_to_lines <- function(text, max_length,spacer="") {
   }
   return(result_vector)
 }
+#' @title wrap_text
+#' @export
+wrap_text <- function(text, max_length = 40, spacer = "\n") {
+  words <- unlist(strsplit(text, " "))
+  current_line <- ""
+  result <- ""
+  for (word in words) {
+    if (nchar(current_line) + nchar(word) + 1 > max_length) {
+      result <- paste0(result, current_line, spacer)
+      current_line <- word
+    } else {
+      if (nchar(current_line) == 0) {
+        current_line <- word
+      } else {
+        current_line <- paste0(current_line, " ", word)
+      }
+    }
+  }
+  result <- paste0(result, current_line)
+  return(result)
+}
 #' @title unique_trimmed_strings
 #' @export
 unique_trimmed_strings <- function(strings,max_length) {
