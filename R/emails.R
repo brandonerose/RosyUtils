@@ -56,23 +56,23 @@ count_emails <- function(emails_sum,ADDRESS_TYPE){
 }
 #' @title choose_emails_to_delete_in_bulk
 #' @export
-choose_emails_to_delete_in_bulk <- function(inbox,full_address = T,use_sender = T,n=2000){
+choose_emails_to_delete_in_bulk <- function(outlook,full_address = T,use_sender = T,n=2000){
   ADDRESS_TYPE <- use_sender %>% ifelse("sender","from")
   ADDRESS_TYPE <- full_address %>% ifelse(ADDRESS_TYPE,paste0(ADDRESS_TYPE,"_root"))
   message("Getting emails... This can take several seconds!")
-  emails <- inbox$list_emails(n=n,pagesize = 50)
+  emails <- outlook$list_emails(n=n,pagesize = 50)
   emails_sum <- summarize_emails(emails)
   emails_counted <- count_emails(emails_sum = emails_sum,ADDRESS_TYPE = ADDRESS_TYPE)
   for (row in 1:nrow(emails_counted)){ # row <- 1:nrow(emails_counted) %>% sample(1)
     address <- emails_counted$address[row]
     name <- emails_counted$name[row]
     message("Searching for emails from '",address,"' (",name,") ...")
-    choose_emails_to_delete_from(inbox = inbox, address = address)
+    choose_emails_to_delete_from(outlook = outlook, address = address)
   }
 }
 #' @title choose_emails_to_delete_from
 #' @export
-choose_emails_to_delete_from <- function(inbox,address,n=2000, individual_choice = F){
+choose_emails_to_delete_from <- function(outlook,address,n=2000, individual_choice = F){
   message("Getting emails... This can take several seconds!")
   emails_from <- outlook$list_emails(search = paste0("from:",address),n=n)
   if(length(emails_from)==0)return(message("No emails from '",address,"'"))

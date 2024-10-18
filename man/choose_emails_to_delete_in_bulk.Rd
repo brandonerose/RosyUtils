@@ -5,7 +5,7 @@
 \title{choose_emails_to_delete_in_bulk}
 \usage{
 choose_emails_to_delete_in_bulk(
-  inbox,
+  outlook,
   full_address = T,
   use_sender = T,
   n = 2000

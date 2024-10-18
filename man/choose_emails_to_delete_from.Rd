@@ -4,7 +4,7 @@
 \alias{choose_emails_to_delete_from}
 \title{choose_emails_to_delete_from}
 \usage{
-choose_emails_to_delete_from(inbox, address, n = 2000, individual_choice = F)
+choose_emails_to_delete_from(outlook, address, n = 2000, individual_choice = F)
 }
 \description{
 choose_emails_to_delete_from
