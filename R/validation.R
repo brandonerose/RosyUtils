@@ -2,6 +2,7 @@
 #' @export
 is_something <- function(thing,row=0){
   out <- FALSE
+  if(is.function(thing))return(T)
   if(!is.null(thing)){
     if(is.data.frame(thing)){
       if(nrow(thing)>row){
