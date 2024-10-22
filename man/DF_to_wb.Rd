@@ -10,7 +10,7 @@ DF_to_wb(
   wb = openxlsx::createWorkbook(),
   link_col_list = list(),
   str_trunc_length = 32000,
-  header_df,
+  header_df = NULL,
   tableStyle = "none",
   header_style = default_header_style,
   body_style = default_body_style,

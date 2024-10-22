@@ -58,7 +58,7 @@ DF_to_wb <- function(
     wb = openxlsx::createWorkbook(),
     link_col_list = list(),
     str_trunc_length = 32000,
-    header_df,
+    header_df = NULL,
     tableStyle = "none",
     header_style = default_header_style,
     body_style = default_body_style,
@@ -93,7 +93,6 @@ DF_to_wb <- function(
     startRow_header <-pad_rows + 1
     startRow_table <- startRow_header
     startCol <-pad_cols + 1
-    if(missing(header_df))  header_df<- data.frame()
     if(is_something(header_df)){
       openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = startRow_header,startCol = startCol,colNames = F)
       startRow_table <- startRow_header + nrow(header_df)
@@ -198,13 +197,17 @@ list_to_wb <- function(
     list_names_rename <- unique_trimmed_strings(list_names_rename, max_length = 31)
   }
   for(i in seq_along(list_names)){
+    header_df <- header_df_list[[list_names[i]]]
+    key_cols <- key_cols_list[[list_names[i]]]
+    if(!is_something(header_df))header_df <- NULL
+    if(!is_something(key_cols))key_cols <- NULL
     wb <- DF_to_wb(
       DF = list[[list_names[i]]],
       DF_name = list_names_rename[i],
       wb = wb,
       link_col_list = list_link_names[[list_names[i]]],
       str_trunc_length = str_trunc_length,
-      header_df = header_df_list[[list_names[i]]],
+      header_df = header_df,
       tableStyle = tableStyle,
       header_style = header_style,
       body_style = body_style,
@@ -212,7 +215,7 @@ list_to_wb <- function(
       pad_rows = pad_rows,
       pad_cols = pad_cols,
       freeze_keys = freeze_keys,
-      key_cols = key_cols_list[[list_names[i]]]
+      key_cols = key_cols
     )
   }
   return(wb)
