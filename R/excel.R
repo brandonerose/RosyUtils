@@ -164,7 +164,7 @@ list_to_wb <- function(
     list,
     link_col_list = list(),
     str_trunc_length = 32000,
-    header_df_list = list(),
+    header_df_list = NULL,
     tableStyle = "none",
     header_style = default_header_style,
     body_style = default_body_style,
@@ -175,7 +175,6 @@ list_to_wb <- function(
     key_cols_list = NULL,
     drop_empty = T
 ){
-  if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list,drop_empty = drop_empty)
   list_names <- names(list)
@@ -199,8 +198,6 @@ list_to_wb <- function(
   for(i in seq_along(list_names)){
     header_df <- header_df_list[[list_names[i]]]
     key_cols <- key_cols_list[[list_names[i]]]
-    if(!is_something(header_df))header_df <- NULL
-    if(!is_something(key_cols))key_cols <- NULL
     wb <- DF_to_wb(
       DF = list[[list_names[i]]],
       DF_name = list_names_rename[i],
@@ -230,7 +227,7 @@ list_to_excel <- function(
     overwrite = TRUE,
     link_col_list = list(),
     str_trunc_length = 32000,
-    header_df_list,
+    header_df_list = NULL,
     tableStyle = "none",
     header_style = default_header_style,
     body_style = default_body_style,
@@ -241,7 +238,6 @@ list_to_excel <- function(
     key_cols_list = NULL,
     drop_empty = T
 ) {
-  if(missing(header_df_list))  header_df_list<- list()
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list,drop_empty = drop_empty)
   list_names <- names(list)
