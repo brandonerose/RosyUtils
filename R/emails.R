@@ -67,10 +67,9 @@ choose_emails_to_delete_in_bulk <- function(outlook,full_address = T,use_sender 
     address <- emails_counted$address[row]
     name <- emails_counted$name[row]
     message("Searching for emails from '",address,"' (",name,") ...")
-    choice_from <- utils::menu(choices = c("Yes","No","Choose Individually"),title = paste0("Would like to delete email(s) from '",address,"'?"))
+    emails_sum$subject %>% print()
+    choice_from <- utils::menu(choices = c("Yes","No","Choose Individually"),title = paste0("Would like to delete email(s) from '",address,"'? (n = ",nrow(emails_sum),")"))
     if(choice_from %in% c(1,3)){
-      emails_sum$subject %>% print()
-      message("n = ",nrow(emails_sum),")")
       choose_emails_to_delete_from(outlook = outlook, address = address,ask = F, individual_choice = choice_from == 3)
     }
   }
