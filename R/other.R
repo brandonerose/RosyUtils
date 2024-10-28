@@ -176,3 +176,40 @@ matches <- function(x,ref,count_only=F){
   }
   return(final_match)
 }
+#' @title numeric_to_five_cats
+#' @export
+numeric_to_five_cats <- function(vec,more_descriptive_label = F){
+  med <- median(vec)
+  sd_val <- sd(vec)
+  # Define the actual value ranges rounded to 1 decimal place
+  low_threshold <- round(med - 1.5 * sd_val, 1)
+  mid_low_threshold <- round(med - 0.5 * sd_val, 1)
+  mid_high_threshold <- round(med + 0.5 * sd_val, 1)
+  high_threshold <- round(med + 1.5 * sd_val, 1)
+  # Define the labels with both SD and actual values
+  labels <- c(
+    "Very Low",
+    "Low",
+    "Moderate",
+    "High",
+    "Very High"
+  )
+  if(more_descriptive_label){
+    labels <- c(
+      paste0("Very Low (≤", low_threshold, ", median - 1.5 SD)"),
+      paste0("Low (", low_threshold, "to", mid_low_threshold, ", median - 1.5 to -0.5 SD)"),
+      paste0("Middle (", mid_low_threshold, "to", mid_high_threshold, ", median ± 0.5 SD)"),
+      paste0("High (", mid_high_threshold, "to", high_threshold, ", median + 0.5 to 1.5 SD)"),
+      paste0("Very High (>", high_threshold, ", median + 1.5 SD)")
+    )
+  }
+  # Create a factor column with 5 categories and descriptive labels
+  data_category <- cut(
+    vec,
+    breaks = c(-Inf, low_threshold, mid_low_threshold, mid_high_threshold, high_threshold, Inf),
+    labels = labels,
+    right = TRUE
+  )
+  data_category <- factor(data_category,levels = levels(data_category),ordered = T)
+  return(data_category)
+}

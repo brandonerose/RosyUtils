@@ -56,19 +56,20 @@ count_emails <- function(emails_sum,ADDRESS_TYPE){
 }
 #' @title choose_emails_to_delete_in_bulk
 #' @export
-choose_emails_to_delete_in_bulk <- function(outlook,full_address = T,use_sender = T,n=2000){
+choose_emails_to_delete_in_bulk <- function(outlook = Microsoft365R::get_business_outlook(),full_address = T,use_sender = T,n=2000){
   ADDRESS_TYPE <- use_sender %>% ifelse("sender","from")
   ADDRESS_TYPE <- full_address %>% ifelse(ADDRESS_TYPE,paste0(ADDRESS_TYPE,"_root"))
   message("Getting emails... This can take several seconds!")
-  emails <- outlook$list_emails(n=n,pagesize = 50)
+  emails <- outlook$list_emails(n=n,pagesize = 100)
   emails_sum <- summarize_emails(emails)
   emails_counted <- count_emails(emails_sum = emails_sum,ADDRESS_TYPE = ADDRESS_TYPE)
   for (row in 1:nrow(emails_counted)){ # row <- 1:nrow(emails_counted) %>% sample(1)
     address <- emails_counted$address[row]
     name <- emails_counted$name[row]
     message("Searching for emails from '",address,"' (",name,") ...")
-    emails_sum$subject %>% print()
-    choice_from <- utils::menu(choices = c("Yes","No","Choose Individually"),title = paste0("Would like to delete email(s) from '",address,"'? (n = ",nrow(emails_sum),")"))
+    vec <- emails_sum$subject[which(tolower(emails_sum[[ADDRESS_TYPE]]) == tolower(address))]
+    vec %>% print()
+    choice_from <- utils::menu(choices = c("Yes","No","Choose Individually"),title = paste0("Would like to delete email(s) from '",address,"'? (n = ",length(vec),")"))
     if(choice_from %in% c(1,3)){
       choose_emails_to_delete_from(outlook = outlook, address = address,ask = F, individual_choice = choice_from == 3)
     }

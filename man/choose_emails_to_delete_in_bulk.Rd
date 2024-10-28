@@ -5,7 +5,7 @@
 \title{choose_emails_to_delete_in_bulk}
 \usage{
 choose_emails_to_delete_in_bulk(
-  outlook,
+  outlook = Microsoft365R::get_business_outlook(),
   full_address = T,
   use_sender = T,
   n = 2000

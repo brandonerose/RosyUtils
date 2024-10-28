@@ -16,6 +16,7 @@ Imports:
     grDevices,
     lubridate (>= 1.9.3),
     magrittr (>= 2.0.3),
+    Microsoft365R,
     openxlsx (>= 4.2.5.2),
     pdftools,
     purrr,
