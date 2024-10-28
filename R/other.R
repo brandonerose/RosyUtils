@@ -176,40 +176,98 @@ matches <- function(x,ref,count_only=F){
   }
   return(final_match)
 }
-#' @title numeric_to_five_cats
+#' @title numeric_to_cats
 #' @export
-numeric_to_five_cats <- function(vec,more_descriptive_label = F){
-  med <- median(vec)
-  sd_val <- sd(vec)
-  # Define the actual value ranges rounded to 1 decimal place
-  low_threshold <- round(med - 1.5 * sd_val, 1)
-  mid_low_threshold <- round(med - 0.5 * sd_val, 1)
-  mid_high_threshold <- round(med + 0.5 * sd_val, 1)
-  high_threshold <- round(med + 1.5 * sd_val, 1)
-  # Define the labels with both SD and actual values
-  labels <- c(
-    "Very Low",
-    "Low",
-    "Moderate",
-    "High",
-    "Very High"
-  )
-  if(more_descriptive_label){
+numeric_to_cats <- function(vec, method = "quantile", quantiles = 5, more_descriptive_label = FALSE) {
+  if (method == "sd") {
+    med <- median(vec)
+    sd_val <- sd(vec)
+    # Define the actual value ranges rounded to 1 decimal place
+    low_threshold <- round(med - 2 * sd_val, 1)
+    mid_low_threshold <- round(med - 1 * sd_val, 1)
+    mid_high_threshold <- round(med + 1 * sd_val, 1)
+    high_threshold <- round(med + 2 * sd_val, 1)
+    # Define the labels with both SD and actual values
     labels <- c(
-      paste0("Very Low (≤", low_threshold, ", median - 1.5 SD)"),
-      paste0("Low (", low_threshold, "to", mid_low_threshold, ", median - 1.5 to -0.5 SD)"),
-      paste0("Middle (", mid_low_threshold, "to", mid_high_threshold, ", median ± 0.5 SD)"),
-      paste0("High (", mid_high_threshold, "to", high_threshold, ", median + 0.5 to 1.5 SD)"),
-      paste0("Very High (>", high_threshold, ", median + 1.5 SD)")
+      "Very Low",
+      "Low",
+      "Moderate",
+      "High",
+      "Very High"
     )
+    if(more_descriptive_label){
+      labels <- c(
+        paste0("Very Low (≤", low_threshold, ", median - 2 SD)"),
+        paste0("Low (", low_threshold, "to", mid_low_threshold, ", median - 2 to - 1 SD)"),
+        paste0("Middle (", mid_low_threshold, "to", mid_high_threshold, ", median ± 1 SD)"),
+        paste0("High (", mid_high_threshold, "to", high_threshold, ", median + 1 to 2 SD)"),
+        paste0("Very High (>", high_threshold, ", median + 2 SD)")
+      )
+      # labels <- c(
+      #   paste0("Very Low (≤", low_threshold, ", median - 1.5 SD)"),
+      #   paste0("Low (", low_threshold, "to", mid_low_threshold, ", median - 1.5 to -0.5 SD)"),
+      #   paste0("Middle (", mid_low_threshold, "to", mid_high_threshold, ", median ± 0.5 SD)"),
+      #   paste0("High (", mid_high_threshold, "to", high_threshold, ", median + 0.5 to 1.5 SD)"),
+      #   paste0("Very High (>", high_threshold, ", median + 1.5 SD)")
+      # )
+    }
+    # Create a factor column with 5 categories and descriptive labels
+    data_category <- cut(
+      vec,
+      breaks = c(-Inf, low_threshold, mid_low_threshold, mid_high_threshold, high_threshold, Inf),
+      labels = labels,
+      right = TRUE
+    )
+  } else if (method == "sd_mod") {
+    # Standard deviation-based binning
+    med <- median(vec)
+    sd_val <- sd(vec)
+    # Define the actual value ranges rounded to 1 decimal place
+    low_threshold <- round(med - 1.5 * sd_val, 1)
+    mid_low_threshold <- round(med - 0.5 * sd_val, 1)
+    mid_high_threshold <- round(med + 0.5 * sd_val, 1)
+    high_threshold <- round(med + 1.5 * sd_val, 1)
+    # Define the labels with both SD and actual values
+    labels <- c("Very Low", "Low", "Moderate", "High", "Very High")
+    if (more_descriptive_label) {
+      labels <- c(
+        paste0("Very Low (≤", low_threshold, ", median - 1.5 SD)"),
+        paste0("Low (", low_threshold, " to ", mid_low_threshold, ", median - 1.5 to -0.5 SD)"),
+        paste0("Moderate (", mid_low_threshold, " to ", mid_high_threshold, ", median ± 0.5 SD)"),
+        paste0("High (", mid_high_threshold, " to ", high_threshold, ", median + 0.5 to 1.5 SD)"),
+        paste0("Very High (>", high_threshold, ", median + 1.5 SD)")
+      )
+    }
+    # Create SD-based binning
+    data_category <- cut(
+      vec,
+      breaks = c(-Inf, low_threshold, mid_low_threshold, mid_high_threshold, high_threshold, Inf),
+      labels = labels,
+      right = TRUE
+    )
+  } else if (method == "quantile") {
+    # Quantile-based binning
+    quantile_cutoffs <- quantile(vec, probs = seq(0, 1, length.out = quantiles + 1))
+
+    # Generate labels for the specified number of quantiles
+    labels <- paste("Q", 1:quantiles, sep = "")
+
+    if (more_descriptive_label) {
+      labels <- paste0("Quantile ", 1:quantiles, " (",
+                       round(quantile_cutoffs[-length(quantile_cutoffs)], 1), " to ",
+                       round(quantile_cutoffs[-1], 1), ")")
+    }
+
+    # Create quantile-based binning
+    data_category <- cut(
+      vec,
+      breaks = quantile_cutoffs,
+      labels = labels,
+      include.lowest = TRUE
+    )
+  } else {
+    stop("Invalid method. Choose either 'sd' or 'quantile'.")
   }
-  # Create a factor column with 5 categories and descriptive labels
-  data_category <- cut(
-    vec,
-    breaks = c(-Inf, low_threshold, mid_low_threshold, mid_high_threshold, high_threshold, Inf),
-    labels = labels,
-    right = TRUE
-  )
-  data_category <- factor(data_category,levels = levels(data_category),ordered = T)
+  data_category <- factor(data_category, levels = levels(data_category), ordered = TRUE)
   return(data_category)
 }
