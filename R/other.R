@@ -248,16 +248,13 @@ numeric_to_cats <- function(vec, method = "quantile", quantiles = 5, more_descri
   } else if (method == "quantile") {
     # Quantile-based binning
     quantile_cutoffs <- quantile(vec, probs = seq(0, 1, length.out = quantiles + 1))
-
     # Generate labels for the specified number of quantiles
     labels <- paste("Q", 1:quantiles, sep = "")
-
     if (more_descriptive_label) {
       labels <- paste0("Quantile ", 1:quantiles, " (",
                        round(quantile_cutoffs[-length(quantile_cutoffs)], 1), " to ",
                        round(quantile_cutoffs[-1], 1), ")")
     }
-
     # Create quantile-based binning
     data_category <- cut(
       vec,
