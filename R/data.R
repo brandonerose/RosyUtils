@@ -583,3 +583,19 @@ vec_to_empty_df <- function(vec,nrow = 0) {
   colnames(df) <- vec
   return(df)
 }
+#' @title drop_missing_levels_df
+#' @export
+drop_missing_levels_df <- function(df, drop_levels = NULL) {
+  if (!is.data.frame(df)) {
+    stop("Input must be a data frame")
+  }
+  df[] <- lapply(df, function(column) {
+    if (is.factor(column)) {
+      retained_levels <- levels(column)[!levels(column) %in% drop_levels]
+      retained_levels <- retained_levels[retained_levels %in% unique(column)]
+      column <- factor(column, levels = retained_levels, ordered = is.ordered(column))
+    }
+    return(column)
+  })
+  return(df)
+}
