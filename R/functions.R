@@ -37,16 +37,13 @@ clean_function_list <- function(func_list) {
 size_func <- function(x) {
   # Start with the function's own size
   total_size <- object.size(x)
-
   # Check if x is a function with a non-empty environment
   if (is.function(x) && !identical(environment(x), emptyenv())) {
     # Add the size of the environment
     env_objects <- ls(envir = environment(x), all.names = TRUE)
     env_size <- sum(sapply(env_objects, function(obj) object.size(get(obj, envir = environment(x)))))
-
     # Add environment size to total
     total_size <- total_size + env_size
   }
-
   format(total_size, units = "auto")
 }
