@@ -264,6 +264,21 @@ clean_df_blanks <- function(df,other_blanks=NULL) {
   }) %>% as.data.frame()
   return(df)
 }
+#' @title index_na
+#' @export
+index_na <- function(df, MARGIN = "col") {
+  okcols <- c("cols","col")
+  okrows <-  c("row","rows")
+  allowed <- c(okcols,okrows,1,2)
+  if(length(MARGIN)!=1)stop("MARGIN must be length 1")
+  if(!tolower(MARGIN) %in% allowed)stop("MARGIN must be one of the following ... ",as_comma_string(allowed))
+  if(tolower(MARGIN) %in% okcols) MARGIN <- 2
+  if(tolower(MARGIN) %in% okrows) MARGIN <- 1
+  x <- df %>% apply(MARGIN = MARGIN,function(IN){
+    all(is.na(IN))
+  }) %>% which() %>% unname()
+  return(x)
+}
 #' @title clean_env_names
 #' @export
 clean_env_names <- function(env_names,silent = F,lowercase=T){
