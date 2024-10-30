@@ -4,7 +4,7 @@
 \alias{clean_df_blanks}
 \title{clean_df_blanks}
 \usage{
-clean_df_blanks(df, other_blanks = NULL)
+clean_df_blanks(DF, other_blanks = NULL)
 }
 \description{
 clean_df_blanks

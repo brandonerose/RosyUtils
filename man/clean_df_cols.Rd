@@ -4,7 +4,7 @@
 \alias{clean_df_cols}
 \title{clean_df_cols}
 \usage{
-clean_df_cols(df)
+clean_df_cols(DF)
 }
 \description{
 clean_df_cols

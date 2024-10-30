@@ -12,7 +12,7 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
   new <- all_character_cols(new)
   old <- all_character_cols(old)
   if (!all(colnames(new) %in% colnames(old))) {
-    stop("All new df columns must be included in old df")
+    stop("All new DF columns must be included in old DF")
   }
   if (!all(ref_cols %in% colnames(new))| !all(ref_cols %in% colnames(old))) {
     stop("ref_cols must be included in both dfs")
@@ -25,14 +25,14 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
     old$key <- old[ , ref_cols]
   }
   if (anyDuplicated(old$key) > 0) {
-    stop("Keys must lead to unique rows! (old df)")
+    stop("Keys must lead to unique rows! (old DF)")
   }
   if (anyDuplicated(new$key) > 0) {
-    stop("Keys must lead to unique rows! (new df)")
+    stop("Keys must lead to unique rows! (new DF)")
   }
   new_keys <- integer(0)
   if(any(!new$key %in% old$key)){
-    # warning("You have at least one new key compared to old df therefore all columns will be included by default",immediate. = T)
+    # warning("You have at least one new key compared to old DF therefore all columns will be included by default",immediate. = T)
     new_keys <- which(!new$key %in% old$key)
   }
   indices <- data.frame(
@@ -88,7 +88,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, 
   new <- all_character_cols(new)
   old <- all_character_cols(old)
   if (!all(colnames(new) %in% colnames(old))) {
-    stop("All new df columns must be included in old df")
+    stop("All new DF columns must be included in old DF")
   }
   if (!all(ref_cols %in% colnames(new))| !all(ref_cols %in% colnames(old))) {
     stop("ref_cols must be included in both dfs")
@@ -101,10 +101,10 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, 
     old_keys <- old[ , ref_cols]
   }
   if (anyDuplicated(old_keys) > 0) {
-    stop("Keys must lead to unique rows! (old df)")
+    stop("Keys must lead to unique rows! (old DF)")
   }
   if (anyDuplicated(new_keys) > 0) {
-    stop("Keys must lead to unique rows! (new df)")
+    stop("Keys must lead to unique rows! (new DF)")
   }
   appended_old_col_suffix <- "__old"
   if(any(endsWith(unique(colnames(old),colnames(new)),appended_old_col_suffix)))stop("colnames cant end with '",appended_old_col_suffix,"'")
@@ -194,8 +194,8 @@ find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T, n_ro
 }
 #' @title all_character_cols
 #' @export
-all_character_cols <- function(df){
-  as.data.frame(lapply(df,as.character))
+all_character_cols <- function(DF){
+  as.data.frame(lapply(DF,as.character))
 }
 #' @title all_character_cols_list
 #' @export
@@ -243,8 +243,8 @@ collapse_DF <- function(DF,ref_id,list_mod){
 }
 #' @title clean_df_cols
 #' @export
-clean_df_cols <- function(df) {
-  str <- tolower(colnames(df))
+clean_df_cols <- function(DF) {
+  str <- tolower(colnames(DF))
   str <- gsub("[^a-z0-9\\s]+", " _", str)
   str <- gsub("\\s+", "_", str)
   str <- gsub("^_|_$", "", str)
@@ -252,21 +252,21 @@ clean_df_cols <- function(df) {
   str <- gsub("__", "_", str)
   str <- gsub("__", "_", str)
   if(anyDuplicated(str)>0)stop("Duplicate col names!")
-  colnames(df) <- str
-  return(df)
+  colnames(DF) <- str
+  return(DF)
 }
 #' @title clean_df_blanks
 #' @export
-clean_df_blanks <- function(df,other_blanks=NULL) {
-  df <- df %>% lapply(function(IN){
+clean_df_blanks <- function(DF,other_blanks=NULL) {
+  DF <- DF %>% lapply(function(IN){
     IN[which(IN%in%c("NA","",other_blanks))] <- NA
     return(IN)
   }) %>% as.data.frame()
-  return(df)
+  return(DF)
 }
 #' @title index_na
 #' @export
-index_na <- function(df, MARGIN = "col",invert = F) {
+index_na <- function(DF, MARGIN = "col",invert = F) {
   okcols <- c("cols","col")
   okrows <-  c("row","rows")
   allowed <- c(okcols,okrows,1,2)
@@ -274,7 +274,7 @@ index_na <- function(df, MARGIN = "col",invert = F) {
   if(!tolower(MARGIN) %in% allowed)stop("MARGIN must be one of the following ... ",as_comma_string(allowed))
   if(tolower(MARGIN) %in% okcols) MARGIN <- 2
   if(tolower(MARGIN) %in% okrows) MARGIN <- 1
-  x <- df %>% apply(MARGIN = MARGIN,function(IN){
+  x <- DF %>% apply(MARGIN = MARGIN,function(IN){
     all(is.na(IN))
   })
   if(invert)x <- !x
@@ -373,11 +373,11 @@ find_in_df_list <- function(df_list,text,exact = F){
 #' @export
 count_vec_df <- function(vec){
   vec <- vec %>% table() %>% sort(decreasing = T)
-  df <- data.frame(
+  DF <- data.frame(
     count = as.integer(vec),
     name = names(vec)
   )
-  return(df)
+  return(DF)
 }
 #' @title vec_to_cvec
 #' @export
@@ -386,9 +386,9 @@ vec_to_cvec <- function(vec){
 }
 #' @title reassign_variable_in_bulk
 #' @export
-reassign_variable_in_bulk <- function(df,old_colname,new_colname,optional_choices){
-  if( ! new_colname %in% colnames(df))df[[new_colname]] <- NA
-  df_vec_counted <- count_vec_df(df[[old_colname]])
+reassign_variable_in_bulk <- function(DF,old_colname,new_colname,optional_choices){
+  if( ! new_colname %in% colnames(DF))DF[[new_colname]] <- NA
+  df_vec_counted <- count_vec_df(DF[[old_colname]])
   choices <- "Do Nothing (Skip)"
   has_choices <- F
   if(!missing(optional_choices)) {
@@ -414,14 +414,14 @@ reassign_variable_in_bulk <- function(df,old_colname,new_colname,optional_choice
     }
     choice <- utils::menu(choices_mod,title=paste0("What would you like to do for...?\n\n --> ",the_name," <--"))
     clean_choice <- choices[choice]
-    if(clean_choice=="Stop and Return Current DF") return(df)
+    if(clean_choice=="Stop and Return Current DF") return(DF)
     if(clean_choice != "Do Nothing (Skip)"){
       if(clean_choice == "Best Guess --> "){
         clean_choice <- best_guess
       }
       if(clean_choice=="Manual Entry")clean_choice <- readline("Enter reassignment here --> ")
-      rows <- which(df[[old_colname]]==the_name)
-      df[[new_colname]][rows] <- clean_choice
+      rows <- which(DF[[old_colname]]==the_name)
+      DF[[new_colname]][rows] <- clean_choice
     }
   }
 }
@@ -568,8 +568,8 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
 }
 #' @title count_instances
 #' @export
-count_instances <- function(df,ref_id,inst_name){
-  vec_ori<- df[[ref_id]]
+count_instances <- function(DF,ref_id,inst_name){
+  vec_ori<- DF[[ref_id]]
   x<- vec_ori %>% rle()
   x<- data.frame(
     lengths = x$lengths,
@@ -578,11 +578,11 @@ count_instances <- function(df,ref_id,inst_name){
   vec <- x$lengths %>% sapply(function(IN){1:IN}) %>% unlist()
   vec2 <- 1:nrow(x) %>% sapply(function(ROW){rep(x$values[ROW],x$lengths[ROW])}) %>% unlist()
   if(any(vec_ori!=vec2))stop("mismatch!")
-  df[[inst_name]] <- vec
-  key_check <- paste0(df[[ref_id]],"__",df[[inst_name]])
+  DF[[inst_name]] <- vec
+  key_check <- paste0(DF[[ref_id]],"__",DF[[inst_name]])
   dup_keys <- key_check[which(duplicated(key_check))]
   if(length(dup_keys)>0)stop("You can't have ids that are not sorted by the ref_id ('",ref_id,"') ",dup_keys %>% paste0(collapse = ", "))
-  return(df)
+  return(DF)
 }
 #' @title scale_vec_to_range
 #' @export
@@ -596,17 +596,17 @@ scale_vec_to_range <- function(vec, max_target, min_target = 1) {
 #' @title vec_to_empty_df
 #' @export
 vec_to_empty_df <- function(vec,nrow = 0) {
-  df <- data.frame(matrix(data = NA, ncol = length(vec), nrow = nrow))
-  colnames(df) <- vec
-  return(df)
+  DF <- data.frame(matrix(data = NA, ncol = length(vec), nrow = nrow))
+  colnames(DF) <- vec
+  return(DF)
 }
 #' @title drop_missing_levels_df
 #' @export
-drop_missing_levels_df <- function(df, drop_levels = NULL) {
-  if (!is.data.frame(df)) {
+drop_missing_levels_df <- function(DF, drop_levels = NULL) {
+  if (!is.data.frame(DF)) {
     stop("Input must be a data frame")
   }
-  df[] <- lapply(df, function(column) {
+  DF[] <- lapply(DF, function(column) {
     if (is.factor(column)) {
       retained_levels <- levels(column)[!levels(column) %in% drop_levels]
       retained_levels <- retained_levels[retained_levels %in% unique(column)]
@@ -614,5 +614,5 @@ drop_missing_levels_df <- function(df, drop_levels = NULL) {
     }
     return(column)
   })
-  return(df)
+  return(DF)
 }

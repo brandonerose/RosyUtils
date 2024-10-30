@@ -304,7 +304,7 @@ list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE, drop_empty = T
       file_name2 <- paste0(file_name,"_",file_name2)
     }
     save_csv(
-      df = sub_list[[1]],
+      DF = sub_list[[1]],
       dir = dir,
       file_name = file_name2,
       overwrite = overwrite
@@ -323,7 +323,7 @@ save_wb <- function(wb,dir,file_name,overwrite =TRUE){
   )
   bullet_in_console(paste0("Saved at -> ","'",path,"'"),bullet_type = "V")
 }
-save_csv <- function(df,dir,file_name,overwrite =TRUE){
+save_csv <- function(DF,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
   path <- file.path(dir,paste0(file_name,".csv"))
   write_it <- T
@@ -335,7 +335,7 @@ save_csv <- function(df,dir,file_name,overwrite =TRUE){
   }
   if(write_it){
     write.csv(
-      x = df,
+      x = DF,
       file = path
     )
     bullet_in_console(paste0("Saved at -> ","'",path,"'"),bullet_type = "V")

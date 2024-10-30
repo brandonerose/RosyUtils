@@ -4,7 +4,7 @@
 \alias{drop_missing_levels_df}
 \title{drop_missing_levels_df}
 \usage{
-drop_missing_levels_df(df, drop_levels = NULL)
+drop_missing_levels_df(DF, drop_levels = NULL)
 }
 \description{
 drop_missing_levels_df

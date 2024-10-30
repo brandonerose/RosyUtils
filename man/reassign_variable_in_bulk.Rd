@@ -4,7 +4,7 @@
 \alias{reassign_variable_in_bulk}
 \title{reassign_variable_in_bulk}
 \usage{
-reassign_variable_in_bulk(df, old_colname, new_colname, optional_choices)
+reassign_variable_in_bulk(DF, old_colname, new_colname, optional_choices)
 }
 \description{
 reassign_variable_in_bulk

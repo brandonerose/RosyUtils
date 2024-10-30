@@ -4,7 +4,7 @@
 \alias{all_character_cols}
 \title{all_character_cols}
 \usage{
-all_character_cols(df)
+all_character_cols(DF)
 }
 \description{
 all_character_cols

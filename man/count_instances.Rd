@@ -4,7 +4,7 @@
 \alias{count_instances}
 \title{count_instances}
 \usage{
-count_instances(df, ref_id, inst_name)
+count_instances(DF, ref_id, inst_name)
 }
 \description{
 count_instances
