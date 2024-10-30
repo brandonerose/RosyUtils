@@ -266,7 +266,7 @@ clean_df_blanks <- function(df,other_blanks=NULL) {
 }
 #' @title index_na
 #' @export
-index_na <- function(df, MARGIN = "col") {
+index_na <- function(df, MARGIN = "col",invert = F) {
   okcols <- c("cols","col")
   okrows <-  c("row","rows")
   allowed <- c(okcols,okrows,1,2)
@@ -276,7 +276,9 @@ index_na <- function(df, MARGIN = "col") {
   if(tolower(MARGIN) %in% okrows) MARGIN <- 1
   x <- df %>% apply(MARGIN = MARGIN,function(IN){
     all(is.na(IN))
-  }) %>% which() %>% unname()
+  })
+  if(invert)x <- !x
+  x <- x %>% which() %>% unname()
   return(x)
 }
 #' @title clean_env_names
