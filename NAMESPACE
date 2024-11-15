@@ -3,6 +3,7 @@
 export("%>%")
 export(DF_to_wb)
 export(addSlashIfNeeded)
+export(add_TF_to_DF)
 export(add_df_flag)
 export(add_list_to_global)
 export(age)

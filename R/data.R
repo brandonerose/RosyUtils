@@ -616,3 +616,24 @@ drop_missing_levels_df <- function(DF, drop_levels = NULL) {
   })
   return(DF)
 }
+#' @title add_TF_to_DF
+#' @export
+add_TF_to_DF <- function(DF,cols,include_NA=F){
+  if(any(!cols %in% colnames(DF)))stop("all `cols` must be colnames of `DF`")
+  for(col in cols){
+    choices<-unique(DF[[col]])
+    if(include_NA){
+      if("NA" %in% choices){
+        DF[[col]][which(DF[[col]]=="NA")] <- NA
+        warning("for this function you can't have a choice that is 'NA'. So it's been converted to NA in R",immediate. = T)
+      }
+    }
+    if(!include_NA){
+      choices<-choices[!sapply(choices, is.na)]
+    }
+    for (choice in choices){
+      DF[[gsub(" ","_",paste0(col,"_",choice,"_TF"))]] <- DF[[col]]==choice
+    }
+  }
+  DF
+}
