@@ -15,7 +15,11 @@ is_something <- function(thing,row=0){
         }else{
           if(length(thing)==1){
             if(!is.na(thing)){
-              if(thing!=""){
+              if(is.character(thing)){
+                if(thing!=""){
+                  out <-TRUE
+                }
+              }else{
                 out <-TRUE
               }
             }
