@@ -133,18 +133,14 @@ file_tree <- function(path = ".", prefix = "") {
   # List files and directories in the current path
   entries <- list.files(path, full.names = TRUE, recursive = FALSE, include.dirs = TRUE)
   n <- length(entries)
-
   # Initialize result
   result <- character()
-
   for (i in seq_along(entries)) {
     entry <- entries[i]
     is_last <- (i == n)
     entry_name <- basename(entry)
-
     # Add the entry with appropriate prefix
     result <- c(result, paste0(prefix, if (is_last) "└── " else "├── ", entry_name))
-
     # If entry is a directory, recurse and add subdirectory contents
     if (file.info(entry)$isdir) {
       sub_prefix <- paste0(prefix, if (is_last) "    " else "│   ")
