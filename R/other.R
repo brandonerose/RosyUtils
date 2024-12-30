@@ -59,6 +59,11 @@ clean_num <- function(num){
 size <- function(x){
   format(object.size(x),units = "auto")
 }
+#' @title file_size_mb
+#' @export
+file_size_mb <- function(path){
+  (file.info(path)[["size"]]/1048576) %>% round(1) %>% paste0(" Mb")
+}
 #' @title read_pdf
 #' @export
 read_pdf <- function(path,no_double_spaces = F){
