@@ -321,7 +321,7 @@ save_wb <- function(wb,dir,file_name,overwrite =TRUE){
     file = path,
     overwrite = overwrite
   )
-  bullet_in_console(paste0("Saved at -> ","'",path,"'"),bullet_type = "V")
+  bullet_in_console(paste0("Saved '", basename(path),"'!"),file = path)
 }
 save_csv <- function(DF,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
@@ -330,7 +330,7 @@ save_csv <- function(DF,dir,file_name,overwrite =TRUE){
   if(!overwrite){
     if(file.exists(path)){
       write_it <- F
-      message("Already a file at -> ","'",path,"'")
+      bullet_in_console(paste0("Already a file!"),file = path)
     }
   }
   if(write_it){
@@ -338,7 +338,7 @@ save_csv <- function(DF,dir,file_name,overwrite =TRUE){
       x = DF,
       file = path
     )
-    bullet_in_console(paste0("Saved at -> ","'",path,"'"),bullet_type = "V")
+    bullet_in_console(paste0("Saved '", basename(path),"'!"),file = path)
   }
 }
 #' @title process_df_list
