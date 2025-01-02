@@ -54,7 +54,7 @@ is_named_list <- function(x,silent =T,recursive = F) {
     for (n in names(x)) {
       element <- x[[n]]
       if (is.list(element)) {
-        named_all <- named_all && is_named_list_all(element)
+        named_all <- named_all && is_named_list(element)
         if(!silent&&!named_all)message("'",n, "' is not named")
       }
     }
