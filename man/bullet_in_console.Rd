@@ -9,7 +9,8 @@ bullet_in_console(
   url = NULL,
   bullet_type = "i",
   collapse = T,
-  file = NULL
+  file = NULL,
+  verbosity = 2
 )
 }
 \description{
