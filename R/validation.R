@@ -172,3 +172,8 @@ validate_web_link <- function(link) {
   link <- paste0(link, "/")
   return(link)
 }
+#' @title generate_hex
+#' @export
+generate_hex <- function(length = 32) {
+  toupper(paste0(sample(c(0:9, letters[1:6]), length, replace = TRUE), collapse = ""))
+}
