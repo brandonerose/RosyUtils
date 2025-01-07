@@ -273,3 +273,10 @@ numeric_to_cats <- function(vec, method = "quantile", quantiles = 5, more_descri
   data_category <- factor(data_category, levels = levels(data_category), ordered = TRUE)
   return(data_category)
 }
+#' @title sanitize_path
+#' @export
+sanitize_path <- function(path) {
+  sanitized <- gsub("\\\\", "/", path)
+  sanitized <- normalizePath(sanitized, winslash = "/", mustWork = FALSE)
+  return(sanitized)
+}
