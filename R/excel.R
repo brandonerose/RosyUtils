@@ -78,7 +78,7 @@ DF_to_wb <- function(
     if(length(freeze_key_cols)>0){
       if(!is_consecutive_srt_1(freeze_key_cols)){
         warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = T)
-        non_key_cols <- 1:ncol(DF)
+        non_key_cols <- seq_len(ncol(DF))
         non_key_cols <- non_key_cols[which(!non_key_cols%in%freeze_key_cols)]
         new_col_order <- c(freeze_key_cols,non_key_cols)
         if(is_something(header_df)){
