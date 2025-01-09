@@ -402,7 +402,7 @@ reassign_variable_in_bulk <- function(DF,old_colname,new_colname,optional_choice
   }
   choices <- choices %>% append(c("Manual Entry","Stop and Return Current DF"))
   df_vec_counted %>% head(20) %>% print.data.frame()
-  for(i in 1:nrow(df_vec_counted)){ #i <- 1:nrow(df_vec_counted) %>% sample(1)
+  for(i in seq_len(nrow(df_vec_counted))){ #i <- seq_len(nrow(df_vec_counted) %>% sample(1)
     the_name <- df_vec_counted$name[i]
     choices_mod <- choices
     best_guess <- NA
@@ -485,7 +485,7 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
       }
       if(choice1 == 2){
         if(nrow(CHANGE)==0)CHANGE <- blank_row
-        for(j in 1:nrow(CHANGE)){
+        for(j in seq_len(nrow(CHANGE))){
           message("Old answer (",field_name_to_change, "): ",CHANGE[j,field_name_to_change])
           choice2 <- utils::menu(choices2,title=paste0("What would you like to do?"))
           choice <- choices2[choice2]
@@ -581,7 +581,7 @@ count_instances <- function(DF,ref_id,inst_name){
     values = x$values
   )
   vec <- x$lengths %>% sapply(function(IN){1:IN}) %>% unlist()
-  vec2 <- 1:nrow(x) %>% sapply(function(ROW){rep(x$values[ROW],x$lengths[ROW])}) %>% unlist()
+  vec2 <- seq_len(nrow(x)) %>% sapply(function(ROW){rep(x$values[ROW],x$lengths[ROW])}) %>% unlist()
   if(any(vec_ori!=vec2))stop("mismatch!")
   DF[[inst_name]] <- vec
   key_check <- paste0(DF[[ref_id]],"__",DF[[inst_name]])

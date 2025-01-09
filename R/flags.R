@@ -2,7 +2,7 @@
 add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_split=" [:|:] ",write_split = " | ",remove_previous = T){
   if(any(!ids%in%DF[[id_field_name]]))stop( "Some of your record IDs are not included in the set of the current database IDs! Add them first...")
   flag_vector <- DF[[flag_field_name]] %>% strsplit(split=read_split)
-  DF[[flag_field_name]] <- 1:nrow(DF) %>% sapply(function(ROW){
+  DF[[flag_field_name]] <- seq_len(nrow(DF)) %>% sapply(function(ROW){
     if(!is.na(DF[[flag_field_name]][ROW])){
       IN <- flag_vector[[ROW]]
     }else{
@@ -28,7 +28,7 @@ check_df_flag <- function(DF,flag_field_name,split=" [|] "){
 remove_df_flag <- function(DF,flag_field_name,flag_name){
   if(nrow(DF)>0){
     flag_vector<- DF[[flag_field_name]] %>% strsplit(" [:|:] ")
-    DF[[flag_field_name]] <- 1:nrow(DF) %>% sapply(function(ROW){
+    DF[[flag_field_name]] <- seq_len(nrow(DF)) %>% sapply(function(ROW){
       if(!is.na(DF[[flag_field_name]][ROW])){
         IN <- flag_vector[[ROW]]
       }else{

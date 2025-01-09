@@ -63,7 +63,7 @@ choose_emails_to_delete_in_bulk <- function(outlook = Microsoft365R::get_busines
   emails <- outlook$list_emails(n=n,pagesize = 100)
   emails_sum <- summarize_emails(emails)
   emails_counted <- count_emails(emails_sum = emails_sum,ADDRESS_TYPE = ADDRESS_TYPE)
-  for (row in 1:nrow(emails_counted)){ # row <- 1:nrow(emails_counted) %>% sample(1)
+  for (row in seq_len(nrow(emails_counted))){ # row <- seq_len(nrow(emails_counted) %>% sample(1)
     address <- emails_counted$address[row]
     name <- emails_counted$name[row]
     message("Searching for emails from '",address,"' (",name,") ...")

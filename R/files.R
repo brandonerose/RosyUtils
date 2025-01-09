@@ -36,7 +36,7 @@ sync_dir <- function(from,to,top_level=T){
   file_info_from <- full.file.info(from)
   file_info_to <- full.file.info(to,showWarnings=F)
   if(nrow(file_info_from)>0){
-    for(i in 1:nrow(file_info_from)){
+    for(i in seq_len(nrow(file_info_from))){
       file_from <- file_info_from$file[i]
       isdir_from <- file_info_from$isdir[i]
       path_from <- file_info_from$path[i]
