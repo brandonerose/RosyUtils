@@ -67,7 +67,7 @@ is_df_list <- function(x,strict=F){
   if (!is.list(x)) return(FALSE)
   if (length(x)==0) return(FALSE)
   if (is_nested_list(x)) return(FALSE)
-  out <- sapply(x,is.data.frame)
+  out <- unlist(lapply(x,is.data.frame))
   if(strict)return(all(out))
   return(any(out))
 }

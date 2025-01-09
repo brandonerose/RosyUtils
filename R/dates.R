@@ -92,7 +92,7 @@ convert_dates <- function(input_string,allow_partial = F) {
       output_string <- input_string
       for (the_date in dates) {
         the_date_final <- gsub("-","/",the_date)
-        split_pattern <- the_date_final %>% strsplit("/") %>% unlist() %>% sapply(function(E){
+        split_pattern <- the_date_final %>% strsplit("/") %>% unlist() %>% lapply(function(E){
           E %>% as.integer()%>% stringr::str_pad(2,"left",0)
         }) %>% unlist()
         y_n <- 3
@@ -134,7 +134,7 @@ convert_dates <- function(input_string,allow_partial = F) {
 #' @export
 date_imputation <- function(dates_in,date_imputation){
   #followup add min max
-  z <- sapply(dates_in,is_date) %>% as.logical()
+  z <- lapply(dates_in,is_date) %>% as.logical()
   x <- which(z&!is_date_full(dates_in))
   y <- which(!z)
   date_out <- dates_in
@@ -147,7 +147,7 @@ date_imputation <- function(dates_in,date_imputation){
       date_out[x]<- NA
     }
     if(!is.null(date_imputation)){
-      date_out[x] <- dates_in[x] %>% sapply(function(date){
+      date_out[x] <- dates_in[x] %>% lapply(function(date){
         admiral::impute_dtc_dt(
           date,
           highest_imputation = "M", # "n" for normal date

@@ -36,8 +36,8 @@ summarize_emails <- function(emails){
       purrr::map_depth(1,"name") %>%
       unlist()
   )
-  x$from_root <- x$from %>% strsplit(split = "@") %>% sapply(dplyr::last) %>% unlist()
-  x$sender_root <- x$sender %>% strsplit(split = "@") %>% sapply(dplyr::last) %>% unlist()
+  x$from_root <- x$from %>% strsplit(split = "@") %>% lapply(dplyr::last) %>% unlist()
+  x$sender_root <- x$sender %>% strsplit(split = "@") %>% lapply(dplyr::last) %>% unlist()
   x$same <- x$from == x$sender
   x$same_root <- x$from_root == x$sender_root
   return(x)
@@ -47,7 +47,7 @@ summarize_emails <- function(emails){
 count_emails <- function(emails_sum,ADDRESS_TYPE){
   x <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T)
   y <- names(x)
-  z <- names(x) %>% sapply(function(address){emails_sum[[paste0(ADDRESS_TYPE,"_name")]][which(emails_sum[[ADDRESS_TYPE]]==address)][1]}) %>% as.character()
+  z <- names(x) %>% lapply(function(address){emails_sum[[paste0(ADDRESS_TYPE,"_name")]][which(emails_sum[[ADDRESS_TYPE]]==address)][1]}) %>% as.character()
   return(data.frame(
     count = as.integer(x),
     address = y,

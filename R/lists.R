@@ -12,6 +12,6 @@ add_list_to_global <- function(x,only_dfs=F){
   }
   if(class(x)!="list")stop("x must be a named list or named character vector")
   if(is.null(names(x)))stop("x list must have names")
-  if(only_dfs)x <- x[sapply(x,is.data.frame)]
+  if(only_dfs)x <- x[unlist(lapply(x,is.data.frame))]
   list2env(x,envir = .GlobalEnv)
 }

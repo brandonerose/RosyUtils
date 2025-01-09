@@ -41,7 +41,7 @@ size_func <- function(x) {
   if (is.function(x) && !identical(environment(x), emptyenv())) {
     # Add the size of the environment
     env_objects <- ls(envir = environment(x), all.names = TRUE)
-    env_size <- sum(sapply(env_objects, function(obj) object.size(get(obj, envir = environment(x)))))
+    env_size <- sum(unlist(lapply(env_objects, function(obj) object.size(get(obj, envir = environment(x))))))
     # Add environment size to total
     total_size <- total_size + env_size
   }

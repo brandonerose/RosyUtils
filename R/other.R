@@ -37,7 +37,7 @@ dw <- function(x){
 #' @title drop_nas
 #' @export
 drop_nas <- function(x) {
-  x[!sapply(x, is.na)]
+  x[!unlist(lapply(x, is.na))]
 }
 #' @title drop_if
 #' @export
@@ -124,7 +124,7 @@ unique_trimmed_strings <- function(strings,max_length) {
   trim_string <- function(s, max_length) {
     substr(s, 1, max_length)
   }
-  trimmed_strings <- sapply(strings, trim_string, max_length = max_length)
+  trimmed_strings <- unlist(lapply(strings, trim_string, max_length = max_length))
   # Initialize a vector to store unique strings
   unique_strings <- character(length(trimmed_strings))
   # Initialize a counter to keep track of occurrences
@@ -174,10 +174,10 @@ matches <- function(x,ref,count_only=F){
     next_match_index <- which(!is.na(next_match))
   }
   if(count_only){
-    final_match <- final_match %>% sapply(function(IN){
+    final_match <- final_match %>% lapply(function(IN){
       if(is.na(IN[1]))return(NA)
       return(length(IN))
-    })
+    }) %>% unlist()
   }
   return(final_match)
 }

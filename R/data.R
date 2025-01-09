@@ -211,7 +211,7 @@ collapse_DF <- function(DF,ref_id,list_mod){
   other_cols <-colnames(DF)[which(!colnames(DF) %in% ref_id)]
   if(!missing(list_mod)){
     for(i in seq_along(list_mod)){
-      new_DF[[names(list_mod[i])]] <- new_DF[[ref_id]] %>% sapply(function(ID){
+      new_DF[[names(list_mod[i])]] <- new_DF[[ref_id]] %>% lapply(function(ID){
         sub_df <- DF[which(DF[[ref_id]]==ID),list_mod[[i]]]
         n_col <- ncol(sub_df)
         n_row <- nrow(sub_df)
@@ -226,18 +226,18 @@ collapse_DF <- function(DF,ref_id,list_mod){
         }
         out_final <- out_final %>% paste(collapse = " || ")
         out_final
-      }) %>% as.character()
+      }) %>% unlist() %>% as.character()
     }
     DF <- DF[,which(!colnames(DF)%in%list_mod[[i]])]
     other_cols <- other_cols[which(!other_cols%in%list_mod[[i]])]
   }
   other_col <- other_cols %>% sample(1)
   for (other_col in other_cols) {
-    new_DF[[other_col]] <- sapply( new_DF[[ref_id]], function(ID){
+    new_DF[[other_col]] <- lapply( new_DF[[ref_id]], function(ID){
       x<- unique(DF[[other_col]][which(DF[[ref_id]]==ID)]) %>% drop_nas()
       if(length(x)==0)return(NA)
       return(paste0(x,collapse = " | "))
-    })
+    }) %>% unlist()
   }
   as.data.frame(new_DF)
 }
@@ -325,7 +325,7 @@ remove_html_tags <- function(text_vector) {
 #' @export
 check_match <- function(vec_list) {
   sorted_vecs <- lapply(vec_list, sort)
-  all(sapply(sorted_vecs[-1], function(x) identical(sorted_vecs[[1]], x)))
+  all(unlist(lapply(sorted_vecs[-1], function(x) identical(sorted_vecs[[1]], x))))
 }
 #' @title vec1_in_vec2
 #' @export
@@ -580,8 +580,8 @@ count_instances <- function(DF,ref_id,inst_name){
     lengths = x$lengths,
     values = x$values
   )
-  vec <- x$lengths %>% sapply(function(IN){1:IN}) %>% unlist()
-  vec2 <- seq_len(nrow(x)) %>% sapply(function(ROW){rep(x$values[ROW],x$lengths[ROW])}) %>% unlist()
+  vec <- x$lengths %>% lapply(function(IN){1:IN}) %>% unlist()
+  vec2 <- seq_len(nrow(x)) %>% lapply(function(ROW){rep(x$values[ROW],x$lengths[ROW])}) %>% unlist()
   if(any(vec_ori!=vec2))stop("mismatch!")
   DF[[inst_name]] <- vec
   key_check <- paste0(DF[[ref_id]],"__",DF[[inst_name]])
@@ -634,7 +634,7 @@ add_TF_to_DF <- function(DF,cols,include_NA=F){
       }
     }
     if(!include_NA){
-      choices<-choices[!sapply(choices, is.na)]
+      choices<-choices[!lapply(choices, is.na)]
     }
     for (choice in choices){
       DF[[gsub(" ","_",paste0(col,"_",choice,"_TF"))]] <- DF[[col]]==choice

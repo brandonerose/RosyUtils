@@ -347,14 +347,14 @@ process_df_list <- function(list,drop_empty = T,silent = F){
   if(is_something(list)){
     if(!is_df_list(list))stop("list must be ...... a list :)")
     if(drop_empty){
-      is_a_df_with_rows <- list %>% sapply(function(IN){
+      is_a_df_with_rows <- list %>% lapply(function(IN){
         is_df <- is.data.frame(IN)
         if(is_df){
           return(nrow(IN)>0)
         }else{
           return(F)
         }
-      })
+      }) %>% unlist()
       keeps <- which(is_a_df_with_rows)
       drops <-which(!is_a_df_with_rows)
       if(length(drops)>0){
