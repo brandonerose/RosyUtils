@@ -2,7 +2,7 @@
 #' @export
 summarize_emails <- function(emails){
   x <- data.frame(
-    i = 1:length(emails),
+    i = seq_along(emails),
     id = emails %>%
       purrr::map_depth(1,"properties") %>%
       purrr::map_depth(1,"id") %>%  unlist(),
@@ -92,7 +92,7 @@ choose_emails_to_delete_from <- function(outlook,address,n=2000, individual_choi
     emails_from_sum <- summarize_emails(emails_from)
     emails_from_sum$subject %>% print()
     message("n = ",nrow(emails_from_sum),")")
-    for (i in 1:length(emails_from)){# i <- 1:length(emails_from) %>% sample(1)
+    for (i in seq_along(emails_from)){# i <- seq_along(emails_from) %>% sample(1)
       the_address <- emails_from[[i]]$properties$from$emailAddress$address
       the_subject <- emails_from[[i]]$properties$subject
       if(individual_choice){

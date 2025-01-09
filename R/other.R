@@ -152,13 +152,13 @@ as_comma_string <- function(vec){
 #' @export
 choice_vector_string <- function(vec){
   if(!is_something(vec))return(NA)
-  return(paste0(paste0(1:length(vec),", ",vec),collapse = " | "))
+  return(paste0(paste0(seq_along(vec),", ",vec),collapse = " | "))
 }
 #' @title matches
 #' @export
 matches <- function(x,ref,count_only=F){
   final_match <- list()
-  final_match[1:length(x)] <- NA
+  final_match[seq_along(x)] <- NA
   next_match <- match(x,ref)
   next_match_index <- which(!is.na(next_match))
   while(length(next_match_index)>0){

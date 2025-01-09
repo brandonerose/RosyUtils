@@ -33,9 +33,9 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
       "'))}"
     )
   }
-  for(i in 1:length(url_if))text[i] <- paste0(text[i],url_if[i])
-  for(i in 1:length(file_if))text[i] <- paste0(text[i],file_if[i])
-  names(text)[1:length(text)]<- bullet_type
+  for(i in seq_along(url_if))text[i] <- paste0(text[i],url_if[i])
+  for(i in seq_along(file_if))text[i] <- paste0(text[i],file_if[i])
+  names(text)[seq_along(text)]<- bullet_type
   return(cli::cli_bullets(text))
   # * = • = bullet
   # > = → = arrow

@@ -4,7 +4,7 @@ excel_to_list <- function(path){
   sheets <- readxl::excel_sheets(path)
   clean_sheets <- clean_env_names(sheets)
   out <- list()
-  for (i in 1:length(sheets)){
+  for (i in seq_along(sheets)){
     out[[i]]<- rio::import(path,col_types="text",sheet = i)
   }
   names(out) <- clean_sheets
@@ -16,7 +16,7 @@ csv_to_list <- function(paths){
   paths <- normalizePath(paths)
   OUT <- list()
   clean_names <- paths %>% basename() %>% tools::file_path_sans_ext() %>% clean_env_names()
-  for (i in 1:length(paths)){
+  for (i in seq_along(paths)){
     OUT[[i]]<- read.csv(paths[i],stringsAsFactors = F,na.strings = c("","NA"))
   }
   names(OUT) <- clean_names
@@ -39,7 +39,7 @@ wb_to_list <- function(wb){
   sheets <- openxlsx::sheets(wb)
   clean_sheets <- clean_env_names(sheets)
   out <- list()
-  for (i in 1:length(sheets)){
+  for (i in seq_along(sheets)){
     col_row <- 1
     x <- openxlsx::getTables(wb,sheet = i)
     if(length(x)>0){

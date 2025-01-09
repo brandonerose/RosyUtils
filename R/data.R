@@ -210,7 +210,7 @@ collapse_DF <- function(DF,ref_id,list_mod){
   new_DF[[ref_id]] <- unique(DF[[ref_id]])
   other_cols <-colnames(DF)[which(!colnames(DF) %in% ref_id)]
   if(!missing(list_mod)){
-    for(i in 1:length(list_mod)){
+    for(i in seq_along(list_mod)){
       new_DF[[names(list_mod[i])]] <- new_DF[[ref_id]] %>% sapply(function(ID){
         sub_df <- DF[which(DF[[ref_id]]==ID),list_mod[[i]]]
         n_col <- ncol(sub_df)
