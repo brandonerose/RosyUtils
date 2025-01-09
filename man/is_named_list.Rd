@@ -4,7 +4,7 @@
 \alias{is_named_list}
 \title{is_named_list}
 \usage{
-is_named_list(x, silent = T, recursive = F)
+is_named_list(x, silent = TRUE, recursive = FALSE)
 }
 \description{
 is_named_list

@@ -8,8 +8,8 @@ choose_emails_to_delete_from(
   outlook,
   address,
   n = 2000,
-  individual_choice = F,
-  ask = T
+  individual_choice = FALSE,
+  ask = TRUE
 )
 }
 \description{

@@ -8,7 +8,7 @@ find_df_list_diff(
   new_list,
   old_list,
   ref_col_list,
-  view_old = T,
+  view_old = TRUE,
   n_row_view = 20
 )
 }

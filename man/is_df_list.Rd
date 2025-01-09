@@ -4,7 +4,7 @@
 \alias{is_df_list}
 \title{is_df_list}
 \usage{
-is_df_list(x, strict = F)
+is_df_list(x, strict = FALSE)
 }
 \description{
 is_df_list

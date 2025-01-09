@@ -4,7 +4,7 @@
 \alias{sync_dir}
 \title{sync_dir}
 \usage{
-sync_dir(from, to, top_level = T)
+sync_dir(from, to, top_level = TRUE)
 }
 \arguments{
 \item{from}{a file path for from}

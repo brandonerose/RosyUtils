@@ -4,7 +4,7 @@
 \alias{add_TF_to_DF}
 \title{add_TF_to_DF}
 \usage{
-add_TF_to_DF(DF, cols, include_NA = F)
+add_TF_to_DF(DF, cols, include_NA = FALSE)
 }
 \description{
 add_TF_to_DF

@@ -4,7 +4,7 @@
 \alias{matches}
 \title{matches}
 \usage{
-matches(x, ref, count_only = F)
+matches(x, ref, count_only = FALSE)
 }
 \description{
 matches

@@ -4,7 +4,7 @@
 \alias{full.file.info}
 \title{full.file.info}
 \usage{
-full.file.info(path, showWarnings = T)
+full.file.info(path, showWarnings = TRUE)
 }
 \arguments{
 \item{path}{a file path}

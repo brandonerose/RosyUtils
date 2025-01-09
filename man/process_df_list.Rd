@@ -4,7 +4,7 @@
 \alias{process_df_list}
 \title{process_df_list}
 \usage{
-process_df_list(list, drop_empty = T, silent = F)
+process_df_list(list, drop_empty = TRUE, silent = FALSE)
 }
 \description{
 process_df_list

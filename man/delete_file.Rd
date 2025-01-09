@@ -4,7 +4,7 @@
 \alias{delete_file}
 \title{delete_file}
 \usage{
-delete_file(path, silent = F)
+delete_file(path, silent = FALSE)
 }
 \arguments{
 \item{path}{a file path}

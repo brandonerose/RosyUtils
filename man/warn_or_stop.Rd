@@ -4,7 +4,7 @@
 \alias{warn_or_stop}
 \title{warn_or_stop}
 \usage{
-warn_or_stop(m, warn_only = F)
+warn_or_stop(m, warn_only = FALSE)
 }
 \arguments{
 \item{m}{message character string}

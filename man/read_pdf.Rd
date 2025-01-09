@@ -4,7 +4,7 @@
 \alias{read_pdf}
 \title{read_pdf}
 \usage{
-read_pdf(path, no_double_spaces = F)
+read_pdf(path, no_double_spaces = FALSE)
 }
 \description{
 read_pdf

@@ -8,7 +8,7 @@ bullet_in_console(
   text = "",
   url = NULL,
   bullet_type = "i",
-  collapse = T,
+  collapse = TRUE,
   file = NULL,
   verbosity = 2
 )

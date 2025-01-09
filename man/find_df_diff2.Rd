@@ -9,7 +9,7 @@ find_df_diff2(
   old,
   ref_cols = NULL,
   message_pass = "",
-  view_old = T,
+  view_old = TRUE,
   n_row_view = 20
 )
 }

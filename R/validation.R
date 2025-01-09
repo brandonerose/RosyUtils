@@ -2,7 +2,7 @@
 #' @export
 is_something <- function(thing,row=0){
   out <- FALSE
-  if(is.function(thing))return(T)
+  if(is.function(thing))return(TRUE)
   if(!is.null(thing)){
     if(is.data.frame(thing)){
       if(nrow(thing)>row){
@@ -46,7 +46,7 @@ is_nested_list <- function(x) {
 }
 #' @title is_named_list
 #' @export
-is_named_list <- function(x,silent =T,recursive = F) {
+is_named_list <- function(x,silent =TRUE,recursive = FALSE) {
   if (!is.list(x))return(FALSE)
   if (is.null(names(x)))return(FALSE)
   named_all <- TRUE
@@ -63,7 +63,7 @@ is_named_list <- function(x,silent =T,recursive = F) {
 }
 #' @title is_df_list
 #' @export
-is_df_list <- function(x,strict=F){
+is_df_list <- function(x,strict=FALSE){
   if (!is.list(x)) return(FALSE)
   if (length(x)==0) return(FALSE)
   if (is_nested_list(x)) return(FALSE)
@@ -73,7 +73,7 @@ is_df_list <- function(x,strict=F){
 }
 #' @title is_named_df_list
 #' @export
-is_named_df_list <- function(x,strict = F){
+is_named_df_list <- function(x,strict = FALSE){
   is_named_list(x) && is_df_list(x,strict = strict)
 }
 #' @title is_env_name

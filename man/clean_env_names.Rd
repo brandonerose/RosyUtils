@@ -4,7 +4,7 @@
 \alias{clean_env_names}
 \title{clean_env_names}
 \usage{
-clean_env_names(env_names, silent = F, lowercase = T)
+clean_env_names(env_names, silent = FALSE, lowercase = TRUE)
 }
 \description{
 clean_env_names

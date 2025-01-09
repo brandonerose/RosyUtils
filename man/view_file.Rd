@@ -4,7 +4,7 @@
 \alias{view_file}
 \title{view_file}
 \usage{
-view_file(path, browser = F)
+view_file(path, browser = FALSE)
 }
 \arguments{
 \item{browser}{logical for launching from your PC default, not RStudio}

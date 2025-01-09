@@ -4,7 +4,7 @@
 \alias{index_na}
 \title{index_na}
 \usage{
-index_na(DF, MARGIN = "col", invert = F)
+index_na(DF, MARGIN = "col", invert = FALSE)
 }
 \description{
 index_na

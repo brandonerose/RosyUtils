@@ -4,7 +4,7 @@
 \alias{list.files.real}
 \title{list.files.real}
 \usage{
-list.files.real(path, full.names = T, recursive = F)
+list.files.real(path, full.names = TRUE, recursive = FALSE)
 }
 \description{
 list.files.real

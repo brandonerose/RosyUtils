@@ -4,7 +4,7 @@
 \alias{find_in_df_list}
 \title{find_in_DF_list}
 \usage{
-find_in_df_list(df_list, text, exact = F)
+find_in_df_list(df_list, text, exact = FALSE)
 }
 \description{
 find_in_DF_list

@@ -12,12 +12,12 @@ list_to_wb(
   tableStyle = "none",
   header_style = default_header_style,
   body_style = default_body_style,
-  freeze_header = T,
+  freeze_header = TRUE,
   pad_rows = 0,
   pad_cols = 0,
-  freeze_keys = T,
+  freeze_keys = TRUE,
   key_cols_list = NULL,
-  drop_empty = T
+  drop_empty = TRUE
 )
 }
 \description{

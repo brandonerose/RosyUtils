@@ -4,7 +4,7 @@
 \alias{add_list_to_global}
 \title{add_list_to_global}
 \usage{
-add_list_to_global(x, only_dfs = F)
+add_list_to_global(x, only_dfs = FALSE)
 }
 \arguments{
 \item{x}{a named list}
