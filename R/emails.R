@@ -45,7 +45,7 @@ summarize_emails <- function(emails){
 #' @title count_emails
 #' @export
 count_emails <- function(emails_sum,ADDRESS_TYPE){
-  x <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = T)
+  x <- emails_sum[[ADDRESS_TYPE]] %>% table() %>% sort(decreasing = TRUE)
   y <- names(x)
   z <- names(x) %>% lapply(function(address){emails_sum[[paste0(ADDRESS_TYPE,"_name")]][which(emails_sum[[ADDRESS_TYPE]]==address)][1]}) %>% as.character()
   return(data.frame(
@@ -56,7 +56,7 @@ count_emails <- function(emails_sum,ADDRESS_TYPE){
 }
 #' @title choose_emails_to_delete_in_bulk
 #' @export
-choose_emails_to_delete_in_bulk <- function(outlook = Microsoft365R::get_business_outlook(),full_address = T,use_sender = T,n=2000){
+choose_emails_to_delete_in_bulk <- function(outlook = Microsoft365R::get_business_outlook(),full_address = TRUE,use_sender = TRUE,n=2000){
   ADDRESS_TYPE <- use_sender %>% ifelse("sender","from")
   ADDRESS_TYPE <- full_address %>% ifelse(ADDRESS_TYPE,paste0(ADDRESS_TYPE,"_root"))
   message("Getting emails... This can take several seconds!")
@@ -71,20 +71,20 @@ choose_emails_to_delete_in_bulk <- function(outlook = Microsoft365R::get_busines
     vec %>% print()
     choice_from <- utils::menu(choices = c("Yes","No","Choose Individually"),title = paste0("Would like to delete email(s) from '",address,"'? (n = ",length(vec),")"))
     if(choice_from %in% c(1,3)){
-      choose_emails_to_delete_from(outlook = outlook, address = address,ask = F, individual_choice = choice_from == 3)
+      choose_emails_to_delete_from(outlook = outlook, address = address,ask = FALSE, individual_choice = choice_from == 3)
     }
   }
 }
 #' @title choose_emails_to_delete_from
 #' @export
-choose_emails_to_delete_from <- function(outlook,address,n=2000, individual_choice = F,ask = T){
+choose_emails_to_delete_from <- function(outlook,address,n=2000, individual_choice = FALSE,ask = TRUE){
   choice_from <- 1
   if(ask){
     choice_from <- 0
     if(!individual_choice){
       choice_from <- utils::menu(choices = c("Yes","No","Choose Individually"),title = paste0("Would like to delete email(s) from '",address,"'?"))
     }
-    if(choice_from == 3) individual_choice <- T
+    if(choice_from == 3) individual_choice <- TRUE
   }
   if(choice_from %in% c(1,3)){
     emails_from <- outlook$list_emails(search = paste0("from:",address),n=n)
@@ -99,7 +99,7 @@ choose_emails_to_delete_from <- function(outlook,address,n=2000, individual_choi
         choice_from <- utils::menu(choices = c("Yes","No"),title = paste0("Would like to delete email from '",the_address,"'? --> ",the_subject))
       }
       if(choice_from==1){
-        try({emails_from[[i]]$delete(confirm=F)})
+        try({emails_from[[i]]$delete(confirm=FALSE)})
         message("Deleted email: ",the_address," --> ",the_subject)
       }
     }

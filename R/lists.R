@@ -3,7 +3,7 @@
 #' @param only_dfs logical for only including data.frames in output
 #' @return environment adds
 #' @export
-add_list_to_global <- function(x,only_dfs=F){
+add_list_to_global <- function(x,only_dfs=FALSE){
   if(!is.list(x))stop("x must be a list")
   if(length(x)==0)stop("length(x) has to be at least 1")
   if(class(x)=="character"){

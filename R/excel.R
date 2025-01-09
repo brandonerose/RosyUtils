@@ -17,7 +17,7 @@ csv_to_list <- function(paths){
   OUT <- list()
   clean_names <- paths %>% basename() %>% tools::file_path_sans_ext() %>% clean_env_names()
   for (i in seq_along(paths)){
-    OUT[[i]]<- read.csv(paths[i],stringsAsFactors = F,na.strings = c("","NA"))
+    OUT[[i]]<- read.csv(paths[i],stringsAsFactors = FALSE,na.strings = c("","NA"))
   }
   names(OUT) <- clean_names
   return(OUT)
@@ -62,10 +62,10 @@ DF_to_wb <- function(
     tableStyle = "none",
     header_style = default_header_style,
     body_style = default_body_style,
-    freeze_header = T,
+    freeze_header = TRUE,
     pad_rows = 0,
     pad_cols = 0,
-    freeze_keys = T,
+    freeze_keys = TRUE,
     key_cols = NULL
 ) {
   if(nchar(DF_name)>31)stop(DF_name, " is longer than 31 char")
@@ -77,7 +77,7 @@ DF_to_wb <- function(
     freeze_key_cols <- which(all_cols%in%key_cols)
     if(length(freeze_key_cols)>0){
       if(!is_consecutive_srt_1(freeze_key_cols)){
-        warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = T)
+        warning("please keep your key cols on the left consecutively. Fixing ",DF_name,": ",paste0(key_cols,collapse = ", "),".",immediate. = TRUE)
         non_key_cols <- seq_len(ncol(DF))
         non_key_cols <- non_key_cols[which(!non_key_cols%in%freeze_key_cols)]
         new_col_order <- c(freeze_key_cols,non_key_cols)
@@ -94,7 +94,7 @@ DF_to_wb <- function(
     startRow_table <- startRow_header
     startCol <-pad_cols + 1
     if(is_something(header_df)){
-      openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = startRow_header,startCol = startCol,colNames = F)
+      openxlsx::writeData(wb, sheet = DF_name, x = header_df,startRow = startRow_header,startCol = startCol,colNames = FALSE)
       startRow_table <- startRow_header + nrow(header_df)
     }
     if(length(link_col_list)>0){
@@ -103,7 +103,7 @@ DF_to_wb <- function(
         if(link_col_list[[i]]%in%colnames(DF)){
           class (DF[[link_col_list[[i]]]]) <- "hyperlink"
         }else{
-          # warning("",immediate. = T)
+          # warning("",immediate. = TRUE)
         }
         if(has_names){
           if(names(link_col_list)[i]%in%colnames(DF)){
@@ -111,7 +111,7 @@ DF_to_wb <- function(
             openxlsx::writeData(wb, sheet = DF_name, x = DF[[link_col_list[[i]]]],startRow = startRow_table+1,startCol = hyperlink_col + pad_cols)
             DF[[link_col_list[[i]]]] <- NULL
           }else{
-            # warning("",immediate. = T)
+            # warning("",immediate. = TRUE)
           }
         }
       }
@@ -124,8 +124,8 @@ DF_to_wb <- function(
       style = header_style,
       rows = seq(from=startRow_header,to=startRow_table),
       cols = style_cols,
-      gridExpand = T,
-      stack = T
+      gridExpand = TRUE,
+      stack = TRUE
     )
     openxlsx::addStyle(
       wb,
@@ -133,8 +133,8 @@ DF_to_wb <- function(
       style = body_style,
       rows = seq(nrow(DF))+startRow_table,
       cols = style_cols,
-      gridExpand = T,
-      stack = T
+      gridExpand = TRUE,
+      stack = TRUE
     )
     if(freeze_header||freeze_keys){
       firstActiveRow <- NULL
@@ -149,7 +149,7 @@ DF_to_wb <- function(
           if (is_consecutive_srt_1(freeze_key_cols)){
             firstActiveCol <- firstActiveCol + freeze_key_cols[length(freeze_key_cols)]
           }else{
-            warning("key_cols must be consecutive and start from the left most column.",immediate. = T)
+            warning("key_cols must be consecutive and start from the left most column.",immediate. = TRUE)
           }
         }
         openxlsx::freezePane(wb, DF_name, firstActiveRow = firstActiveRow, firstActiveCol = firstActiveCol)
@@ -168,12 +168,12 @@ list_to_wb <- function(
     tableStyle = "none",
     header_style = default_header_style,
     body_style = default_body_style,
-    freeze_header = T,
+    freeze_header = TRUE,
     pad_rows = 0,
     pad_cols = 0,
-    freeze_keys = T,
+    freeze_keys = TRUE,
     key_cols_list = NULL,
-    drop_empty = T
+    drop_empty = TRUE
 ){
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list,drop_empty = drop_empty)
@@ -191,7 +191,7 @@ list_to_wb <- function(
   list_names_rename <- stringr::str_trunc(list_names,width = 31,side = "right",ellipsis = "")
   BAD <- dw(list_names_rename)
   if(length(BAD)>0){
-    warning("Duplicated names when trimmed from right 31 max in Excel: ",list_names[BAD] %>% paste0(collapse = ", "),immediate. = T)
+    warning("Duplicated names when trimmed from right 31 max in Excel: ",list_names[BAD] %>% paste0(collapse = ", "),immediate. = TRUE)
     message("Use CSV or shorten the names and make sure they are unique if they are trimmed to 31 char. For now will make unique by adding number.")
     list_names_rename <- unique_trimmed_strings(list_names_rename, max_length = 31)
   }
@@ -231,17 +231,17 @@ list_to_excel <- function(
     tableStyle = "none",
     header_style = default_header_style,
     body_style = default_body_style,
-    freeze_header = T,
+    freeze_header = TRUE,
     pad_rows = 0,
     pad_cols = 0,
-    freeze_keys = T,
+    freeze_keys = TRUE,
     key_cols_list = NULL,
-    drop_empty = T
+    drop_empty = TRUE
 ) {
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list,drop_empty = drop_empty)
   list_names <- names(list)
-  if(length(list)==0)return(warning("empty list cannot be saved",immediate. = T))
+  if(length(list)==0)return(warning("empty list cannot be saved",immediate. = TRUE))
   if(separate){
     for(i in seq_along(list)){
       sub_list <- list[i]
@@ -294,7 +294,7 @@ list_to_excel <- function(
   }
 }
 #' @export
-list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE, drop_empty = T){
+list_to_csv <- function(list,dir,file_name=NULL,overwrite = TRUE, drop_empty = TRUE){
   list <- process_df_list(list,drop_empty = drop_empty)
   list_names <- names(list)
   for(i in seq_along(list)){
@@ -326,10 +326,10 @@ save_wb <- function(wb,dir,file_name,overwrite =TRUE){
 save_csv <- function(DF,dir,file_name,overwrite =TRUE){
   if(!dir.exists(dir))stop("dir doesn't exist")
   path <- file.path(dir,paste0(file_name,".csv"))
-  write_it <- T
+  write_it <- TRUE
   if(!overwrite){
     if(file.exists(path)){
-      write_it <- F
+      write_it <- FALSE
       bullet_in_console(paste0("Already a file!"),file = path)
     }
   }
@@ -343,7 +343,7 @@ save_csv <- function(DF,dir,file_name,overwrite =TRUE){
 }
 #' @title process_df_list
 #' @export
-process_df_list <- function(list,drop_empty = T,silent = F){
+process_df_list <- function(list,drop_empty = TRUE,silent = FALSE){
   if(is_something(list)){
     if(!is_df_list(list))stop("list must be ...... a list :)")
     if(drop_empty){
@@ -352,7 +352,7 @@ process_df_list <- function(list,drop_empty = T,silent = F){
         if(is_df){
           return(nrow(IN)>0)
         }else{
-          return(F)
+          return(FALSE)
         }
       }) %>% unlist()
       keeps <- which(is_a_df_with_rows)

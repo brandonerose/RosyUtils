@@ -32,7 +32,7 @@ is_date_full <- function(date) {
   grepl("^\\d{4}-\\d{2}-\\d{2}$", date)
 }
 #' @export
-extract_dates <- function(input_string,allow_partial = T) {
+extract_dates <- function(input_string,allow_partial = TRUE) {
   # Regular expression pattern to match different date formats
   date_patterns <- c(
     "\\b(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])/(\\d{2})\\b", # MM/DD/YY
@@ -84,7 +84,7 @@ delete_dates2 <- function(input_string){
   gsub(paste(date_patterns, collapse = "|"), "", input_string)
 }
 #' @export
-convert_dates <- function(input_string,allow_partial = F) {
+convert_dates <- function(input_string,allow_partial = FALSE) {
   if(!is.na(input_string)){
     input_string <- input_string %>% trimws()
     if(input_string!=""){

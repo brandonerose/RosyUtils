@@ -3,13 +3,13 @@
 #' @param showWarnings logical for showing warnings
 #' @return file_info data.frame
 #' @export
-full.file.info <- function(path,showWarnings = T) {
+full.file.info <- function(path,showWarnings = TRUE) {
   if(showWarnings){
-    if(! file.exists(path))warning("path does not exist: ",path,immediate. = T)
+    if(! file.exists(path))warning("path does not exist: ",path,immediate. = TRUE)
   }
   file_info <- data.frame(
     file = list.files(path) ,
-    path = list.files(path, full.names = T)
+    path = list.files(path, full.names = TRUE)
   )
   file_info <- cbind(
     file_info,
@@ -24,24 +24,24 @@ full.file.info <- function(path,showWarnings = T) {
 #' @param top_level logical for being at top level of recursive function
 #' @return message
 #' @export
-sync_dir <- function(from,to,top_level=T){
+sync_dir <- function(from,to,top_level=TRUE){
   if(top_level){
     if(!file.exists(from))stop("from path '",from, "' doesn't exist")
     if(!file.info(from)[["isdir"]])stop("from path '",from, "' must be a folder")
     if(!file.exists(to)){
-      dir.create(to,showWarnings = F)
+      dir.create(to,showWarnings = FALSE)
     }#stop("to path '",to, "' doesn't exist")
     if(!file.info(to)[["isdir"]])stop("to path '",to, "' must be a folder")
   }
   file_info_from <- full.file.info(from)
-  file_info_to <- full.file.info(to,showWarnings=F)
+  file_info_to <- full.file.info(to,showWarnings=FALSE)
   if(nrow(file_info_from)>0){
     for(i in seq_len(nrow(file_info_from))){
       file_from <- file_info_from$file[i]
       isdir_from <- file_info_from$isdir[i]
       path_from <- file_info_from$path[i]
       mtime_from <- file_info_from$mtime[i]
-      COPY_TF <- T
+      COPY_TF <- TRUE
       add_or_update <- "Adding"
       MATCHING_FILE_ROW <- which(file_info_to$file==file_from)
       if(length(MATCHING_FILE_ROW)>0){
@@ -53,7 +53,7 @@ sync_dir <- function(from,to,top_level=T){
         path_to <- file_info_to$path[MATCHING_FILE_ROW]
         mtime_to <- file_info_to$mtime[MATCHING_FILE_ROW]
         if(isdir_from){
-          COPY_TF <- F # no need to copy folders that exist
+          COPY_TF <- FALSE # no need to copy folders that exist
         }
         if(!isdir_from){#if it's a file... check mtimes
           COPY_TF <- mtime_from > mtime_to
@@ -63,8 +63,8 @@ sync_dir <- function(from,to,top_level=T){
         file.copy(
           from = path_from,
           to = to,
-          overwrite = T,
-          recursive = T
+          overwrite = TRUE,
+          recursive = TRUE
         )
         message(add_or_update," file: ",file_from, " to '", to, "'")
       }
@@ -72,18 +72,18 @@ sync_dir <- function(from,to,top_level=T){
         sync_dir( #recursive dive down if it's a folder
           from = path_from,
           to = path_to,
-          top_level = F
+          top_level = FALSE
         )
       }
     }
   }else{
-    warning(from, " is empty!",immediate. = T)
+    warning(from, " is empty!",immediate. = TRUE)
   }
   if(top_level){message("Up to date!")}
 }
 #' @title list.files.real
 #' @export
-list.files.real <- function(path,full.names = T, recursive = F){
+list.files.real <- function(path,full.names = TRUE, recursive = FALSE){
   grep('~$', normalizePath(list.files(path,full.names = full.names,recursive = recursive)), fixed = TRUE, value = TRUE, invert = TRUE)
 }
 #' @title view_file
@@ -91,7 +91,7 @@ list.files.real <- function(path,full.names = T, recursive = F){
 #' @param browser logical for launching from your PC default, not RStudio
 #' @return file opens
 #' @export
-view_file <- function(path,browser = F){
+view_file <- function(path,browser = FALSE){
   its_there <- file.exists(path)
   if(! its_there) return(message("No file there: ",path))
   if(its_there){
@@ -109,7 +109,7 @@ view_file <- function(path,browser = F){
 #' @param silent logical for silencing messages
 #' @return file deleted and maybe a message
 #' @export
-delete_file <- function(path, silent = F){
+delete_file <- function(path, silent = FALSE){
   its_there <- file.exists(path)
   if(! its_there){
     if(!silent)return(message("No file to delete: ",path))

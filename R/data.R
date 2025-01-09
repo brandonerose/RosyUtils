@@ -32,7 +32,7 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
   }
   new_keys <- integer(0)
   if(any(!new$key %in% old$key)){
-    # warning("You have at least one new key compared to old DF therefore all columns will be included by default",immediate. = T)
+    # warning("You have at least one new key compared to old DF therefore all columns will be included by default",immediate. = TRUE)
     new_keys <- which(!new$key %in% old$key)
   }
   indices <- data.frame(
@@ -84,7 +84,7 @@ find_df_diff <- function (new, old,ref_cols=NULL,message_pass=""){
 #' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, n_row_view = 20){
+find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = TRUE, n_row_view = 20){
   new <- all_character_cols(new)
   old <- all_character_cols(old)
   if (!all(colnames(new) %in% colnames(old))) {
@@ -108,7 +108,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, 
   }
   appended_old_col_suffix <- "__old"
   if(any(endsWith(unique(colnames(old),colnames(new)),appended_old_col_suffix)))stop("colnames cant end with '",appended_old_col_suffix,"'")
-  merged_df <- merge(new, old, by = ref_cols, suffixes = c("",appended_old_col_suffix ),all.x = T)
+  merged_df <- merge(new, old, by = ref_cols, suffixes = c("",appended_old_col_suffix ),all.x = TRUE)
   placeholder <- "NA_placeholder"
   rows_to_keep <- NULL
   cols_to_view <- cols_to_keep <- which(colnames(merged_df) %in% ref_cols)
@@ -135,18 +135,18 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, 
     cols_to_keep <- cols_to_keep %>% unique()
     if(view_old){
       rows_to_keep2 <- rows_to_keep
-      done <- F
+      done <- FALSE
       while ( ! done) {
         length_of_rows_to_keep <- length(rows_to_keep2)
         if(length_of_rows_to_keep==0){
-          done <- T
+          done <- TRUE
         }else{
           indices <- 1:ifelse(length_of_rows_to_keep<n_row_view,length_of_rows_to_keep,n_row_view)
           rows_to_keep3 <- rows_to_keep2[indices]
           print.data.frame(merged_df[rows_to_keep3,unique(cols_to_view)])
           choice <- utils::menu(choices = c("Check more rows","Proceed with no more checking", "Stop the function"),title = "What would you like to do?")
           if(choice==3)stop("Stopped as requested!")
-          if(choice==2)done <- T
+          if(choice==2)done <- TRUE
           if(choice==1)rows_to_keep2 <- rows_to_keep2[-indices]
         }
       }
@@ -169,7 +169,7 @@ find_df_diff2 <- function (new, old,ref_cols=NULL,message_pass="",view_old = T, 
 #' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = T, n_row_view = 20){
+find_df_list_diff <- function(new_list, old_list,ref_col_list,view_old = TRUE, n_row_view = 20){
   if(!is_something(new_list)){
     message("new_list is empty")
     return(list())
@@ -266,7 +266,7 @@ clean_df_blanks <- function(DF,other_blanks=NULL) {
 }
 #' @title index_na
 #' @export
-index_na <- function(DF, MARGIN = "col",invert = F) {
+index_na <- function(DF, MARGIN = "col",invert = FALSE) {
   okcols <- c("cols","col")
   okrows <-  c("row","rows")
   allowed <- c(okcols,okrows,1,2)
@@ -283,7 +283,7 @@ index_na <- function(DF, MARGIN = "col",invert = F) {
 }
 #' @title clean_env_names
 #' @export
-clean_env_names <- function(env_names,silent = F,lowercase=T){
+clean_env_names <- function(env_names,silent = FALSE,lowercase=TRUE){
   cleaned_names <- character(length(env_names))
   for (i in seq_along(env_names)) {
     name <- env_names[i]
@@ -339,7 +339,7 @@ vec1_not_in_vec2 <- function(vec1,vec2){
 }
 #' @title find_in_DF_list
 #' @export
-find_in_df_list <- function(df_list,text,exact = F){
+find_in_df_list <- function(df_list,text,exact = FALSE){
   df_list <- process_df_list(df_list)
   out <- data.frame(
     record_id = character(0),
@@ -372,7 +372,7 @@ find_in_df_list <- function(df_list,text,exact = F){
 #' @title count_vec_df
 #' @export
 count_vec_df <- function(vec){
-  vec <- vec %>% table() %>% sort(decreasing = T)
+  vec <- vec %>% table() %>% sort(decreasing = TRUE)
   DF <- data.frame(
     count = as.integer(vec),
     name = names(vec)
@@ -395,10 +395,10 @@ reassign_variable_in_bulk <- function(DF,old_colname,new_colname,optional_choice
   if( ! new_colname %in% colnames(DF))DF[[new_colname]] <- NA
   df_vec_counted <- count_vec_df(DF[[old_colname]])
   choices <- "Do Nothing (Skip)"
-  has_choices <- F
+  has_choices <- FALSE
   if(!missing(optional_choices)) {
     choices <- choices %>% append(c("Best Guess --> ", optional_choices))
-    has_choices <- T
+    has_choices <- TRUE
   }
   choices <- choices %>% append(c("Manual Entry","Stop and Return Current DF"))
   df_vec_counted %>% head(20) %>% print.data.frame()
@@ -457,7 +457,7 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
     is_repeating_form <- change_form %in% DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)]
     OUT <- NULL
     for (record in records){ # record <- records%>% sample(1)
-      record_was_updated <- F
+      record_was_updated <- FALSE
       VIEW <- optional_DF[which(optional_DF[[DB$redcap$id_col]]==record),]
       VIEW_simp <- VIEW[,unique(c(DB$redcap$id_col,field_names_to_view))] %>% unique()
       row.names(VIEW_simp) <- NULL
@@ -499,7 +499,7 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
               if(upload_individually){
                 OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
                 message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
-                record_was_updated <- T
+                record_was_updated <- TRUE
               }else{
                 OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
               }
@@ -512,7 +512,7 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
             if(upload_individually){
               OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
               message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
-              record_was_updated <- T
+              record_was_updated <- TRUE
             }else{
               OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
             }
@@ -542,7 +542,7 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
                   if(upload_individually){
                     OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
                     message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
-                    record_was_updated <- T
+                    record_was_updated <- TRUE
                   }else{
                     OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
                   }
@@ -556,7 +556,7 @@ edit_variable_while_viewing <- function(DF,optional_DF, field_name_to_change, fi
                 if(upload_individually){
                   OUT_sub %>% labelled_to_raw_form(DB) %>% upload_form_to_redcap(DB)
                   message("Uploaded: ",OUT_sub %>% paste0(collapse = " | "))
-                  record_was_updated <- T
+                  record_was_updated <- TRUE
                 }else{
                   OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
                 }
@@ -623,14 +623,14 @@ drop_missing_levels_df <- function(DF, drop_levels = NULL) {
 }
 #' @title add_TF_to_DF
 #' @export
-add_TF_to_DF <- function(DF,cols,include_NA=F){
+add_TF_to_DF <- function(DF,cols,include_NA=FALSE){
   if(any(!cols %in% colnames(DF)))stop("all `cols` must be colnames of `DF`")
   for(col in cols){
     choices<-unique(DF[[col]])
     if(include_NA){
       if("NA" %in% choices){
         DF[[col]][which(DF[[col]]=="NA")] <- NA
-        warning("for this function you can't have a choice that is 'NA'. So it's been converted to NA in R",immediate. = T)
+        warning("for this function you can't have a choice that is 'NA'. So it's been converted to NA in R",immediate. = TRUE)
       }
     }
     if(!include_NA){

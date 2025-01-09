@@ -1,5 +1,5 @@
 #' @export
-add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_split=" [:|:] ",write_split = " | ",remove_previous = T){
+add_df_flag <- function(DF,flag_field_name,id_field_name,ids,flag_name,read_split=" [:|:] ",write_split = " | ",remove_previous = TRUE){
   if(any(!ids%in%DF[[id_field_name]]))stop( "Some of your record IDs are not included in the set of the current database IDs! Add them first...")
   flag_vector <- DF[[flag_field_name]] %>% strsplit(split=read_split)
   DF[[flag_field_name]] <- seq_len(nrow(DF)) %>% lapply(function(ROW){
@@ -63,7 +63,7 @@ combine_two_split_vector_flags <- function(v1,v2,read_split=" [:|:] ",write_spli
   return(v3)
 }
 #' @export
-clean_split_vec <- function(vec,read_split=" [:|:] ",write_split = " | ",sort_them=T,lowercase_them=T){
+clean_split_vec <- function(vec,read_split=" [:|:] ",write_split = " | ",sort_them=TRUE,lowercase_them=TRUE){
   vec %>% trimws(whitespace = "[\\h\\v]") %>% lapply(function(E){
     if(is.na(E))return(NA)
     x <- strsplit(E,split= read_split) %>% unlist() %>% unique() %>% trimws(whitespace = "[\\h\\v]")
@@ -85,7 +85,7 @@ assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
       lengths = x$lengths,
       values = x$values
     )
-    vec <- x$values[order(x$lengths,decreasing = T)]
+    vec <- x$values[order(x$lengths,decreasing = TRUE)]
   }
   vec <- vec %>% drop_nas() %>% unique()
   if(sort_type=="alphabetic") vec <- vec %>% sort()
@@ -97,7 +97,7 @@ assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
   }else{
     the_choices <- the_choices %>% append(choices)
   }
-  keep_going <- T
+  keep_going <- TRUE
   i <- 1
   vec_length <- length(vec)
   v1_length <- length(v1)
@@ -109,7 +109,7 @@ assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
     message(length(rows)," elements can change based on next choice")
     the_current_choice <- utils::menu(the_choices,title=paste0("What would you like to do for '",vec[i],"'?"))
     if(the_current_choice==1) the_final_v2_choice <- NA
-    if(the_current_choice==2) keep_going <- F
+    if(the_current_choice==2) keep_going <- FALSE
     if(the_current_choice>=3){
       the_final_v2_choice <- the_choices[the_current_choice]
       if(no_choices){
@@ -118,7 +118,7 @@ assign_vec_in_console <- function(vec,choices,sort_type = "smart"){
       if(!is.na(the_final_v2_choice))v2[rows] <- the_final_v2_choice
     }
     i <- i + 1
-    if(i>vec_length) keep_going <- F
+    if(i>vec_length) keep_going <- FALSE
   }
   return(v2)
 }

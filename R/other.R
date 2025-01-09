@@ -4,7 +4,7 @@
 #' @export
 clear_env <- function(){
   pos <- 1
-  rm(list=ls(all.names = T,pos = pos),pos = pos)
+  rm(list=ls(all.names = TRUE,pos = pos),pos = pos)
   cat("\014")
   if(!is.null(grDevices::dev.list())) grDevices::dev.off()
   grDevices::graphics.off()
@@ -66,7 +66,7 @@ file_size_mb <- function(path){
 }
 #' @title read_pdf
 #' @export
-read_pdf <- function(path,no_double_spaces = F){
+read_pdf <- function(path,no_double_spaces = FALSE){
   pdf_text_raw <- pdftools::pdf_text(path)
   pdf_text <- pdf_text_raw %>% paste(collapse = " ")
   pdf_text <- gsub("\\n"," ",pdf_text)
@@ -156,7 +156,7 @@ choice_vector_string <- function(vec){
 }
 #' @title matches
 #' @export
-matches <- function(x,ref,count_only=F){
+matches <- function(x,ref,count_only=FALSE){
   final_match <- list()
   final_match[seq_along(x)] <- NA
   next_match <- match(x,ref)
@@ -252,7 +252,7 @@ numeric_to_cats <- function(vec, method = "quantile", quantiles = 5, more_descri
     )
   } else if (method == "quantile") {
     # Quantile-based binning
-    quantile_cutoffs <- quantile(vec, probs = seq(0, 1, length.out = quantiles + 1),na.rm = T)
+    quantile_cutoffs <- quantile(vec, probs = seq(0, 1, length.out = quantiles + 1),na.rm = TRUE)
     # Generate labels for the specified number of quantiles
     labels <- paste("Q", 1:quantiles, sep = "")
     if (more_descriptive_label) {
