@@ -27,7 +27,7 @@ bullet_in_console <- function(text = "",url = NULL,bullet_type = "i",collapse = 
     if(collapse)file_if <- paste0(file_if,collapse = " and ")
     file_if <- paste0(
       " {cli::col_blue(cli::style_hyperlink('",
-      sanitize_path(file_names),
+      gsub("\\\\", "/", file_names),
       "', '",
       sanitize_path(paste0("file://",file)),
       "'))}"
