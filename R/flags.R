@@ -46,7 +46,7 @@ remove_df_flag <- function(DF,flag_field_name,flag_name){
 }
 #' @export
 get_df_flag_rows <- function(DF,flag_field_name,flag_name){
-  return(which(DF[[flag_field_name]] %>% strsplit(" [:|:] ") %>% lapply(function(ROW){flag_name%in%drop_nas(ROW)})))
+  return(which(DF[[flag_field_name]] %>% strsplit(" [:|:] ") %>% lapply(function(ROW){flag_name%in%drop_nas(ROW)}) %>% unlist()))
 }
 #' @export
 combine_two_split_vector_flags <- function(v1,v2,read_split=" [:|:] ",write_split = " | "){
