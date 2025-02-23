@@ -106,7 +106,7 @@ wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
   if (end <= max_length) {
     return(text)
   }
-  protected_pattern <- '"[^"]*"|\'[^\']*\'|`[^`]*`|\\[[^\\]]*\\]|\\{[^}]*\\}'
+  protected_pattern <- '"[^"]*"|\\[[^\\]]*\\]|\\{[^}]*\\}'
   masked_text <- text
   matches <- stringr::str_extract_all(text, protected_pattern)[[1]]
   for (match in matches) {
