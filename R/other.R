@@ -126,7 +126,7 @@ wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
     is_start <- final_start == 1
     final_max_length <- max_length
     if (!is_start) {
-      final_max_length <- (max_length - spacer_length) + final_start
+      final_max_length <- (max_length - spacer_length)
     }
     short_enough <- (end - final_start) <= final_max_length
     if (short_enough) {
@@ -139,7 +139,7 @@ wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
     }
     if (go) {
       available_spaces <- space_positions[which(
-        space_positions <= final_max_length &
+        space_positions <= (final_max_length + final_start) &
           space_positions >= final_start
       )]
       if (length(available_spaces) > 0) {
