@@ -97,6 +97,67 @@ wrap_string_to_lines <- function(text, max_length,spacer="") {
   }
   return(result_vector)
 }
+#' @title wrap_string_to_lines2
+#' @export
+wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
+  final_end <- end <- nchar(text)
+  if(end<=max_length){
+    return(text)
+  }
+  protected_pattern <- '"[^"]*"|\'[^\']*\'|`[^`]*`|\\[[^\\]]*\\]|\\{[^}]*\\}'
+  masked_text <- text
+  matches <- stringr::str_extract_all(text, protected_pattern)[[1]]
+  for (match in matches) {
+    masked_text <- sub(fixed(match), strrep("_", nchar(match)), masked_text, fixed = TRUE)
+  }
+  space_positions <- as.data.frame(stringr::str_locate_all(masked_text," ")[[1]])$end
+  if(length(space_positions)==0){
+    bullet_in_console(paste0("No unprotected spaces to wrap by for: ",text),bullet_type = "!")
+    return(text)
+  }
+  spacer_length <- nchar(spacer)
+  space_positions <- space_positions - 1
+  result_vector <- c()
+  final_start <- start <- 1
+  go <- TRUE
+  while (go) {
+    is_start <- final_start == 1
+    final_max_length <- max_length
+    if(!is_start){
+      final_max_length <- (max_length - spacer_length) + final_start
+    }
+    short_enough <- (end - final_start) <= final_max_length
+    if(short_enough){
+      chunk <- substr(text, final_start, end)
+      if(!is_start){
+        chunk <- paste(spacer, chunk, sep = "")
+      }
+      result_vector <- c(result_vector, chunk)
+      go <- FALSE
+    }
+    if(go){
+      available_spaces <- space_positions[which(
+        space_positions<=final_max_length &
+          space_positions >= final_start
+      )]
+      if(length(available_spaces)>0){
+        final_end <- max(available_spaces)
+      }else{
+        final_end <- end
+      }
+      chunk <- substr(text, final_start, final_end)
+      if(!is_start){
+        chunk <- paste(spacer, chunk, sep = "")
+      }
+      result_vector <- c(result_vector, chunk)
+      final_start <- final_end + 2
+      if(final_start >= end){
+        go <- FALSE
+      }
+    }
+  }
+  return(result_vector)
+}
 #' @title wrap_text
 #' @export
 wrap_text <- function(text, max_length = 40, spacer = "\n") {
