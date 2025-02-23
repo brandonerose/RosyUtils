@@ -101,9 +101,9 @@ wrap_string_to_lines <- function(text, max_length, spacer = "") {
 }
 #' @title wrap_string_to_lines2
 #' @export
-wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
+wrap_string_to_lines2 <- function(text, width = 80, spacer = "") {
   final_end <- end <- nchar(text)
-  if (end <= max_length) {
+  if (end <= width) {
     return(text)
   }
   protected_pattern <- '"[^"]*"|\\[[^\\]]*\\]|\\{[^}]*\\}'
@@ -112,6 +112,7 @@ wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
   for (match in matches) {
     masked_text <- sub(stringr::fixed(match), strrep("_", nchar(match)), masked_text, fixed = TRUE)
   }
+  masked_text <- gsub("\\\\.", "_", masked_text)
   space_positions <- as.data.frame(stringr::str_locate_all(masked_text, " ")[[1]])$end
   if (length(space_positions) == 0) {
     bullet_in_console(paste0("No unprotected spaces to wrap by for: ", text), bullet_type = "!")
@@ -124,9 +125,9 @@ wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
   go <- TRUE
   while (go) {
     is_start <- final_start == 1
-    final_max_length <- max_length
+    final_max_length <- width
     if (!is_start) {
-      final_max_length <- (max_length - spacer_length)
+      final_max_length <- (width - spacer_length)
     }
     short_enough <- (end - final_start) <= final_max_length
     if (short_enough) {
@@ -139,7 +140,7 @@ wrap_string_to_lines2 <- function(text, max_length = 80, spacer = "") {
     }
     if (go) {
       available_spaces <- space_positions[which(
-        space_positions <= (final_max_length + final_start) &
+        space_positions <= (final_max_length + final_start - 1) &
           space_positions >= final_start
       )]
       if (length(available_spaces) > 0) {

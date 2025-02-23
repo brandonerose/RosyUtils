@@ -4,7 +4,7 @@
 \alias{wrap_string_to_lines2}
 \title{wrap_string_to_lines2}
 \usage{
-wrap_string_to_lines2(text, max_length = 80, spacer = "")
+wrap_string_to_lines2(text, width = 80, spacer = "")
 }
 \description{
 wrap_string_to_lines2
