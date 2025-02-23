@@ -129,7 +129,7 @@ wrap_string_to_lines2 <- function(text, width = 80, spacer = "") {
     if (!is_start) {
       final_max_length <- (width - spacer_length)
     }
-    short_enough <- (end - final_start) <= final_max_length
+    short_enough <- (end - final_start + 1) <= final_max_length
     if (short_enough) {
       chunk <- substr(text, final_start, end)
       if (!is_start) {
