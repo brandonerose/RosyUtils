@@ -159,15 +159,11 @@ date_imputation <- function(dates_in, date_imputation) {
       date_out[x] <- NA
     }
     if (!is.null(date_imputation)) {
-      date_out[x] <- dates_in[x] %>% lapply(function(date) {
-        admiral::impute_dtc_dt(
-          date,
-          highest_imputation = "M", # "n" for normal date
-          date_imputation = date_imputation
-          # min_dates = min_dates %>% lubridate::ymd() %>% as.list(),
-          # max_dates = max_dates %>% lubridate::ymd() %>% as.list()
-        )
-      })
+      date_out[x] <- admiral::impute_dtc_dt(
+        dates_in[x],
+        highest_imputation = "M",
+        date_imputation = date_imputation
+      )
     }
   }
   date_out
