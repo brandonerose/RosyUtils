@@ -694,3 +694,52 @@ add_TF_to_DF <- function(DF, cols, include_NA = FALSE) {
   }
   DF
 }
+#' @title clean_date_vector
+#' @export
+clean_date_vector <- function (vector,
+                               allow_partial = TRUE,
+                               exclude_these = NULL) {
+  if (length(vector) > 0) {
+    for (i in seq(length(vector))) {
+      OUT <- vector[i]
+      is_bad_date <- F
+      if (!is.na(OUT)) {
+        if (!is.null(OUT)) {
+          if (!OUT %in% exclude_these) {
+            if(allow_partial){
+              is_bad_date <- !is_date(OUT)
+            }else{
+              is_bad_date <- !is_date_full(OUT)
+            }
+          }
+        }
+      }
+      if (is_bad_date) {
+        message("Bad date: ", OUT)
+        guess <- convert_dates(OUT, allow_partial = allow_partial)
+        choice <- utils::menu(
+          choices = c(
+            "Do Nothing (Skip)",
+            guess,
+            "other",
+            "Stop and Return Current Vector"
+            ),
+          title = paste0("Bad Date (", OUT, "). What is the date?")
+        )
+        date_out <- OUT
+        if (choice == 2) {
+          date_out <- guess
+        }
+        if (choice == 3) {
+          date_out <- readline("What is the date?")
+        }
+        if (choice == 4) {
+          return(vector)
+        }
+        vector[i] <- date_out
+      }
+    }
+  }
+  vector
+}
+
