@@ -120,10 +120,8 @@ guess_date <- function(the_date,allow_partial = TRUE){
     }) %>%
     unlist() %>%
     drop_nas()
-  if(length(split_pattern)==0){
-    if(is.na(split_pattern)){
-      return(the_date)
-    }
+  if (length(split_pattern) == 0) {
+    return(the_date)
   }
   y_n <- 3
   m_n <- 1
