@@ -90,6 +90,69 @@ delete_dates2 <- function(input_string) {
   gsub(paste(date_patterns, collapse = "|"), "", input_string)
 }
 #' @export
+guess_date <- function(the_date,allow_partial = TRUE){
+  the_date <- as.character(the_date)
+  is_digit_string <- grepl("^\\d{4,5}$", the_date)
+  if(is_digit_string){
+    x_num <- suppressWarnings(as.integer(the_date))
+    if(x_num > 2173 && x_num < 50000){
+      #will only allow dates betwen 1905-12-12 and 2173-10-13
+      the_date_final <- openxlsx::convertToDate(x_num) %>% as.character()
+      return(the_date_final)
+    }
+  }
+  if (allow_partial) {
+    if (is_date(the_date)) {
+      return(the_date)
+    }
+  } else{
+    if (is_date_full(the_date)) {
+      return(the_date)
+    }
+  }
+  the_date_final <- gsub("-", "/", the_date)
+  split_pattern <- the_date_final %>%
+    strsplit("/") %>%
+    unlist() %>%
+    lapply(function(E) {
+      E %>%
+        as.integer() %>%
+        stringr::str_pad(2, "left", 0)
+    }) %>%
+    unlist()
+  y_n <- 3
+  m_n <- 1
+  d_n <- 2
+  check_year <- which(nchar(split_pattern) == 4)
+  if (length(check_year) == 1) {
+    if (check_year == 1) {
+      y_n <- 1
+      m_n <- 2
+      d_n <- 3
+    }
+  }
+  year <- split_pattern[[y_n]]
+  if (nchar(year) == 2) {
+    year <- year %>% stringr::str_pad(2, "left", 0)
+    if (year >= 0 && year < 25) {
+      year <- paste0("20", year)
+    }
+    if (year >= 50 && year <= 99) {
+      year <- paste0("19", year)
+    }
+  }
+  the_date_final <- paste0(year)
+  if (length(split_pattern) > 1) {
+    month <- split_pattern[[m_n]]
+    the_date_final <- the_date_final %>% paste0("-", month)
+  }
+  if (length(split_pattern) > 2) {
+    day <- split_pattern[[d_n]]
+    the_date_final <- the_date_final %>% paste0("-", day)
+  }
+  the_date_final
+}
+#' @export
 convert_dates <- function(input_string, allow_partial = FALSE) {
   if (!is.na(input_string)) {
     input_string <- input_string %>% trimws()
@@ -97,46 +160,7 @@ convert_dates <- function(input_string, allow_partial = FALSE) {
       dates <- extract_dates(input_string, allow_partial = allow_partial)
       output_string <- input_string
       for (the_date in dates) {
-        the_date_final <- gsub("-", "/", the_date)
-        split_pattern <- the_date_final %>%
-          strsplit("/") %>%
-          unlist() %>%
-          lapply(function(E) {
-            E %>%
-              as.integer() %>%
-              stringr::str_pad(2, "left", 0)
-          }) %>%
-          unlist()
-        y_n <- 3
-        m_n <- 1
-        d_n <- 2
-        check_year <- which(nchar(split_pattern) == 4)
-        if (length(check_year) == 1) {
-          if (check_year == 1) {
-            y_n <- 1
-            m_n <- 2
-            d_n <- 3
-          }
-        }
-        year <- split_pattern[[y_n]]
-        if (nchar(year) == 2) {
-          year <- year %>% stringr::str_pad(2, "left", 0)
-          if (year >= 0 && year < 25) {
-            year <- paste0("20", year)
-          }
-          if (year >= 50 && year <= 99) {
-            year <- paste0("19", year)
-          }
-        }
-        the_date_final <- paste0(year)
-        if (length(split_pattern) > 1) {
-          month <- split_pattern[[m_n]]
-          the_date_final <- the_date_final %>% paste0("-", month)
-        }
-        if (length(split_pattern) > 2) {
-          day <- split_pattern[[d_n]]
-          the_date_final <- the_date_final %>% paste0("-", day)
-        }
+        the_date_final <- guess_date(the_date,allow_partial = allow_partial)
         output_string <- gsub(the_date, the_date_final, output_string)
       }
       return(output_string)

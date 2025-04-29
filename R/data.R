@@ -716,7 +716,7 @@ clean_date_vector <- function (vector,
       }
       if (is_bad_date) {
         message("Bad date: ", OUT)
-        guess <- convert_dates(OUT, allow_partial = allow_partial)
+        guess <- guess_date(OUT, allow_partial = allow_partial)
         choice <- utils::menu(
           choices = c(
             "Do Nothing (Skip)",
@@ -742,4 +742,3 @@ clean_date_vector <- function (vector,
   }
   vector
 }
-
