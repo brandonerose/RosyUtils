@@ -118,7 +118,8 @@ guess_date <- function(the_date,allow_partial = TRUE){
         as.integer() %>%
         stringr::str_pad(2, "left", 0)
     }) %>%
-    unlist() %>% drop_nas()
+    unlist() %>%
+    drop_nas()
   if(length(split_pattern)==0){
     if(is.na(split_pattern)){
       return(the_date)
@@ -132,6 +133,11 @@ guess_date <- function(the_date,allow_partial = TRUE){
     if (check_year == 1) {
       y_n <- 1
       m_n <- 2
+      d_n <- 3
+    }
+    if (check_year == 2) {
+      y_n <- 2
+      m_n <- 1
       d_n <- 3
     }
   }
