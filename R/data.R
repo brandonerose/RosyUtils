@@ -724,14 +724,14 @@ clean_date_vector <- function (vector,
             "other",
             "Stop and Return Current Vector"
             ),
-          title = paste0("Bad Date (", OUT, "). What is the date?")
+          title = paste0("Bad Date (", OUT, "). What is the date? ")
         )
         date_out <- OUT
         if (choice == 2) {
           date_out <- guess
         }
         if (choice == 3) {
-          date_out <- readline("What is the date?")
+          date_out <- readline("What is the date? ")
         }
         if (choice == 4) {
           return(vector)
