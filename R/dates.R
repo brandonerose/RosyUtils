@@ -110,8 +110,7 @@ guess_date <- function(the_date,allow_partial = TRUE){
       return(the_date)
     }
   }
-  the_date_final <- gsub("-", "/", the_date)
-  split_pattern <- the_date_final %>%
+  split_pattern <- gsub("-", "/", the_date) %>%
     strsplit("/") %>%
     unlist() %>%
     lapply(function(E) {
@@ -119,7 +118,12 @@ guess_date <- function(the_date,allow_partial = TRUE){
         as.integer() %>%
         stringr::str_pad(2, "left", 0)
     }) %>%
-    unlist()
+    unlist() %>% drop_nas()
+  if(length(split_pattern)==0){
+    if(is.na(split_pattern)){
+      return(the_date)
+    }
+  }
   y_n <- 3
   m_n <- 1
   d_n <- 2
