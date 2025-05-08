@@ -352,19 +352,24 @@ process_df_list <- function(list, drop_empty = TRUE, silent = FALSE) {
     if (!is_df_list(list)) stop("list must be ...... a list :)")
     if (drop_empty) {
       is_a_df_with_rows <- list %>%
-        lapply(function(IN) {
-          is_df <- is.data.frame(IN)
+        lapply(function(x) {
+          is_df <- is.data.frame(x)
+          out <- FALSE
           if (is_df) {
-            return(nrow(IN) > 0)
-          } else {
-            return(FALSE)
+            out <- nrow(x) > 0
           }
+          out
         }) %>%
         unlist()
       keeps <- which(is_a_df_with_rows)
       drops <- which(!is_a_df_with_rows)
       if (length(drops) > 0) {
-        if (!silent) bullet_in_console("Dropping non-data.frames and empties... ", paste0(names(drops), collapse = ", "))
+        if (!silent) {
+          cli_alert_wrap(
+            "Dropping non-data.frames and empties... ",
+            toString(names(drops))
+          )
+        }
       }
       list <- list[keeps]
     }
@@ -374,7 +379,7 @@ process_df_list <- function(list, drop_empty = TRUE, silent = FALSE) {
       }
     }
   }
-  return(list)
+  list
 }
 default_header_style <-
   openxlsx::createStyle(
