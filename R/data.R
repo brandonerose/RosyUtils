@@ -352,7 +352,10 @@ vec1_not_in_vec2 <- function(vec1, vec2) {
 }
 #' @title find_in_DF_list
 #' @export
-find_in_df_list <- function(df_list, text, exact = FALSE) {
+find_in_df_list <- function(df_list,
+                            id_col = "record_id",
+                            text,
+                            exact = FALSE) {
   df_list <- process_df_list(df_list)
   out <- data.frame(
     record_id = character(0),
@@ -372,7 +375,7 @@ find_in_df_list <- function(df_list, text, exact = FALSE) {
       if (length(rows) > 0) {
         out <- out %>% dplyr::bind_rows(
           data.frame(
-            record_id = DF[[DB$redcap$id_col]][rows],
+            record_id = DF[[id_col]][rows],
             col = col,
             row = as.character(rows)
           )
