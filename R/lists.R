@@ -1,3 +1,11 @@
+#' @title add_to_global
+#' @param only_dfs logical for only including data.frames in output
+#' @return environment adds
+#' @export
+add_to_global <- function(...,only_dfs = FALSE){
+  x <- list(...)
+  add_list_to_global(x,only_dfs)
+}
 #' @title add_list_to_global
 #' @param x a named list
 #' @param only_dfs logical for only including data.frames in output
