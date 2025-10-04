@@ -147,7 +147,7 @@ is_web_link <- function(link, silent = FALSE, strict = FALSE) {
 #' @title is_consecutive_srt_1
 #' @export
 is_consecutive_srt_1 <- function(vec) {
-  if (vec[1] != 1) {
+  if (vec[1] != 1L) {
     return(FALSE)
   }
   if (length(vec) > 1) {
@@ -157,7 +157,7 @@ is_consecutive_srt_1 <- function(vec) {
       }
     }
   }
-  return(TRUE)
+  TRUE
 }
 #' @title validate_env_name
 #' @export

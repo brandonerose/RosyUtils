@@ -223,6 +223,156 @@ list_to_wb <- function(
   }
   wb
 }
+#' @title form_to_wb
+#' @export
+form_to_wb <- function(form,
+                       form_name,
+                       wb = openxlsx::createWorkbook(),
+                       key_cols = NULL,
+                       derived_cols = NULL,
+                       link_col_list = list(),
+                       str_trunc_length = 32000,
+                       header_df = NULL,
+                       tableStyle = "none",
+                       header_style = default_header_style,
+                       body_style = default_body_style,
+                       freeze_header = TRUE,
+                       pad_rows = 0,
+                       pad_cols = 0,
+                       freeze_keys = TRUE) {
+  if (nchar(form_name) > 31) stop(form_name, " is longer than 31 char")
+  form[] <- lapply(form, function(col) {
+    out <- col
+    if (is.character(col)) {
+      out <- stringr::str_trunc(col, str_trunc_length, ellipsis = "")
+    }
+    out
+  })
+  hyperlink_col <- NULL
+  if (freeze_keys) {
+    all_cols <- colnames(form)
+    if (!all(key_cols %in% all_cols)) stop("all key_cols must be in the forms")
+    freeze_key_cols <- which(all_cols %in% key_cols)
+    if (length(freeze_key_cols) > 0) {
+      if (!is_consecutive_srt_1(freeze_key_cols)) {
+        warning(
+          "please keep your key cols on the left consecutively. Fixing ",
+          form_name,
+          ": ",
+          toString(key_cols),
+          ".",
+          immediate. = TRUE
+        )
+        non_key_cols <- seq_len(ncol(form))
+        non_key_cols <- non_key_cols[which(!non_key_cols %in% freeze_key_cols)]
+        new_col_order <- c(freeze_key_cols, non_key_cols)
+        if (is_something(header_df)) {
+          header_df <- header_df[, new_col_order]
+        }
+        form <- form[, new_col_order]
+      }
+    }
+  }
+  if (nrow(form) > 0) {
+    openxlsx::addWorksheet(wb, form_name)
+    start_row_header <- pad_rows + 1
+    start_row_table <- start_row_header
+    startCol <- pad_cols + 1
+    if (is_something(header_df)) {
+      openxlsx::writeData(
+        wb,
+        sheet = form_name,
+        x = header_df,
+        startRow = start_row_header,
+        startCol = startCol,
+        colNames = FALSE
+      )
+      start_row_table <- start_row_header + nrow(header_df)
+    }
+    if (length(link_col_list) > 0) {
+      has_names <- !is.null(names(link_col_list))
+      for (i in seq_along(link_col_list)) {
+        if (link_col_list[[i]] %in% colnames(form)) {
+          class(form[[link_col_list[[i]]]]) <- "hyperlink"
+        } else {
+          # warning("",immediate. = TRUE)
+        }
+        if (has_names) {
+          if (names(link_col_list)[i] %in% colnames(form)) {
+            hyperlink_col <- which(colnames(form) == names(link_col_list)[i])
+            openxlsx::writeData(
+              wb,
+              sheet = form_name,
+              x = form[[link_col_list[[i]]]],
+              startRow = start_row_table + 1,
+              startCol = hyperlink_col + pad_cols
+            )
+            form[[link_col_list[[i]]]] <- NULL
+          } else {
+            # warning("",immediate. = TRUE)
+          }
+        }
+      }
+    }
+    openxlsx::writeDataTable(
+      wb,
+      sheet = form_name,
+      x = form,
+      startRow = start_row_table,
+      startCol = startCol,
+      tableStyle = tableStyle
+    )
+    #add derived style
+    style_cols <- seq_len(ncol(form)) + pad_cols
+    openxlsx::addStyle(
+      wb,
+      sheet = form_name,
+      style = header_style,
+      rows = seq(from = start_row_header, to = start_row_table),
+      cols = style_cols,
+      gridExpand = TRUE,
+      stack = TRUE
+    )
+    openxlsx::addStyle(
+      wb,
+      sheet = form_name,
+      style = body_style,
+      rows = seq_len(nrow(form)) + start_row_table,
+      cols = style_cols,
+      gridExpand = TRUE,
+      stack = TRUE
+    )
+    if (freeze_header || freeze_keys) {
+      firstActiveRow <- NULL
+      if (freeze_header) {
+        firstActiveRow <- start_row_table + 1
+      }
+      firstActiveCol <- NULL
+      if (freeze_keys) {
+        firstActiveCol <- startCol
+        freeze_key_cols <- which(colnames(form) %in% key_cols)
+        if (length(freeze_key_cols) > 0) {
+          if (is_consecutive_srt_1(freeze_key_cols)) {
+            firstActiveCol <- firstActiveCol +
+              freeze_key_cols[length(freeze_key_cols)]
+          } else {
+            warning(
+              "key_cols must be consecutive and start from left most column.",
+              immediate. = TRUE
+            )
+          }
+        }
+        openxlsx::freezePane(
+          wb,
+          form_name,
+          firstActiveRow = firstActiveRow,
+          firstActiveCol = firstActiveCol
+        )
+      }
+    }
+    return(wb)
+  }
+}
 #' @title list_to_excel
 #' @export
 list_to_excel <- function(
@@ -335,22 +485,22 @@ save_wb <- function(wb, dir, file_name, overwrite = TRUE) {
 }
 #' @title save_csv
 #' @export
-save_csv <- function(DF, dir, file_name, overwrite = TRUE) {
+save_csv <- function(form, dir, file_name, overwrite = TRUE) {
   if (!dir.exists(dir)) stop("dir doesn't exist")
-  path <- file.path(dir, paste0(file_name, ".csv"))
+  path <- file.path(dir, paste0(file_name, ".csv")) %>% sanitize_path()
   write_it <- TRUE
   if (!overwrite) {
     if (file.exists(path)) {
       write_it <- FALSE
-      bullet_in_console(paste0("Already a file!"), file = path)
+      cli_alert_wrap(paste0("Already a file!"), file = path)
     }
   }
   if (write_it) {
-    write.csv(
-      x = DF,
+    utils::write.csv(
+      x = form,
       file = path
     )
-    bullet_in_console(paste0("Saved '", basename(path), "'!"), file = path)
+    cli_alert_wrap(paste0("Saved '", basename(path), "'!"), file = path)
   }
 }
 #' @title process_df_list
