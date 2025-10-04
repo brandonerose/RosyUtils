@@ -191,12 +191,15 @@ list_to_wb <- function(
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list, drop_empty = drop_empty)
   list_names <- names(list)
+  list_link_names <- list()
   if (length(link_col_list) > 0) {
     if (is_named_list(link_col_list)) {
-      if (!all(names(link_col_list) %in% list_names)) {
-        for (list_name in list_names) {
-          list_link_names[[list_name]] <- link_col_list
-        }
+      if(all(names(link_col_list) %in% list_names)){
+        list_link_names <- link_col_list
+      } else {
+        # for (list_name in list_names) {
+        #   list_link_names[[list_name]] <- link_col_list
+        # }
       }
     }
   }
