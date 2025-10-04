@@ -32,7 +32,7 @@ is_something <- function(thing, row = 0) {
       }
     }
   }
-  return(out)
+  out
 }
 #' @title is_nested_list
 #' @export
