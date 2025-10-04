@@ -375,6 +375,34 @@ form_to_wb <- function(form,
 }
 #' @title list_to_excel
 #' @export
+rename_list_names_excel <- function(list_names) {
+  list_names_rename <- stringr::str_trunc(
+    list_names,
+    width = 31,
+    side = "right",
+    ellipsis = ""
+  )
+  bad_names <- duplicated_which(list_names_rename)
+  if (length(bad_names) > 0) {
+    cli_alert_danger(
+      "Duplicated names when trimmed from right 31 max in Excel: ",
+      toString(list_names[bad_names])
+    )
+    cli_alert_info(
+      paste0(
+        "Use CSV or shorten the names and make sure they are unique if they",
+        " are trimmed to 31 char. For now will make unique by adding number."
+      )
+    )
+    list_names_rename <- unique_trimmed_strings(
+      list_names_rename,
+      max_length = 31
+    )
+  }
+  list_names_rename
+}
+#' @title list_to_excel
+#' @export
 list_to_excel <- function(
     list,
     dir,

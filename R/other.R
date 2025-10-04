@@ -34,6 +34,11 @@ dwl <- function(x) {
 dw <- function(x) {
   which(duplicated(x))
 }
+#' @title duplicated_which
+#' @export
+duplicated_which <- function(x) {
+  which(duplicated(x))
+}
 #' @title drop_nas
 #' @export
 drop_nas <- function(x) {
@@ -188,7 +193,8 @@ unique_trimmed_strings <- function(strings, max_length) {
   trim_string <- function(s, max_length) {
     substr(s, 1, max_length)
   }
-  trimmed_strings <- unlist(lapply(strings, trim_string, max_length = max_length))
+  trimmed_strings <- lapply(strings, trim_string, max_length = max_length) %>%
+    unlist()
   # Initialize a vector to store unique strings
   unique_strings <- character(length(trimmed_strings))
   # Initialize a counter to keep track of occurrences
@@ -199,13 +205,21 @@ unique_trimmed_strings <- function(strings, max_length) {
     counter <- 1
     # Keep adjusting the string until it's unique
     while (new_string %in% unique_strings) {
-      new_string <- paste0(stringr::str_trunc(base_string, width = max_length - (counter), side = "right", ellipsis = ""), counter)
+      new_string <- paste0(
+        stringr::str_trunc(
+          base_string,
+          width = max_length - (counter),
+          side = "right",
+          ellipsis = ""
+        ),
+        counter
+      )
       counter <- counter + 1
     }
     unique_strings[i] <- new_string
     counts[i] <- counter
   }
-  return(unique_strings)
+  unique_strings
 }
 #' @title as_comma_string
 #' @export
