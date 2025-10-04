@@ -307,8 +307,11 @@ clean_env_names <- function(env_names, silent = FALSE, lowercase = TRUE) {
       cleaned_name <- gsub("__", "_", gsub(" ", "_", gsub("-", "", name)))
       if (lowercase) cleaned_name <- tolower(cleaned_name)
       if (cleaned_name %in% cleaned_names) {
-        if (!silent) message("Non-unique environment name: '", name, "', added numbers...")
-        cleaned_name <- cleaned_name %>% paste0("_", max(wl(cleaned_name %in% cleaned_names)) + 1)
+        if (!silent) {
+          message("Non-unique environment name: '", name, "', added numbers...")
+        }
+        cleaned_name <- cleaned_name %>%
+          paste0("_", max(which_length(cleaned_name %in% cleaned_names)) + 1L)
       }
       cleaned_names[i] <- cleaned_name
     }

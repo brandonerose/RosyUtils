@@ -5,40 +5,43 @@ excel_to_list <- function(path) {
   clean_sheets <- clean_env_names(sheets)
   out <- list()
   for (i in seq_along(sheets)) {
-    out[[i]] <- rio::import(path, col_types = "text", sheet = i)
+    out[[i]] <- readxl::read_xlsx(path, col_types = "text", sheet = i)
   }
   names(out) <- clean_sheets
-  return(out)
+  out
 }
 #' @title csv_to_list
 #' @export
 csv_to_list <- function(paths) {
-  paths <- normalizePath(paths)
-  OUT <- list()
+  paths <- sanitize_path(paths)
+  form_list <- list()
   clean_names <- paths %>%
     basename() %>%
     tools::file_path_sans_ext() %>%
     clean_env_names()
   for (i in seq_along(paths)) {
-    OUT[[i]] <- read.csv(paths[i], stringsAsFactors = FALSE, na.strings = c("", "NA"))
+    form_list[[i]] <- utils::read.csv(
+      paths[i],
+      stringsAsFactors = FALSE,
+      na.strings = c("", "NA")
+    )
   }
-  names(OUT) <- clean_names
-  return(OUT)
+  names(form_list) <- clean_names
+  form_list
 }
 #' @title csv_folder_to_list
 #' @export
 csv_folder_to_list <- function(folder) {
-  folder <- normalizePath(folder)
+  folder <- sanitize_path(folder)
   if (!dir.exists(folder)) stop("Folder does not exist: ", folder)
-  paths <- list.files.real(folder)
-  paths <- paths[which(paths %>% endsWith(".csv"))]
-  return(csv_to_list(paths = paths))
+  paths <- list_files_real(folder)
+  paths <- paths[which(endsWith(paths, ".csv"))]
+  csv_to_list(paths = paths)
 }
 #' @title wb_to_list
 #' @export
 wb_to_list <- function(wb) {
-  # wb <- openxlsx::loadWorkbook(file = path)
-  # test for if user does not have excel
+  # consider test for if user does not have excel
   sheets <- openxlsx::sheets(wb)
   clean_sheets <- clean_env_names(sheets)
   out <- list()
@@ -46,12 +49,18 @@ wb_to_list <- function(wb) {
     col_row <- 1
     x <- openxlsx::getTables(wb, sheet = i)
     if (length(x) > 0) {
-      col_row <- as.integer(gsub("[A-Za-z]", "", unlist(x %>% attr("refs") %>% strsplit(":"))[[1]])) # test for xlsx without letters for cols
+      # test for xlsx without letters for cols
+      col_row <- gsub(
+        "[A-Za-z]",
+        "",
+        unlist(x %>% attr("refs") %>% strsplit(":"))[[1]]
+      ) %>%
+        as.integer()
     }
     out[[i]] <- openxlsx::read.xlsx(wb, sheet = i, startRow = col_row)
   }
   names(out) <- clean_sheets
-  return(out)
+  out
 }
 #' @title DF_to_wb
 #' @export
@@ -220,7 +229,7 @@ list_to_wb <- function(
   }
   return(wb)
 }
-#' @title list_to_wb
+#' @title list_to_excel
 #' @export
 list_to_excel <- function(
     list,
@@ -228,6 +237,8 @@ list_to_excel <- function(
     file_name = NULL,
     separate = FALSE,
     overwrite = TRUE,
+    key_cols_list = list(),
+    derived_cols_list = list(),
     link_col_list = list(),
     str_trunc_length = 32000,
     header_df_list = NULL,
@@ -238,9 +249,7 @@ list_to_excel <- function(
     pad_rows = 0,
     pad_cols = 0,
     freeze_keys = TRUE,
-    key_cols_list = NULL,
     drop_empty = TRUE) {
-  wb <- openxlsx::createWorkbook()
   list <- process_df_list(list, drop_empty = drop_empty)
   list_names <- names(list)
   if (length(list) == 0) {
@@ -256,7 +265,9 @@ list_to_excel <- function(
       save_wb(
         wb = list_to_wb(
           list = sub_list,
-          link_col_list = link_col_list,
+          key_cols_list = key_cols_list[[list_names[i]]],
+          derived_cols_list = derived_cols_list[[list_names[i]]],
+          link_col_list = link_col_list[[list_names[i]]],
           str_trunc_length = str_trunc_length,
           header_df_list = header_df_list,
           tableStyle = tableStyle,
@@ -266,7 +277,6 @@ list_to_excel <- function(
           pad_rows = pad_rows,
           pad_cols = pad_cols,
           freeze_keys = freeze_keys,
-          key_cols_list = key_cols_list[[list_names[i]]],
           drop_empty = drop_empty
         ),
         dir = dir,
@@ -278,6 +288,8 @@ list_to_excel <- function(
     save_wb(
       wb = list_to_wb(
         list = list,
+        key_cols_list = key_cols_list,
+        derived_cols_list = derived_cols_list,
         link_col_list = link_col_list,
         str_trunc_length = str_trunc_length,
         header_df_list = header_df_list,
@@ -288,7 +300,6 @@ list_to_excel <- function(
         pad_rows = pad_rows,
         pad_cols = pad_cols,
         freeze_keys = freeze_keys,
-        key_cols_list = key_cols_list,
         drop_empty = drop_empty
       ),
       dir = dir,
@@ -297,6 +308,7 @@ list_to_excel <- function(
     )
   }
 }
+#' @title list_to_csv
 #' @export
 list_to_csv <- function(list, dir, file_name = NULL, overwrite = TRUE, drop_empty = TRUE) {
   list <- process_df_list(list, drop_empty = drop_empty)
