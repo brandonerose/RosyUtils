@@ -69,7 +69,7 @@ is_named_list <- function(x, silent = TRUE, recursive = FALSE) {
       }
     }
   }
-  return(named_all) # Return the result
+  named_all
 }
 #' @title is_df_list
 #' @export
