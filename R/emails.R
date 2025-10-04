@@ -68,7 +68,10 @@ count_emails <- function(emails_sum, ADDRESS_TYPE) {
 }
 #' @title choose_emails_to_delete_in_bulk
 #' @export
-choose_emails_to_delete_in_bulk <- function(outlook = Microsoft365R::get_business_outlook(), full_address = TRUE, use_sender = TRUE, n = 2000) {
+choose_emails_to_delete_in_bulk <- function(outlook, full_address = TRUE, use_sender = TRUE, n = 2000) {
+  if(missing(outlook)){
+    outlook <- Microsoft365R::get_business_outlook()
+  }
   ADDRESS_TYPE <- use_sender %>% ifelse("sender", "from")
   ADDRESS_TYPE <- full_address %>% ifelse(ADDRESS_TYPE, paste0(ADDRESS_TYPE, "_root"))
   message("Getting emails... This can take several seconds!")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/excel.R
 \name{list_to_excel}
 \alias{list_to_excel}
-\title{list_to_wb}
+\title{list_to_excel}
 \usage{
 list_to_excel(
   list,
@@ -10,6 +10,8 @@ list_to_excel(
   file_name = NULL,
   separate = FALSE,
   overwrite = TRUE,
+  key_cols_list = list(),
+  derived_cols_list = list(),
   link_col_list = list(),
   str_trunc_length = 32000,
   header_df_list = NULL,
@@ -20,10 +22,9 @@ list_to_excel(
   pad_rows = 0,
   pad_cols = 0,
   freeze_keys = TRUE,
-  key_cols_list = NULL,
   drop_empty = TRUE
 )
 }
 \description{
-list_to_wb
+list_to_excel
 }

@@ -6,6 +6,8 @@
 \usage{
 list_to_wb(
   list,
+  key_cols_list = list(),
+  derived_cols_list = list(),
   link_col_list = list(),
   str_trunc_length = 32000,
   header_df_list = NULL,
@@ -16,7 +18,6 @@ list_to_wb(
   pad_rows = 0,
   pad_cols = 0,
   freeze_keys = TRUE,
-  key_cols_list = NULL,
   drop_empty = TRUE
 )
 }

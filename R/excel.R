@@ -175,6 +175,8 @@ DF_to_wb <- function(
 #' @export
 list_to_wb <- function(
     list,
+    key_cols_list = list(),
+    derived_cols_list = list(),
     link_col_list = list(),
     str_trunc_length = 32000,
     header_df_list = NULL,
@@ -185,7 +187,6 @@ list_to_wb <- function(
     pad_rows = 0,
     pad_cols = 0,
     freeze_keys = TRUE,
-    key_cols_list = NULL,
     drop_empty = TRUE) {
   wb <- openxlsx::createWorkbook()
   list <- process_df_list(list, drop_empty = drop_empty)
@@ -200,34 +201,27 @@ list_to_wb <- function(
       }
     }
   }
-  list_names_rename <- stringr::str_trunc(list_names, width = 31, side = "right", ellipsis = "")
-  BAD <- dw(list_names_rename)
-  if (length(BAD) > 0) {
-    warning("Duplicated names when trimmed from right 31 max in Excel: ", list_names[BAD] %>% paste0(collapse = ", "), immediate. = TRUE)
-    message("Use CSV or shorten the names and make sure they are unique if they are trimmed to 31 char. For now will make unique by adding number.")
-    list_names_rename <- unique_trimmed_strings(list_names_rename, max_length = 31)
-  }
+  list_names_rename <- rename_list_names_excel(list_names = list_names)
   for (i in seq_along(list_names)) {
-    header_df <- header_df_list[[list_names[i]]]
-    key_cols <- key_cols_list[[list_names[i]]]
-    wb <- DF_to_wb(
-      DF = list[[list_names[i]]],
-      DF_name = list_names_rename[i],
+    wb <- form_to_wb(
       wb = wb,
+      form = list[[list_names[i]]],
+      form_name = list_names_rename[i],
+      key_cols = key_cols_list[[list_names[i]]],
+      derived_cols = NULL,
       link_col_list = list_link_names[[list_names[i]]],
       str_trunc_length = str_trunc_length,
-      header_df = header_df,
+      header_df = header_df_list[[list_names[i]]],
       tableStyle = tableStyle,
       header_style = header_style,
       body_style = body_style,
       freeze_header = freeze_header,
       pad_rows = pad_rows,
       pad_cols = pad_cols,
-      freeze_keys = freeze_keys,
-      key_cols = key_cols
+      freeze_keys = freeze_keys
     )
   }
-  return(wb)
+  wb
 }
 #' @title list_to_excel
 #' @export
@@ -331,14 +325,16 @@ list_to_csv <- function(list, dir, file_name = NULL, overwrite = TRUE, drop_empt
 #' @export
 save_wb <- function(wb, dir, file_name, overwrite = TRUE) {
   if (!dir.exists(dir)) stop("dir doesn't exist")
-  path <- file.path(dir, paste0(file_name, ".xlsx"))
+  path <- file.path(dir, paste0(file_name, ".xlsx")) %>% sanitize_path()
   openxlsx::saveWorkbook(
     wb = wb,
     file = path,
     overwrite = overwrite
   )
-  bullet_in_console(paste0("Saved '", basename(path), "'!"), file = path)
+  cli_alert_wrap(paste0("Saved '", basename(path), "'!"), file = path)
 }
+#' @title save_csv
+#' @export
 save_csv <- function(DF, dir, file_name, overwrite = TRUE) {
   if (!dir.exists(dir)) stop("dir doesn't exist")
   path <- file.path(dir, paste0(file_name, ".csv"))
