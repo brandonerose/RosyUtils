@@ -43,12 +43,11 @@ is_nested_list <- function(x) {
   if (is.data.frame(x)) {
     return(FALSE)
   }
-  OUT <- length(x) == 0
+  outcome <- length(x) == 0L
   for (i in seq_along(x)) {
-    OUT <- OUT || is_nested_list(x[[i]])
-    # print(OUT)
+    outcome <- outcome || is_nested_list(x[[i]])
   }
-  return(OUT)
+  outcome
 }
 #' @title is_named_list
 #' @export
@@ -77,7 +76,7 @@ is_df_list <- function(x, strict = FALSE) {
   if (!is.list(x)) {
     return(FALSE)
   }
-  if (length(x) == 0) {
+  if (length(x) == 0L) {
     return(FALSE)
   }
   if (is_nested_list(x)) {
