@@ -242,7 +242,9 @@ form_to_wb <- function(form,
                        pad_rows = 0,
                        pad_cols = 0,
                        freeze_keys = TRUE) {
-  if (nchar(form_name) > 31) stop(form_name, " is longer than 31 char")
+  if (nchar(form_name) > 31) {
+    stop(form_name, " is longer than 31 char")
+  }
   form[] <- lapply(form, function(col) {
     out <- col
     if (is.character(col)) {
@@ -301,18 +303,21 @@ form_to_wb <- function(form,
         }
         if (has_names) {
           if (names(link_col_list)[i] %in% colnames(form)) {
-            hyperlink_col <- which(colnames(form) == names(link_col_list)[i])
-            openxlsx::writeData(
-              wb,
-              sheet = form_name,
-              x = form[[link_col_list[[i]]]],
-              startRow = start_row_table + 1,
-              startCol = hyperlink_col + pad_cols
-            )
-            form[[link_col_list[[i]]]] <- NULL
+            link_col <- form[[link_col_list[[i]]]]
+            if(names(link_col_list)[i] != link_col_list[[i]]){
+              form[[link_col_list[[i]]]] <- NULL
+            }
           } else {
             # warning("",immediate. = TRUE)
           }
+          hyperlink_col <- which(colnames(form) == names(link_col_list)[i])
+          openxlsx::writeData(
+            wb,
+            sheet = form_name,
+            x = link_col,
+            startRow = start_row_table + 1,
+            startCol = hyperlink_col + pad_cols
+          )
         }
       }
     }
