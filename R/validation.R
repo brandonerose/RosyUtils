@@ -200,3 +200,4 @@ validate_web_link <- function(link) {
 generate_hex <- function(length = 32) {
   toupper(paste0(sample(c(0:9, letters[1:6]), length, replace = TRUE), collapse = ""))
 }
+
