@@ -161,3 +161,46 @@ file_tree <- function(path = ".", prefix = "") {
   }
   return(vec_cat(result))
 }
+#' @title get_script_path
+#' @export
+get_script_path <- function(dir_only = FALSE) {
+  script_path <- NULL
+  # RStudio
+  if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+    try_path <- tryCatch(rstudioapi::getSourceEditorContext()$path, error = function(e) NULL)
+    if (!is.null(try_path) && try_path != "") {
+      script_path <- try_path
+    }
+  }
+  # Knitr / Rmarkdown
+  if (is.null(script_path) && !is.null(knitr::current_input())) {
+    script_path <- knitr::current_input()
+  }
+  # Command line
+  if (is.null(script_path)) {
+    cmdArgs <- commandArgs(trailingOnly = FALSE)
+    needle <- "--file="
+    match <- grep(needle, cmdArgs)
+    if (length(match) > 0) {
+      script_path <- sub(needle, "", cmdArgs[match])
+    }
+  }
+  # Source'd file
+  if (is.null(script_path) && !is.null(sys.frames()[[1]]$ofile)) {
+    script_path <- sys.frames()[[1]]$ofile
+  }
+  # Default to working dir
+  # if (is.null(script_path)) {
+  #   script_path <- getwd()
+  # }
+  script_path <-   normalizePath(script_path)
+  if(dir_only){
+    script_path <- dirname(script_path)
+  }
+  script_path
+}
+#' @title get_script_dir
+#' @export
+get_script_dir <- function(){
+  get_script_path(dir_only = TRUE)
+}

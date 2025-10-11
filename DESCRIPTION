@@ -14,6 +14,7 @@ Imports:
     cli,
     dplyr (>= 1.1.4),
     grDevices,
+    knitr,
     lubridate (>= 1.9.3),
     magrittr,
     Microsoft365R,
