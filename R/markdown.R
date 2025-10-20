@@ -38,7 +38,11 @@ recursive_markdown <- function(
           is_named <- the_col %in% named_cols
           is_link <- FALSE
           if(has_links){
-            comparison <- ifelse(has_named_links,names(link_cols),link_cols)
+            if(has_named_links){
+              comparison <- names(link_cols)
+            }else{
+              comparison <- link_cols
+            }
             is_link <- the_col %in% comparison
             is_named_link <- has_named_links
           }
