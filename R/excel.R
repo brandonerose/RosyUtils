@@ -29,6 +29,21 @@ csv_to_list <- function(paths) {
   names(form_list) <- clean_names
   form_list
 }
+#' @title list_files_real
+#' @export
+list_files_real <- function(path,
+                            full_names = TRUE,
+                            recursive = FALSE) {
+  grep(
+    "~$",
+    sanitize_path(
+      list.files(path, full.names = full_names, recursive = recursive)
+    ),
+    fixed = TRUE,
+    value = TRUE,
+    invert = TRUE
+  )
+}
 #' @title csv_folder_to_list
 #' @export
 csv_folder_to_list <- function(folder) {
