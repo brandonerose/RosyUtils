@@ -2,7 +2,7 @@
 #' @export
 function_to_string <- function(func) {
   # Deparse the function and collapse into a single string using "\n"
-  deparse(func) %>% paste(collapse = "\n")
+  deparse(func) |> paste(collapse = "\n")
 }
 #' @title function_to_string
 #' @export

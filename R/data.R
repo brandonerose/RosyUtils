@@ -40,7 +40,7 @@ find_df_diff <- function(new, old, ref_cols = NULL, message_pass = "") {
     col = integer(0)
   )
   for (new_key in new_keys) {
-    indices <- indices %>% dplyr::bind_rows(
+    indices <- indices |> dplyr::bind_rows(
       data.frame(
         row = new_key,
         col = which(!colnames(new) %in% c(ref_cols, "key"))
@@ -53,7 +53,7 @@ find_df_diff <- function(new, old, ref_cols = NULL, message_pass = "") {
     for (COL in colnames(new)[which(!colnames(new) %in% c(ref_cols, "key"))]) {
       col <- which(colnames(new) == COL)
       if (!identical(new[row, COL], old[row_old, COL])) {
-        indices <- indices %>% dplyr::bind_rows(
+        indices <- indices |> dplyr::bind_rows(
           data.frame(
             row = row,
             col = col
@@ -63,10 +63,10 @@ find_df_diff <- function(new, old, ref_cols = NULL, message_pass = "") {
     }
   }
   if (nrow(indices) > 0) {
-    rows <- indices$row %>%
-      unique() %>%
+    rows <- indices$row |>
+      unique() |>
       sort()
-    cols <- which(colnames(new) %in% ref_cols) %>% append(indices$col %>% unique() %>% sort())
+    cols <- which(colnames(new) %in% ref_cols) |> append(indices$col |> unique() |> sort())
     OUT <- new[rows, cols]
     message(message_pass, nrow(OUT), " rows have updates")
   } else {
@@ -124,19 +124,19 @@ find_df_diff2 <- function(new, old, ref_cols = NULL, message_pass = "", view_old
     # Compare vectors element-wise
     are_not_equal <- which(vector1_no_na != vector2_no_na)
     if (length(are_not_equal) > 0) {
-      rows_to_keep <- rows_to_keep %>% append(are_not_equal)
+      rows_to_keep <- rows_to_keep |> append(are_not_equal)
       additional_cols <- which(colnames(merged_df) == COL)
-      cols_to_keep <- cols_to_keep %>% append(additional_cols)
+      cols_to_keep <- cols_to_keep |> append(additional_cols)
       if (view_old) {
-        cols_to_view <- cols_to_view %>%
-          append(additional_cols) %>%
+        cols_to_view <- cols_to_view |>
+          append(additional_cols) |>
           append(which(colnames(merged_df) == compare_COL))
       }
     }
   }
   if (length(rows_to_keep) > 0) {
-    rows_to_keep <- rows_to_keep %>% unique()
-    cols_to_keep <- cols_to_keep %>% unique()
+    rows_to_keep <- rows_to_keep |> unique()
+    cols_to_keep <- cols_to_keep |> unique()
     if (view_old) {
       rows_to_keep2 <- rows_to_keep
       done <- FALSE
@@ -186,7 +186,7 @@ find_df_list_diff <- function(new_list, old_list, ref_col_list, view_old = TRUE,
   if (!is_df_list(old_list)) stop("old_list must be a list of data.frames")
   if (any(!names(new_list) %in% names(old_list))) stop("All new_list names must be included in the set of old_list names.")
   if (!is.list(ref_col_list)) {
-    ref_col_list <- names(new_list) %>% lapply(function(IN) {
+    ref_col_list <- names(new_list) |> lapply(function(IN) {
       ref_col_list
     })
     names(ref_col_list) <- names(new_list)
@@ -215,7 +215,7 @@ collapse_DF <- function(DF, ref_id, list_mod) {
   other_cols <- colnames(DF)[which(!colnames(DF) %in% ref_id)]
   if (!missing(list_mod)) {
     for (i in seq_along(list_mod)) {
-      new_DF[[names(list_mod[i])]] <- new_DF[[ref_id]] %>%
+      new_DF[[names(list_mod[i])]] <- new_DF[[ref_id]] |>
         lapply(function(ID) {
           sub_df <- DF[which(DF[[ref_id]] == ID), list_mod[[i]]]
           n_col <- ncol(sub_df)
@@ -224,29 +224,29 @@ collapse_DF <- function(DF, ref_id, list_mod) {
           for (j in 1:n_row) {
             out <- NULL
             for (k in 1:n_col) {
-              out <- out %>% append(paste0(colnames(sub_df)[k], " - ", sub_df[j, k]))
+              out <- out |> append(paste0(colnames(sub_df)[k], " - ", sub_df[j, k]))
             }
-            out <- out %>% paste(collapse = " | ")
-            out_final <- out_final %>% append(out)
+            out <- out |> paste(collapse = " | ")
+            out_final <- out_final |> append(out)
           }
-          out_final <- out_final %>% paste(collapse = " || ")
+          out_final <- out_final |> paste(collapse = " || ")
           out_final
-        }) %>%
-        unlist() %>%
+        }) |>
+        unlist() |>
         as.character()
     }
     DF <- DF[, which(!colnames(DF) %in% list_mod[[i]])]
     other_cols <- other_cols[which(!other_cols %in% list_mod[[i]])]
   }
-  other_col <- other_cols %>% sample(1)
+  other_col <- other_cols |> sample(1)
   for (other_col in other_cols) {
     new_DF[[other_col]] <- lapply(new_DF[[ref_id]], function(ID) {
-      x <- unique(DF[[other_col]][which(DF[[ref_id]] == ID)]) %>% drop_nas()
+      x <- unique(DF[[other_col]][which(DF[[ref_id]] == ID)]) |> drop_nas()
       if (length(x) == 0) {
         return(NA)
       }
       return(paste0(x, collapse = " | "))
-    }) %>% unlist()
+    }) |> unlist()
   }
   as.data.frame(new_DF)
 }
@@ -267,11 +267,11 @@ clean_df_cols <- function(DF) {
 #' @title clean_df_blanks
 #' @export
 clean_df_blanks <- function(DF, other_blanks = NULL) {
-  DF <- DF %>%
+  DF <- DF |>
     lapply(function(IN) {
       IN[which(IN %in% c("NA", "", other_blanks))] <- NA
       return(IN)
-    }) %>%
+    }) |>
     as.data.frame()
   return(DF)
 }
@@ -285,12 +285,12 @@ index_na <- function(DF, MARGIN = "col", invert = FALSE) {
   if (!tolower(MARGIN) %in% allowed) stop("MARGIN must be one of the following ... ", as_comma_string(allowed))
   if (tolower(MARGIN) %in% okcols) MARGIN <- 2
   if (tolower(MARGIN) %in% okrows) MARGIN <- 1
-  x <- DF %>% apply(MARGIN = MARGIN, function(IN) {
+  x <- DF |> apply(MARGIN = MARGIN, function(IN) {
     all(is.na(IN))
   })
   if (invert) x <- !x
-  x <- x %>%
-    which() %>%
+  x <- x |>
+    which() |>
     unname()
   return(x)
 }
@@ -310,7 +310,7 @@ clean_env_names <- function(env_names, silent = FALSE, lowercase = TRUE) {
         if (!silent) {
           message("Non-unique environment name: '", name, "', added numbers...")
         }
-        cleaned_name <- cleaned_name %>%
+        cleaned_name <- cleaned_name |>
           paste0("_", max(which_length(cleaned_name %in% cleaned_names)) + 1L)
       }
       cleaned_names[i] <- cleaned_name
@@ -376,7 +376,7 @@ find_in_df_list <- function(df_list,
       }
       rows <- which(grepl(text, DF[[col]]))
       if (length(rows) > 0) {
-        out <- out %>% dplyr::bind_rows(
+        out <- out |> dplyr::bind_rows(
           data.frame(
             record_id = DF[[id_col]][rows],
             col = col,
@@ -391,8 +391,8 @@ find_in_df_list <- function(df_list,
 #' @title count_vec_df
 #' @export
 count_vec_df <- function(vec) {
-  vec <- vec %>%
-    table() %>%
+  vec <- vec |>
+    table() |>
     sort(decreasing = TRUE)
   DF <- data.frame(
     count = as.integer(vec),
@@ -403,16 +403,16 @@ count_vec_df <- function(vec) {
 #' @title vec_to_cvec
 #' @export
 vec_to_cvec <- function(vec) {
-  vec %>%
-    paste0("\"", ., "\"", collapse = ",\n") %>%
-    paste0("c(\n", ., "\n)") %>%
+  vec |>
+    paste0("\"", ., "\"", collapse = ",\n") |>
+    paste0("c(\n", ., "\n)") |>
     cat()
 }
 #' @title vec_cat
 #' @export
 vec_cat <- function(vec, prefix = "", suffix = "", collapse = "\n") {
-  vec %>%
-    paste0(prefix, ., suffix, collapse = collapse) %>%
+  vec |>
+    paste0(prefix, ., suffix, collapse = collapse) |>
     cat()
 }
 #' @title reassign_variable_in_bulk
@@ -423,28 +423,30 @@ reassign_variable_in_bulk <- function(DF, old_colname, new_colname, optional_cho
   choices <- "Do Nothing (Skip)"
   has_choices <- FALSE
   if (!missing(optional_choices)) {
-    choices <- choices %>% append(c("Best Guess --> ", optional_choices))
+    choices <- choices |> append(c("Best Guess --> ", optional_choices))
     has_choices <- TRUE
   }
-  choices <- choices %>% append(c("Manual Entry", "Stop and Return Current DF"))
-  df_vec_counted %>%
-    head(20) %>%
+  choices <- choices |> append(c("Manual Entry", "Stop and Return Current DF"))
+  df_vec_counted |>
+    head(20) |>
     print.data.frame()
-  for (i in seq_len(nrow(df_vec_counted))) { # i <- seq_len(nrow(df_vec_counted) %>% sample(1)
+  for (i in seq_len(nrow(df_vec_counted))) { # i <- seq_len(nrow(df_vec_counted) |> sample(1)
     the_name <- df_vec_counted$name[i]
     choices_mod <- choices
     best_guess <- NA
     if (has_choices) {
-      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "osa") %>% which.min() %>% optional_choices[.]
-      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "lv") %>% which.min() %>% optional_choices[.]
-      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "dl") %>% which.min() %>% optional_choices[.]
-      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "lcs") %>% which.max() %>% optional_choices[.]
-      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "qgram") %>% which.min() %>% optional_choices[.]
-      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "cosine") %>% which.min() %>% optional_choices[.]
-      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "jw") %>% which.max() %>% optional_choices[.]
-      best_guess <- stringdist::stringdist(the_name, optional_choices, method = "jaccard") %>%
-        which.min() %>%
-        optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "osa") |> which.min() |> optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "lv") |> which.min() |> optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "dl") |> which.min() |> optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "lcs") |> which.max() |> optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "qgram") |> which.min() |> optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "cosine") |> which.min() |> optional_choices[.]
+      # best_guess <- stringdist::stringdist(the_name,optional_choices,method = "jw") |> which.max() |> optional_choices[.]
+      best_guess <- optional_choices[
+        which.min(
+          stringdist::stringdist(the_name, optional_choices, method = "jaccard")
+        )
+      ]
       choices_mod[which(choices_mod == "Best Guess --> ")] <- paste0("Best Guess --> ", best_guess)
     }
     choice <- utils::menu(choices_mod, title = paste0("What would you like to do for...?\n\n --> ", the_name, " <--"))
@@ -465,10 +467,10 @@ reassign_variable_in_bulk <- function(DF, old_colname, new_colname, optional_cho
 edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, field_names_to_view = NULL) {
   change_form <- field_names_to_instruments(DB, field_name_to_change)
   view_forms <- field_names_to_instruments(DB, field_names_to_view)
-  field_names_to_view <- c(field_name_to_change, field_names_to_view) %>% unique()
+  field_names_to_view <- c(field_name_to_change, field_names_to_view) |> unique()
   # if(length(view_forms)>1)stop("only one form combinations are allowed.")
-  if (missing(records)) records <- DB$data_extract[[view_forms]][[DB$redcap$id_col]] %>% unique()
-  all_forms <- c(change_form, view_forms) %>% unique()
+  if (missing(records)) records <- DB$data_extract[[view_forms]][[DB$redcap$id_col]] |> unique()
+  all_forms <- c(change_form, view_forms) |> unique()
   ref_cols_change <- DB$redcap$instrument_key_cols[[change_form]]
   # ref_cols_view <- DB$redcap$instrument_key_cols[[view_forms]]
   if (missing(optional_DF)) {
@@ -488,13 +490,13 @@ edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, f
     }
     is_repeating_form <- change_form %in% DB$redcap$instruments$instrument_name[which(DB$redcap$instruments$repeating)]
     OUT <- NULL
-    for (record in records) { # record <- records%>% sample(1)
+    for (record in records) { # record <- records|> sample(1)
       record_was_updated <- FALSE
       VIEW <- optional_DF[which(optional_DF[[DB$redcap$id_col]] == record), ]
-      VIEW_simp <- VIEW[, unique(c(DB$redcap$id_col, field_names_to_view))] %>% unique()
+      VIEW_simp <- VIEW[, unique(c(DB$redcap$id_col, field_names_to_view))] |> unique()
       row.names(VIEW_simp) <- NULL
-      VIEW_simp %>%
-        t() %>%
+      VIEW_simp |>
+        t() |>
         print()
       CHANGE <- filter_DB(DB, records = record, form_names = change_form)[[1]]
       row.names(CHANGE) <- NULL
@@ -515,7 +517,7 @@ edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, f
       }
       choice1 <- utils::menu(choices1, title = paste0("What would you like to do?"))
       if (choice1 == 3) {
-        DB %>% link_REDCap_record(record = record)
+        DB |> link_REDCap_record(record = record)
       }
       if (choice1 == 2) {
         if (nrow(CHANGE) == 0) CHANGE <- blank_row
@@ -531,28 +533,28 @@ edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, f
             if (choice == "Manual Entry") {
               OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
               if (upload_individually) {
-                OUT_sub %>%
-                  labelled_to_raw_form(DB) %>%
+                OUT_sub |>
+                  labelled_to_raw_form(DB) |>
                   upload_form_to_redcap(DB)
-                message("Uploaded: ", OUT_sub %>% paste0(collapse = " | "))
+                message("Uploaded: ", OUT_sub |> paste0(collapse = " | "))
                 record_was_updated <- TRUE
               } else {
-                OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+                OUT <- OUT |> dplyr::bind_rows(OUT_sub)
               }
             }
             if (choice == "Launch Redcap Link Only") { # account for repeat? instance
-              DB %>% link_REDCap_record(record = record, page = change_form, instance = CHANGE[j, "redcap_repeat_instance"])
+              DB |> link_REDCap_record(record = record, page = change_form, instance = CHANGE[j, "redcap_repeat_instance"])
             }
           } else {
             OUT_sub[[field_name_to_change]] <- choice
             if (upload_individually) {
-              OUT_sub %>%
-                labelled_to_raw_form(DB) %>%
+              OUT_sub |>
+                labelled_to_raw_form(DB) |>
                 upload_form_to_redcap(DB)
-              message("Uploaded: ", OUT_sub %>% paste0(collapse = " | "))
+              message("Uploaded: ", OUT_sub |> paste0(collapse = " | "))
               record_was_updated <- TRUE
             } else {
-              OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+              OUT <- OUT |> dplyr::bind_rows(OUT_sub)
             }
           }
         }
@@ -560,8 +562,8 @@ edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, f
           choice3 <- 2
           the_max <- 0
           if (nrow(CHANGE) > 0) {
-            the_max <- CHANGE$redcap_repeat_instance %>%
-              as.integer() %>%
+            the_max <- CHANGE$redcap_repeat_instance |>
+              as.integer() |>
               max()
           }
           while (choice3 == 2) {
@@ -582,29 +584,29 @@ edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, f
                 if (choice == "Manual Entry") {
                   OUT_sub[[field_name_to_change]] <- readline("What would you like it to be? ")
                   if (upload_individually) {
-                    OUT_sub %>%
-                      labelled_to_raw_form(DB) %>%
+                    OUT_sub |>
+                      labelled_to_raw_form(DB) |>
                       upload_form_to_redcap(DB)
-                    message("Uploaded: ", OUT_sub %>% paste0(collapse = " | "))
+                    message("Uploaded: ", OUT_sub |> paste0(collapse = " | "))
                     record_was_updated <- TRUE
                   } else {
-                    OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+                    OUT <- OUT |> dplyr::bind_rows(OUT_sub)
                   }
                   the_max <- the_max + 1
                 }
                 if (choice == "Launch Redcap Link Only") { # account for repeat? instance
-                  DB %>% link_REDCap_record(record = record, page = change_form, instance = CHANGE[j, "redcap_repeat_instance"])
+                  DB |> link_REDCap_record(record = record, page = change_form, instance = CHANGE[j, "redcap_repeat_instance"])
                 }
               } else {
                 OUT_sub[[field_name_to_change]] <- choice
                 if (upload_individually) {
-                  OUT_sub %>%
-                    labelled_to_raw_form(DB) %>%
+                  OUT_sub |>
+                    labelled_to_raw_form(DB) |>
                     upload_form_to_redcap(DB)
-                  message("Uploaded: ", OUT_sub %>% paste0(collapse = " | "))
+                  message("Uploaded: ", OUT_sub |> paste0(collapse = " | "))
                   record_was_updated <- TRUE
                 } else {
-                  OUT <- OUT %>% dplyr::bind_rows(OUT_sub)
+                  OUT <- OUT |> dplyr::bind_rows(OUT_sub)
                 }
                 the_max <- the_max + 1
               }
@@ -616,8 +618,8 @@ edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, f
     if (record_was_updated) DB <- update_DB(DB)
   }
   if (!upload_individually) {
-    OUT %>%
-      labelled_to_raw_form(DB) %>%
+    OUT |>
+      labelled_to_raw_form(DB) |>
       upload_form_to_redcap(DB)
   }
 }
@@ -625,26 +627,26 @@ edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, f
 #' @export
 count_instances <- function(DF, ref_id, inst_name) {
   vec_ori <- DF[[ref_id]]
-  x <- vec_ori %>% rle()
+  x <- vec_ori |> rle()
   x <- data.frame(
     lengths = x$lengths,
     values = x$values
   )
-  vec <- x$lengths %>%
+  vec <- x$lengths |>
     lapply(function(IN) {
       1:IN
-    }) %>%
+    }) |>
     unlist()
-  vec2 <- seq_len(nrow(x)) %>%
+  vec2 <- seq_len(nrow(x)) |>
     lapply(function(ROW) {
       rep(x$values[ROW], x$lengths[ROW])
-    }) %>%
+    }) |>
     unlist()
   if (any(vec_ori != vec2)) stop("mismatch!")
   DF[[inst_name]] <- vec
   key_check <- paste0(DF[[ref_id]], "__", DF[[inst_name]])
   dup_keys <- key_check[which(duplicated(key_check))]
-  if (length(dup_keys) > 0) stop("You can't have ids that are not sorted by the ref_id ('", ref_id, "') ", dup_keys %>% paste0(collapse = ", "))
+  if (length(dup_keys) > 0) stop("You can't have ids that are not sorted by the ref_id ('", ref_id, "') ", dup_keys |> paste0(collapse = ", "))
   return(DF)
 }
 #' @title scale_vec_to_range
@@ -757,7 +759,7 @@ find_match <- function(x, ref, count_only = FALSE) {
   next_match_index <- which(!is.na(next_match))
   while (length(next_match_index) > 0L) {
     final_match[next_match_index] <-
-      next_match_index %>% lapply(function(index) {
+      next_match_index |> lapply(function(index) {
         out <- NULL
         if (all(is.na(final_match[[index]]))) {
           out <- next_match[index]
@@ -771,13 +773,13 @@ find_match <- function(x, ref, count_only = FALSE) {
     next_match_index <- which(!is.na(next_match))
   }
   if (count_only) {
-    final_match <- final_match %>%
+    final_match <- final_match |>
       lapply(function(x) {
         if (is.na(x[1])) {
           return(NA)
         }
         length(x)
-      }) %>%
+      }) |>
       unlist()
   }
   final_match

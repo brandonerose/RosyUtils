@@ -13,7 +13,9 @@ recursive_markdown <- function(
     new_pages_levels = NULL,
     newpage_triggered = FALSE
 ) {
-  if (!is_something(DF)) return()
+  if (!is_something(DF)) {
+    return()
+  }
   # Bottom-level: print rows
   if (level > length(order_master)) {
     the_cols <- c(
@@ -21,7 +23,10 @@ recursive_markdown <- function(
       display_cols,
       bold_cols,
       named_cols
-    ) %>% unlist() %>% unname()%>% unique()
+    ) |>
+      unlist() |>
+      unname()|>
+      unique()
     has_header <- !is.null(header_col)
     has_links <- !is.null(link_cols)
     has_named_links <- is_named_list(link_cols)

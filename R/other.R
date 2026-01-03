@@ -67,15 +67,15 @@ size <- function(x) {
 #' @title file_size_mb
 #' @export
 file_size_mb <- function(path) {
-  (file.info(path)[["size"]] / 1048576) %>%
-    round(1) %>%
+  (file.info(path)[["size"]] / 1048576) |>
+    round(1) |>
     paste0(" Mb")
 }
 #' @title read_pdf
 #' @export
 read_pdf <- function(path, no_double_spaces = FALSE) {
   pdf_text_raw <- pdftools::pdf_text(path)
-  pdf_text <- pdf_text_raw %>% paste(collapse = " ")
+  pdf_text <- pdf_text_raw |> paste(collapse = " ")
   pdf_text <- gsub("\\n", " ", pdf_text)
   if (no_double_spaces) {
     while (grepl("  ", pdf_text)) {
@@ -193,7 +193,7 @@ unique_trimmed_strings <- function(strings, max_length) {
   trim_string <- function(s, max_length) {
     substr(s, 1, max_length)
   }
-  trimmed_strings <- lapply(strings, trim_string, max_length = max_length) %>%
+  trimmed_strings <- lapply(strings, trim_string, max_length = max_length) |>
     unlist()
   # Initialize a vector to store unique strings
   unique_strings <- character(length(trimmed_strings))
@@ -242,7 +242,7 @@ matches <- function(x, ref, count_only = FALSE) {
   next_match <- match(x, ref)
   next_match_index <- which(!is.na(next_match))
   while (length(next_match_index) > 0) {
-    final_match[next_match_index] <- next_match_index %>% lapply(function(index) {
+    final_match[next_match_index] <- next_match_index |> lapply(function(index) {
       if (all(is.na(final_match[[index]]))) {
         return(next_match[index])
       } else {
@@ -254,13 +254,13 @@ matches <- function(x, ref, count_only = FALSE) {
     next_match_index <- which(!is.na(next_match))
   }
   if (count_only) {
-    final_match <- final_match %>%
+    final_match <- final_match |>
       lapply(function(IN) {
         if (is.na(IN[1])) {
           return(NA)
         }
         return(length(IN))
-      }) %>%
+      }) |>
       unlist()
   }
   return(final_match)

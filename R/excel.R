@@ -15,9 +15,9 @@ excel_to_list <- function(path) {
 csv_to_list <- function(paths) {
   paths <- sanitize_path(paths)
   form_list <- list()
-  clean_names <- paths %>%
-    basename() %>%
-    tools::file_path_sans_ext() %>%
+  clean_names <- paths |>
+    basename() |>
+    tools::file_path_sans_ext() |>
     clean_env_names()
   for (i in seq_along(paths)) {
     form_list[[i]] <- utils::read.csv(
@@ -68,8 +68,8 @@ wb_to_list <- function(wb) {
       col_row <- gsub(
         "[A-Za-z]",
         "",
-        unlist(x %>% attr("refs") %>% strsplit(":"))[[1]]
-      ) %>%
+        unlist(x |> attr("refs") |> strsplit(":"))[[1]]
+      ) |>
         as.integer()
     }
     out[[i]] <- openxlsx::read.xlsx(wb, sheet = i, startRow = col_row)
@@ -95,8 +95,8 @@ DF_to_wb <- function(
     freeze_keys = TRUE,
     key_cols = NULL) {
   if (nchar(DF_name) > 31) stop(DF_name, " is longer than 31 char")
-  DF <- DF %>%
-    lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") %>%
+  DF <- DF |>
+    lapply(stringr::str_trunc, str_trunc_length, ellipsis = "") |>
     as.data.frame()
   hyperlink_col <- NULL
   if (freeze_keys) {
@@ -525,7 +525,7 @@ list_to_csv <- function(list, dir, file_name = NULL, overwrite = TRUE, drop_empt
 #' @export
 save_wb <- function(wb, dir, file_name, overwrite = TRUE) {
   if (!dir.exists(dir)) stop("dir doesn't exist")
-  path <- file.path(dir, paste0(file_name, ".xlsx")) %>% sanitize_path()
+  path <- file.path(dir, paste0(file_name, ".xlsx")) |> sanitize_path()
   openxlsx::saveWorkbook(
     wb = wb,
     file = path,
@@ -537,7 +537,7 @@ save_wb <- function(wb, dir, file_name, overwrite = TRUE) {
 #' @export
 save_csv <- function(form, dir, file_name, overwrite = TRUE) {
   if (!dir.exists(dir)) stop("dir doesn't exist")
-  path <- file.path(dir, paste0(file_name, ".csv")) %>% sanitize_path()
+  path <- file.path(dir, paste0(file_name, ".csv")) |> sanitize_path()
   write_it <- TRUE
   if (!overwrite) {
     if (file.exists(path)) {
@@ -559,7 +559,7 @@ process_df_list <- function(list, drop_empty = TRUE, silent = FALSE) {
   if (is_something(list)) {
     if (!is_df_list(list)) stop("list must be ...... a list :)")
     if (drop_empty) {
-      is_a_df_with_rows <- list %>%
+      is_a_df_with_rows <- list |>
         lapply(function(x) {
           is_df <- is.data.frame(x)
           out <- FALSE
@@ -567,7 +567,7 @@ process_df_list <- function(list, drop_empty = TRUE, silent = FALSE) {
             out <- nrow(x) > 0
           }
           out
-        }) %>%
+        }) |>
         unlist()
       keeps <- which(is_a_df_with_rows)
       drops <- which(!is_a_df_with_rows)

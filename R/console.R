@@ -15,7 +15,7 @@ cli_alert_wrap <- function(text = "",
   url_if <- ""
   file_if <- ""
   if (length(url) > 0) {
-    # url %>% lapply(function(x){assert_web_link(x)})
+    # url |> lapply(function(x){assert_web_link(x)})
     # doesnt work for /subheaders/
     # url_if <- " {.url {url}}"
     url_names <- names(url)
@@ -30,9 +30,9 @@ cli_alert_wrap <- function(text = "",
     if (collapse) url_if <- paste0(url_if, collapse = " and ")
     url_if <- paste0(
       " {cli::col_blue(cli::style_hyperlink('",
-      url_names%>% clean_for_cli(),
+      url_names|> clean_for_cli(),
       "', '",
-      url%>% clean_for_cli(),
+      url|> clean_for_cli(),
       "'))}"
     )
   }
@@ -47,9 +47,9 @@ cli_alert_wrap <- function(text = "",
     if (collapse) file_if <- paste0(file_if, collapse = " and ")
     file_if <- paste0(
       " {cli::col_blue(cli::style_hyperlink('",
-      sanitize_path(file_names) %>% clean_for_cli(),
+      sanitize_path(file_names) |> clean_for_cli(),
       "', '",
-      sanitize_path(paste0("file://", file)) %>% clean_for_cli(),
+      sanitize_path(paste0("file://", file)) |> clean_for_cli(),
       "'))}"
     )
   }

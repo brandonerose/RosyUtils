@@ -10,22 +10,22 @@ age <- function(dob, age.day = lubridate::today(), units = "years", floor = TRUE
 is_date <- function(date) {
   OUT <- grepl("^\\d{4}-\\d{2}-\\d{2}$|^\\d{4}-\\d{2}$|^\\d{4}$", date)
   if (OUT) {
-    OUT2 <- date %>%
-      strsplit(split = "-") %>%
+    OUT2 <- date |>
+      strsplit(split = "-") |>
       unlist()
     year <- OUT2[[1]]
     check_date <- year
     if (length(OUT2) == 1) {
-      check_date <- check_date %>% paste0("-01")
+      check_date <- check_date |> paste0("-01")
       OUT2[[2]] <- "01"
     }
     if (length(OUT2) == 2) {
-      check_date <- check_date %>% paste0("-01")
+      check_date <- check_date |> paste0("-01")
       OUT2[[3]] <- "01"
     }
-    year <- year %>% as.integer()
-    month <- OUT2[[2]] %>% as.integer()
-    day <- OUT2[[3]] %>% as.integer()
+    year <- year |> as.integer()
+    month <- OUT2[[2]] |> as.integer()
+    day <- OUT2[[3]] |> as.integer()
     this_year <-
       OUT <- month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1900 && year <= lubridate::year(Sys.Date())
   }
@@ -47,7 +47,7 @@ extract_dates <- function(input_string, allow_partial = TRUE) {
     "\\b(19[0-9]{2}|20[0-9]{2})-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01])\\b" # YYYY-MM-DD
   )
   if (allow_partial) {
-    date_patterns <- date_patterns %>% append(
+    date_patterns <- date_patterns |> append(
       c(
         "\\b(19[0-9]{2}|20[0-9]{2})-(0?[1-9]|1[0-2])(?!-[0-9])\\b", # YYYY-MM
         "\\b(0?[1-9]|1[0-2])/(19[0-9]{2}|20[0-9]{2})\\b" # MM/YYYY
@@ -59,7 +59,7 @@ extract_dates <- function(input_string, allow_partial = TRUE) {
   # Extract date matches using str_extract_all for each pattern
   for (pattern in date_patterns) {
     matches <- stringr::str_extract_all(input_string, pattern)
-    matched_dates <- matched_dates %>% append(matches)
+    matched_dates <- matched_dates |> append(matches)
   }
   return(unlist(matched_dates))
 }
@@ -74,7 +74,7 @@ extract_dates2 <- function(input_string) {
   # Extract date matches using str_extract_all for each pattern
   for (pattern in date_patterns) {
     matches <- stringr::str_extract_all(input_string, pattern)
-    matched_dates <- matched_dates %>% append(matches)
+    matched_dates <- matched_dates |> append(matches)
   }
   if (length(matched_dates[[1]]) == 0) {
     return(NA)
@@ -97,7 +97,7 @@ guess_date <- function(the_date,allow_partial = TRUE){
     x_num <- suppressWarnings(as.integer(the_date))
     if(x_num > 2173 && x_num < 50000){
       #will only allow dates betwen 1905-12-12 and 2173-10-13
-      the_date_final <- openxlsx::convertToDate(x_num) %>% as.character()
+      the_date_final <- openxlsx::convertToDate(x_num) |> as.character()
       return(the_date_final)
     }
   }
@@ -110,15 +110,15 @@ guess_date <- function(the_date,allow_partial = TRUE){
       return(the_date)
     }
   }
-  split_pattern <- gsub("-", "/", the_date) %>%
-    strsplit("/") %>%
-    unlist() %>%
+  split_pattern <- gsub("-", "/", the_date) |>
+    strsplit("/") |>
+    unlist() |>
     lapply(function(E) {
-      E %>%
-        as.integer() %>%
+      E |>
+        as.integer() |>
         stringr::str_pad(2, "left", 0)
-    }) %>%
-    unlist() %>%
+    }) |>
+    unlist() |>
     drop_nas()
   if (length(split_pattern) == 0) {
     return(the_date)
@@ -141,7 +141,7 @@ guess_date <- function(the_date,allow_partial = TRUE){
   }
   year <- split_pattern[[y_n]]
   if (nchar(year) == 2) {
-    year <- year %>% stringr::str_pad(2, "left", 0)
+    year <- year |> stringr::str_pad(2, "left", 0)
     if (year >= 0 && year < 25) {
       year <- paste0("20", year)
     }
@@ -152,18 +152,18 @@ guess_date <- function(the_date,allow_partial = TRUE){
   the_date_final <- paste0(year)
   if (length(split_pattern) > 1) {
     month <- split_pattern[[m_n]]
-    the_date_final <- the_date_final %>% paste0("-", month)
+    the_date_final <- the_date_final |> paste0("-", month)
   }
   if (length(split_pattern) > 2) {
     day <- split_pattern[[d_n]]
-    the_date_final <- the_date_final %>% paste0("-", day)
+    the_date_final <- the_date_final |> paste0("-", day)
   }
   the_date_final
 }
 #' @export
 convert_dates <- function(input_string, allow_partial = FALSE) {
   if (!is.na(input_string)) {
-    input_string <- input_string %>% trimws()
+    input_string <- input_string |> trimws()
     if (input_string != "") {
       dates <- extract_dates(input_string, allow_partial = allow_partial)
       output_string <- input_string
@@ -178,7 +178,7 @@ convert_dates <- function(input_string, allow_partial = FALSE) {
 #' @export
 date_imputation <- function(dates_in, date_imputation) {
   # followup add min max
-  z <- lapply(dates_in, is_date) %>% as.logical()
+  z <- lapply(dates_in, is_date) |> as.logical()
   x <- which(z & !is_date_full(dates_in))
   y <- which(!z)
   date_out <- dates_in
