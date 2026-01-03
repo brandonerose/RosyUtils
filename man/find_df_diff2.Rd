@@ -28,5 +28,6 @@ messages and data.frame of only changes and reference cols
 \description{
 This function will compare two data.frames: new and old.
 You define the reference columns with ref_cols.
-Reference columns are always included in the return data.frame and their combination should always lead to a unique key for each row.
+Reference columns are always included in the return data.frame and their
+combination should always lead to a unique key for each row.
 }

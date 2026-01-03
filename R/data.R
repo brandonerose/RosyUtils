@@ -79,14 +79,20 @@ find_df_diff <- function(new, old, ref_cols = NULL, message_pass = "") {
 #' @description
 #' This function will compare two data.frames: new and old.
 #' You define the reference columns with ref_cols.
-#' Reference columns are always included in the return data.frame and their combination should always lead to a unique key for each row.
+#' Reference columns are always included in the return data.frame and their
+#' combination should always lead to a unique key for each row.
 #' @param new a new data.frame to compare to old. All new cols must be included in the set of the old ones.
 #' @param old a reference data.frame to be compared to
 #' @param ref_cols character vector of reference columns. They are always included in the return data.frame and their combination should always lead to a unique key for each row.
 #' @param view_old logical for viewing old
 #' @return messages and data.frame of only changes and reference cols
 #' @export
-find_df_diff2 <- function(new, old, ref_cols = NULL, message_pass = "", view_old = TRUE, n_row_view = 20) {
+find_df_diff2 <- function(new,
+                          old,
+                          ref_cols = NULL,
+                          message_pass = "",
+                          view_old = TRUE,
+                          n_row_view = 20) {
   new <- all_character_cols(new)
   old <- all_character_cols(old)
   if (!all(colnames(new) %in% colnames(old))) {
@@ -109,8 +115,16 @@ find_df_diff2 <- function(new, old, ref_cols = NULL, message_pass = "", view_old
     stop("Keys must lead to unique rows! (new DF)")
   }
   appended_old_col_suffix <- "__old"
-  if (any(endsWith(unique(colnames(old), colnames(new)), appended_old_col_suffix))) stop("colnames cant end with '", appended_old_col_suffix, "'")
-  merged_df <- merge(new, old, by = ref_cols, suffixes = c("", appended_old_col_suffix), all.x = TRUE)
+  if (any(endsWith(unique(colnames(old), colnames(new)), appended_old_col_suffix))) {
+    stop("colnames cant end with '", appended_old_col_suffix, "'")
+  }
+  merged_df <- merge(
+    new,
+    old,
+    by = ref_cols,
+    suffixes = c("", appended_old_col_suffix),
+    all.x = TRUE
+  )
   placeholder <- "NA_placeholder"
   rows_to_keep <- NULL
   cols_to_view <- cols_to_keep <- which(colnames(merged_df) %in% ref_cols)
@@ -135,8 +149,8 @@ find_df_diff2 <- function(new, old, ref_cols = NULL, message_pass = "", view_old
     }
   }
   if (length(rows_to_keep) > 0) {
-    rows_to_keep <- rows_to_keep |> unique()
-    cols_to_keep <- cols_to_keep |> unique()
+    rows_to_keep <- unique(rows_to_keep)
+    cols_to_keep <- unique(cols_to_keep)
     if (view_old) {
       rows_to_keep2 <- rows_to_keep
       done <- FALSE
@@ -149,7 +163,9 @@ find_df_diff2 <- function(new, old, ref_cols = NULL, message_pass = "", view_old
           rows_to_keep3 <- rows_to_keep2[indices]
           print.data.frame(merged_df[rows_to_keep3, unique(cols_to_view)])
           choice <- utils::menu(choices = c("Check more rows", "Proceed with no more checking", "Stop the function"), title = "What would you like to do?")
-          if (choice == 3) stop("Stopped as requested!")
+          if (choice == 3) {
+            stop("Stopped as requested!")
+          }
           if (choice == 2) done <- TRUE
           if (choice == 1) rows_to_keep2 <- rows_to_keep2[-indices]
         }
