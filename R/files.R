@@ -1,9 +1,9 @@
-#' @title full.file.info
+#' @title full_file_info
 #' @param path a file path
 #' @param showWarnings logical for showing warnings
 #' @return file_info data.frame
 #' @export
-full.file.info <- function(path, showWarnings = TRUE) {
+full_file_info <- function(path, showWarnings = TRUE) {
   if (showWarnings) {
     if (!file.exists(path)) warning("path does not exist: ", path, immediate. = TRUE)
   }
@@ -15,8 +15,26 @@ full.file.info <- function(path, showWarnings = TRUE) {
     file_info,
     file.info(file_info$path)
   )
+  file_info$file_ext <- tools::file_ext(file_info$file)
+  file_info$file_ext[which(!nzchar(file_info$file_ext))] <- NA
   rownames(file_info) <- NULL
   return(file_info)
+}
+#' @title most_recent_file
+#' @param dir a dir path
+#' @param starts_with character for file_name startsWith
+#' @param ext character file extention
+#' @return file_info data.frame
+#' @export
+most_recent_file <- function(dir, starts_with, ext = "xlsx"){
+  x <- full_file_info(dir)
+  x <- x[which(!x$isdir), ]
+  x <- x[which(x$file_ext == ext), ]
+  x <- x[which(startsWith(x$file, starts_with)),]
+  if (nrow(x) == 0) {
+    return(NULL)
+  }
+  file.path(dir,x$file[order(x$mtime,decreasing = T)][[1]])
 }
 #' @title sync_dir
 #' @param from a file path for from
@@ -33,8 +51,8 @@ sync_dir <- function(from, to, top_level = TRUE) {
     } # stop("to path '",to, "' doesn't exist")
     if (!file.info(to)[["isdir"]]) stop("to path '", to, "' must be a folder")
   }
-  file_info_from <- full.file.info(from)
-  file_info_to <- full.file.info(to, showWarnings = FALSE)
+  file_info_from <- full_file_info(from)
+  file_info_to <- full_file_info(to, showWarnings = FALSE)
   if (nrow(file_info_from) > 0) {
     for (i in seq_len(nrow(file_info_from))) {
       file_from <- file_info_from$file[i]
@@ -87,9 +105,9 @@ sync_dir <- function(from, to, top_level = TRUE) {
     message("Up to date!")
   }
 }
-#' @title list.files.real
+#' @title list_files_real
 #' @export
-list.files.real <- function(path, full.names = TRUE, recursive = FALSE) {
+list_files_real <- function(path, full.names = TRUE, recursive = FALSE) {
   grep("~$", normalizePath(list.files(path, full.names = full.names, recursive = recursive)), fixed = TRUE, value = TRUE, invert = TRUE)
 }
 #' @title view_file
