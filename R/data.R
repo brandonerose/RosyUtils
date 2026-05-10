@@ -474,6 +474,7 @@ reassign_variable_in_bulk <- function(DF, old_colname, new_colname, optional_cho
       DF[[new_colname]][rows] <- clean_choice
     }
   }
+  DF
 }
 edit_variable_while_viewing <- function(DF, optional_DF, field_name_to_change, field_names_to_view = NULL) {
   change_form <- field_names_to_instruments(DB, field_name_to_change)
