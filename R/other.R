@@ -366,3 +366,8 @@ sanitize_path <- function(path) {
   sanitized <- normalizePath(sanitized, winslash = "/", mustWork = FALSE)
   return(sanitized)
 }
+#' @title remove_all_brackets
+#' @export
+remove_all_brackets <- function(x) {
+  trimws(gsub("\\[[^]]*\\]", "", x))
+}
