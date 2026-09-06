@@ -371,3 +371,8 @@ sanitize_path <- function(path) {
 remove_all_brackets <- function(x) {
   trimws(gsub("\\[[^]]*\\]", "", x))
 }
+#' @title extract_bracket_value
+#' @export
+extract_bracket_value <- function(x) {
+  stringr::str_extract(x, "(?<=\\[)[^\\]]+")
+}

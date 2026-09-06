@@ -266,19 +266,28 @@ collapse_DF <- function(DF, ref_id, list_mod) {
   }
   as.data.frame(new_DF)
 }
-#' @title clean_df_cols
+#' @title clean_vec
 #' @export
-clean_df_cols <- function(DF) {
-  str <- tolower(colnames(DF))
+clean_vec <- function(str, lower = TRUE) {
+  if (lower) {
+    str <- tolower(str)
+  }
   str <- gsub("[^a-z0-9\\s]+", " _", str)
   str <- gsub("\\s+", "_", str)
   str <- gsub("^_|_$", "", str)
   str <- gsub("^_|_$", "", str)
   str <- gsub("__", "_", str)
   str <- gsub("__", "_", str)
-  if (anyDuplicated(str) > 0) stop("Duplicate col names!")
-  colnames(DF) <- str
-  return(DF)
+  if (anyDuplicated(str) > 0) {
+    stop("Duplicate names!")
+  }
+  str
+}
+#' @title clean_df_cols
+#' @export
+clean_df_cols <- function(DF, lower = TRUE) {
+  colnames(DF) <- clean_vec(colnames(DF), lower = lower)
+  DF
 }
 #' @title clean_df_blanks
 #' @export
