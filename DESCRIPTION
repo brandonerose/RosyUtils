@@ -22,6 +22,7 @@ Imports:
     pdftools,
     purrr,
     readxl (>= 1.4.3),
+    rio,
     rstudioapi,
     stringdist,
     stringr (>= 1.5.1),

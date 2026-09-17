@@ -36,6 +36,29 @@ most_recent_file <- function(dir, starts_with, ext = "xlsx"){
   }
   file.path(dir,x$file[order(x$mtime,decreasing = T)][[1]])
 }
+#' @title combine_files
+#' @param dir a dir path
+#' @param starts_with character for file_name startsWith
+#' @param ext character file extention
+#' @return data.frame
+#' @export
+combine_files <- function(dir, starts_with, ext = "xlsx"){
+  x <- full_file_info(dir)
+  x <- x[which(!x$isdir), ]
+  x <- x[which(x$file_ext == ext), ]
+  x <- x[which(startsWith(x$file, starts_with)),]
+  if (nrow(x) == 0) {
+    return(NULL)
+  }
+  files <- file.path(dir,x$file)
+  out <- NULL
+  for(file in files){
+    # add check for colnames
+    out <- out |> dplyr::bind_rows(rio::import(file))
+  }
+  out <- unique(out)
+  out
+}
 #' @title sync_dir
 #' @param from a file path for from
 #' @param to a file path for to
