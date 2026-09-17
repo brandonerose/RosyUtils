@@ -383,9 +383,11 @@ vec1_not_in_vec2 <- function(vec1, vec2) {
 find_in_df_list <- function(df_list,
                             id_col = "record_id",
                             text,
-                            exact = FALSE) {
+                            exact = FALSE,
+                            return_dfs = FALSE) {
   df_list <- process_df_list(df_list)
   out <- data.frame(
+    form = character(0),
     record_id = character(0),
     col = character(0),
     row = character(0)
@@ -394,24 +396,57 @@ find_in_df_list <- function(df_list,
     text <- tolower(text)
   }
   for (form in names(df_list)) {
-    DF <- df_list[[form]]
-    for (col in colnames(DF)) {
-      if (!exact) {
-        DF[[col]] <- tolower(DF[[col]])
-      }
-      rows <- which(grepl(text, DF[[col]]))
-      if (length(rows) > 0) {
-        out <- out |> dplyr::bind_rows(
-          data.frame(
-            record_id = DF[[id_col]][rows],
-            col = col,
-            row = as.character(rows)
-          )
-        )
-      }
+    out_sub <- find_in_df(
+      x = df_list[[form]],
+      id_col = id_col,
+      text = text,
+      exact = exact,
+      return_df = return_dfs
+    )
+    if(return_dfs) {
+      df_list[[form]] <- out_sub
+    }else{
+      out_sub$form <- form
+      out <- out |> dplyr::bind_rows(out_sub)
     }
   }
-  return(out)
+  if(return_dfs) {
+    return(df_list)
+  }
+  out
+}
+#' @title find_in_df
+#' @export
+find_in_df <- function(x,
+                       id_col = "record_id",
+                       text,
+                       exact = FALSE,
+                       return_df = FALSE) {
+  checkmate::expect_data_frame(x)
+  out <- data.frame(record_id = character(0),
+                    col = character(0),
+                    row = character(0))
+  all_rows <- NULL
+  if (!exact) {
+    text <- tolower(text)
+  }
+  cols <- colnames(x) |> setdiff(id_col)
+  for (col in cols) {
+    col_check <- x[[col]]
+    rows <- which(grepl(text, x[[col]], ignore.case = !exact))
+    if (length(rows) > 0) {
+      out <- out |> dplyr::bind_rows(data.frame(
+        record_id = x[[id_col]][rows],
+        col = col,
+        row = as.character(rows)
+      ))
+      all_rows <- all_rows |> append(rows) |> unique()
+    }
+  }
+  if (return_df) {
+    return(x[all_rows, ])
+  }
+  unique(out)
 }
 #' @title count_vec_df
 #' @export
