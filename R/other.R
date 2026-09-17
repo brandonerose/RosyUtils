@@ -376,3 +376,13 @@ remove_all_brackets <- function(x) {
 extract_bracket_value <- function(x) {
   stringr::str_extract(x, "(?<=\\[)[^\\]]+")
 }
+#' @title is_even
+#' @export
+is_even <- function(x) {
+  x %% 2 == 0
+}
+#' @title is_odd
+#' @export
+is_odd <- function(x) {
+  !is_even(x)
+}
