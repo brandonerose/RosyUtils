@@ -386,3 +386,8 @@ is_even <- function(x) {
 is_odd <- function(x) {
   !is_even(x)
 }
+#' @title sort_lines_text
+#' @export
+sort_lines_text <- function(x) {
+ x |> strsplit("\n") |> unlist() |> sort() |> vec_cat()
+}

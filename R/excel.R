@@ -1,10 +1,43 @@
 #' @title excel_to_list
 #' @export
-excel_to_list <- function(path) {
+excel_to_list <- function(path) {# can do do with openxlsx2 as well
   sheets <- readxl::excel_sheets(path)
+  names(sheets) <- seq_along(sheets)
   clean_sheets <- clean_env_names(sheets)
   out <- list()
-  for (i in seq_along(sheets)) {
+  if ("dataset_details" %in% sheets) {
+    dataset_details <- readxl::read_xlsx(
+      path,
+      col_types = "text",
+      sheet = which(sheets == "dataset_details")
+    )
+    if (all(c("paramater", "value") %in% colnames(dataset_details))) {
+      the_row <- which(dataset_details$paramater == "raw_form_names")
+      form_names <- dataset_details$value[the_row] |>
+        strsplit(" [|] ") |>
+        unlist()
+      the_row <- which(dataset_details$paramater == "cols_start")
+      cols_start <- as.integer(dataset_details$value[the_row])
+      if (cols_start > 1L) {
+        for (i in as.integer(names(sheets)[match(form_names, sheets)])) {
+          suppressMessages({
+            out[[i]] <- readxl::read_xlsx(path,
+                                          col_types = "text",
+                                          sheet = i,
+                                          col_names = FALSE)
+          })
+          final_nrow <- nrow(out[[i]])
+          if (cols_start < final_nrow) {
+            true_colnames <- out[[i]][cols_start, ] |> unlist() |> unname()
+            out[[i]] <- out[[i]][(cols_start + 1L):final_nrow, ]
+            colnames(out[[i]]) <- true_colnames
+            sheets <- sheets[which(sheets != sheets[i])]
+          }
+        }
+      }
+    }
+  }
+  for (i in as.integer(names(sheets))) {
     out[[i]] <- readxl::read_xlsx(path, col_types = "text", sheet = i)
   }
   names(out) <- clean_sheets
