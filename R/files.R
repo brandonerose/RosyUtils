@@ -145,7 +145,9 @@ view_file <- function(path, browser = FALSE) {
   }
   if (its_there) {
     its_dir <- dir.exists(path)
-    if (browser) browseURL(url = path)
+    if (browser) {
+      utils::browseURL(url = path)
+    }
     if (!browser) {
       if (its_dir) rstudioapi::filesPaneNavigate(path = path)
       if (!its_dir) rstudioapi::navigateToFile(file = path)

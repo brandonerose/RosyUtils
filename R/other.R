@@ -62,7 +62,7 @@ clean_num <- function(num) {
 #' @title size
 #' @export
 size <- function(x) {
-  format(object.size(x), units = "auto")
+  format(utils::object.size(x), units = "auto")
 }
 #' @title file_size_mb
 #' @export
@@ -120,7 +120,7 @@ wrap_string_to_lines2 <- function(text, width = 80, spacer = "") {
   masked_text <- gsub("\\\\.", "_", masked_text)
   space_positions <- as.data.frame(stringr::str_locate_all(masked_text, " ")[[1]])$end
   if (length(space_positions) == 0) {
-    bullet_in_console(paste0("No unprotected spaces to wrap by for: ", text), bullet_type = "!")
+    cli::cli_alert_warning(paste0("No unprotected spaces to wrap by for: ", text))
     return(text)
   }
   spacer_length <- nchar(spacer)
@@ -269,8 +269,8 @@ matches <- function(x, ref, count_only = FALSE) {
 #' @export
 numeric_to_cats <- function(vec, method = "quantile", quantiles = 5, more_descriptive_label = FALSE) {
   if (method == "sd") {
-    med <- median(vec)
-    sd_val <- sd(vec)
+    med <- stats::median(vec)
+    sd_val <- stats::sd(vec)
     # Define the actual value ranges rounded to 1 decimal place
     low_threshold <- round(med - 2 * sd_val, 1)
     mid_low_threshold <- round(med - 1 * sd_val, 1)
@@ -309,8 +309,8 @@ numeric_to_cats <- function(vec, method = "quantile", quantiles = 5, more_descri
     )
   } else if (method == "sd_mod") {
     # Standard deviation-based binning
-    med <- median(vec)
-    sd_val <- sd(vec)
+    med <- stats::median(vec)
+    sd_val <- stats::sd(vec)
     # Define the actual value ranges rounded to 1 decimal place
     low_threshold <- round(med - 1.5 * sd_val, 1)
     mid_low_threshold <- round(med - 0.5 * sd_val, 1)
@@ -336,7 +336,7 @@ numeric_to_cats <- function(vec, method = "quantile", quantiles = 5, more_descri
     )
   } else if (method == "quantile") {
     # Quantile-based binning
-    quantile_cutoffs <- quantile(vec, probs = seq(0, 1, length.out = quantiles + 1), na.rm = TRUE)
+    quantile_cutoffs <- stats::quantile(vec, probs = seq(0, 1, length.out = quantiles + 1), na.rm = TRUE)
     # Generate labels for the specified number of quantiles
     labels <- paste("Q", 1:quantiles, sep = "")
     if (more_descriptive_label) {

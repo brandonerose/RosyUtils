@@ -406,11 +406,11 @@ rename_list_names_excel <- function(list_names) {
   )
   bad_names <- duplicated_which(list_names_rename)
   if (length(bad_names) > 0) {
-    cli_alert_danger(
+    cli::cli_alert_danger(
       "Duplicated names when trimmed from right 31 max in Excel: ",
       toString(list_names[bad_names])
     )
-    cli_alert_info(
+    cli::cli_alert_info(
       paste0(
         "Use CSV or shorten the names and make sure they are unique if they",
         " are trimmed to 31 char. For now will make unique by adding number."
@@ -514,7 +514,7 @@ list_to_csv <- function(list, dir, file_name = NULL, overwrite = TRUE, drop_empt
       file_name2 <- paste0(file_name, "_", file_name2)
     }
     save_csv(
-      DF = sub_list[[1]],
+      form = sub_list[[1]],
       dir = dir,
       file_name = file_name2,
       overwrite = overwrite
