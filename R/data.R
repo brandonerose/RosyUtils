@@ -342,7 +342,7 @@ clean_env_names <- function(env_names,
       cleaned_name <- gsub("__", "_", gsub(" ", "_", cleaned_name))
       is_valid <- is_env_name(cleaned_name, silent = TRUE)
       if (!is_valid) {
-        cli_abort(paste0("Unable to convert name: ",cleaned_name))
+        cli::cli_abort(paste0("Unable to convert name: ",cleaned_name))
       }
     }
     cleaned_names[i] <- cleaned_name
@@ -353,7 +353,7 @@ clean_env_names <- function(env_names,
 #' @title clean_env_names
 #' @export
 make_unique <- function(x) {
-  n <- ave(x, x, FUN = seq_along)
+  n <- stats::ave(x, x, FUN = seq_along)
   ifelse(duplicated(x) | duplicated(x, fromLast = TRUE),
          paste0(x, "_", n),
          x)
