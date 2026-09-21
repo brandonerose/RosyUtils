@@ -321,27 +321,34 @@ index_na <- function(DF, MARGIN = "col", invert = FALSE) {
 }
 #' @title clean_env_names
 #' @export
-clean_env_names <- function(env_names, silent = FALSE, lowercase = TRUE) {
+clean_env_names <- function(env_names,
+                            silent = FALSE,
+                            lowercase = TRUE) {
   cleaned_names <- character(length(env_names))
-  for (i in seq_along(env_names)) {
-    name <- env_names[i]
-    is_valid <- is_env_name(name, silent = TRUE)
-    if (is_valid) cleaned_names[i] <- name
-    if (!is_valid) {
-      if (!silent) message("Invalid environment name: '", name)
-      cleaned_name <- gsub("__", "_", gsub(" ", "_", gsub("-", "", name)))
-      if (lowercase) cleaned_name <- tolower(cleaned_name)
-      if (cleaned_name %in% cleaned_names) {
-        if (!silent) {
-          message("Non-unique environment name: '", name, "', added numbers...")
-        }
-        cleaned_name <- cleaned_name |>
-          paste0("_", max(wl(cleaned_name %in% cleaned_names)) + 1L)
-      }
-      cleaned_names[i] <- cleaned_name
-    }
+  if (lowercase) {
+    env_names <- tolower(env_names)
   }
-  return(cleaned_names)
+  for (i in seq_along(env_names)) {
+    cleaned_name <- name <- env_names[i]
+    is_valid <- is_env_name(name, silent = TRUE)
+    if (!is_valid) {
+      if (!silent)
+        message("Invalid environment name: '", name)
+      cleaned_name <- trimws(gsub("[^A-Za-z0-9_]", " ", name))
+      cleaned_name <- gsub("__", "_", gsub(" ", "_", cleaned_name))
+    }
+    if (cleaned_name %in% cleaned_names) {
+      if (!silent) {
+        message("Non-unique environment name: '",
+                name,
+                "', added numbers...")
+      }
+      cleaned_name <- cleaned_name |>
+        paste0("_", max(which_length(cleaned_name %in% cleaned_names)) + 1L)
+    }
+    cleaned_names[i] <- cleaned_name
+  }
+  cleaned_names
 }
 #' @title addSlashIfNeeded
 #' @export
@@ -351,7 +358,7 @@ addSlashIfNeeded <- function(input_string) {
   } else {
     output_string <- input_string
   }
-  return(output_string)
+  output_string
 }
 #' @title remove_html_tags
 #' @export
@@ -360,7 +367,7 @@ remove_html_tags <- function(text_vector) {
   html_pattern <- "<[^>]+>"
   # Use gsub to remove the HTML tags from each element in the vector
   cleaned_vector <- gsub(html_pattern, "", text_vector)
-  return(cleaned_vector)
+  cleaned_vector
 }
 #' @title check_match
 #' @export
