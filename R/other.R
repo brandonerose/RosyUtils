@@ -376,6 +376,13 @@ remove_all_brackets <- function(x) {
 extract_bracket_value <- function(x) {
   stringr::str_extract(x, "(?<=\\[)[^\\]]+")
 }
+#' @title remove_blank_lines
+#' @export
+remove_blank_lines <- function(x) {
+  lines <- strsplit(x, "\n", fixed = TRUE)[[1]]
+  lines <- lines[grepl("[[:alnum:]]", lines)]
+  paste(lines, collapse = "\n")
+}
 #' @title is_even
 #' @export
 is_even <- function(x) {
