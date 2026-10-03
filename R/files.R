@@ -5,7 +5,9 @@
 #' @export
 full_file_info <- function(path, showWarnings = TRUE) {
   if (showWarnings) {
-    if (!file.exists(path)) warning("path does not exist: ", path, immediate. = TRUE)
+    if (!file.exists(path)) {
+      warning("path does not exist: ", path, immediate. = TRUE)
+    }
   }
   file_info <- data.frame(
     file = list.files(path),
@@ -18,7 +20,7 @@ full_file_info <- function(path, showWarnings = TRUE) {
   file_info$file_ext <- tools::file_ext(file_info$file)
   file_info$file_ext[which(!nzchar(file_info$file_ext))] <- NA
   rownames(file_info) <- NULL
-  return(file_info)
+  file_info
 }
 #' @title most_recent_file
 #' @param dir a dir path
@@ -246,4 +248,74 @@ get_script_path <- function(dir_only = FALSE) {
 #' @export
 get_script_dir <- function(){
   get_script_path(dir_only = TRUE)
+}
+#' @title unnest_dir
+#' @param from a file path for from
+#' @param to a file path for to
+#' @param ignore_folders character string of folders to ignore
+#' @return message
+#' @export
+unnest_dir <- function(from,
+                       to,
+                       ignore_folders = NULL) {
+  if (!dir.exists(from)) {
+    stop("from path '", from, "' doesn't exist")
+  }
+  if(!dir.exists(to)) {
+    outcome <- utils::menu(
+      choices = c("Yes", "No"),
+      title = paste0("dir doesn't exist... Create it? ", to)
+    )
+    if (outcome == 1) {
+      dir.create(to, showWarnings = F, recursive = T)
+    } else{
+      stop("to path '",to, "' doesn't exist")
+    }
+  }
+  if (!dir.exists(to)) {
+    stop("to path '", to, "' doesn't exist")
+  }
+  file_df <- list.files(
+    from,
+    include.dirs = TRUE,
+    full.names = TRUE,
+    recursive = TRUE
+  ) |> file.info()
+  file_df$path <- rownames(file_df)
+  rownames(file_df) <- NULL
+  file_rows <- which(!file_df$isdir)
+  dir_rows <- which(file_df$isdir)
+  file_df$rel_path <- file_df$path
+  file_df$rel_path <- gsub(paste0("^", from,"/"), "", file_df$rel_path)
+  file_df$file <- basename(file_df$path)
+  file_df$file[dir_rows] |> unique() |> sort() |> toString() |> message()
+  file_df$file_ext <- NA
+  file_df$file_ext[file_rows] <- tools::file_ext(file_df$file[file_rows])
+  file_df$file_ext[which(!nzchar(file_df$file_ext))] <- NA
+  if(!is.null(ignore_folders)){
+    rel_paths_to_drop <- file_df$rel_path[which(file_df$file%in%ignore_folders)]
+    if(length(rel_paths_to_drop) > 0){
+      rows_to_drop <- file_df$rel_path |> lapply(function(x) {
+        rel_paths_to_drop |> lapply(function(y) {
+          startsWith(x, y)
+        }) |> unlist() |> any()
+      }) |> unlist()
+      rows_to_keep <- !rows_to_drop
+      file_df <- file_df[which(rows_to_keep),]
+    }
+  }
+  file_df <- file_df[ which(!file_df$isdir), ]
+  dups <- vec_which_duplicated(file_df$file)
+  if(length(dups) > 0){
+    stop(paste0("Duplicates: ",toString(dups)))
+  }
+  file_df$to_path <- file.path(to,file_df$file)
+  file_df$exists <- file.exists(file_df$to_path)
+  file_df <- file_df[which(!file_df$exists),]
+  if(nrow(file_df)>0){
+    for(i in seq_len(nrow(file_df))){
+      file.copy(from = file_df$path[i], to = to)
+    }
+  }
+  message("Done!")
 }
