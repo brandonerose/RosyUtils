@@ -7,6 +7,10 @@ summarize_emails <- function(emails) {
       purrr::map_depth(1, "properties") |>
       purrr::map_depth(1, "id") |> unlist(),
     subject = emails |>
+      purrr::map(.f = function(x) {
+        purrr::pluck(x, "properties", "subject", .default = NA_character_)
+      }) |>
+      unlist(),
       purrr::map_depth(1, "properties") |>
       purrr::map_depth(1, "subject") |> unlist(),
     from = emails |>
@@ -68,7 +72,10 @@ count_emails <- function(emails_sum, ADDRESS_TYPE) {
 }
 #' @title choose_emails_to_delete_in_bulk
 #' @export
-choose_emails_to_delete_in_bulk <- function(outlook, full_address = TRUE, use_sender = TRUE, n = 2000) {
+choose_emails_to_delete_in_bulk <- function(outlook,
+                                            full_address = TRUE,
+                                            use_sender = TRUE,
+                                            n = 2000) {
   if(missing(outlook)){
     outlook <- Microsoft365R::get_business_outlook()
   }
@@ -92,7 +99,11 @@ choose_emails_to_delete_in_bulk <- function(outlook, full_address = TRUE, use_se
 }
 #' @title choose_emails_to_delete_from
 #' @export
-choose_emails_to_delete_from <- function(outlook, address, n = 2000, individual_choice = FALSE, ask = TRUE) {
+choose_emails_to_delete_from <- function(outlook,
+                                         address,
+                                         n = 2000,
+                                         individual_choice = FALSE,
+                                         ask = TRUE) {
   choice_from <- 1
   if (ask) {
     choice_from <- 0
