@@ -11,8 +11,6 @@ summarize_emails <- function(emails) {
         purrr::pluck(x, "properties", "subject", .default = NA_character_)
       }) |>
       unlist(),
-      purrr::map_depth(1, "properties") |>
-      purrr::map_depth(1, "subject") |> unlist(),
     from = emails |>
       purrr::map_depth(1, "properties") |>
       purrr::map_depth(1, "from") |>
