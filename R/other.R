@@ -398,3 +398,22 @@ is_odd <- function(x) {
 sort_lines_text <- function(x) {
  x |> strsplit("\n") |> unlist() |> sort() |> vec_cat()
 }
+#' @title for_loop_helper
+#' @export
+for_loop_helper <- function(vec, var = "choice"){
+  vec <- unique(vec)
+  vec |> vec_cat(prefix = paste0(var, " <- \""),suffix = "\"")
+}
+#' @title check_grep
+#' @export
+check_grep <- function(x, pattern, ignore.case = TRUE) {
+  if (length(pattern) > 1) {
+    pattern <- paste0(pattern, collapse = "|")
+  }
+  grep(
+    pattern = pattern,
+    x = x,
+    ignore.case = ignore.case,
+    value = TRUE
+  )
+}
