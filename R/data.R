@@ -463,17 +463,21 @@ find_in_df <- function(x,
   }
   unique(out)
 }
+#' @title count_vec
+#' @export
+count_vec <- function(vec) {
+  vec |>
+    table() |>
+    sort(decreasing = TRUE)
+}
 #' @title count_vec_df
 #' @export
 count_vec_df <- function(vec) {
-  vec <- vec |>
-    table() |>
-    sort(decreasing = TRUE)
-  DF <- data.frame(
+  vec <- count_vec(vec)
+  data.frame(
     count = as.integer(vec),
     name = names(vec)
   )
-  return(DF)
 }
 #' @title vec_to_cvec
 #' @export

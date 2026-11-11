@@ -61,6 +61,20 @@ combine_files <- function(dir, starts_with, ext = "xlsx"){
   out <- unique(out)
   out
 }
+#' @title folder_to_df_list
+#' @param dir a dir path
+#' @return data.frame list
+#' @export
+folder_to_df_list <- function (dir){
+  paths <- full_file_info(dir)
+  paths <- paths$path[which(paths$file_ext %in% c("tsv","csv","xlsx"))]
+  OUT <- NULL
+  for (path in paths) {
+    the_name <- basename(path) |> tools::file_path_sans_ext() |> strsplit("-") |> unlist() |> last()
+    OUT[[the_name]] <- path |> rio::import() |> as.data.frame() |> clean_df_cols()
+  }
+  OUT
+}
 #' @title sync_dir
 #' @param from a file path for from
 #' @param to a file path for to
